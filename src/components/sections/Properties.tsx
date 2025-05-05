@@ -1,93 +1,81 @@
 
 import { useState } from 'react';
-import PropertyCard from '@/components/ui/PropertyCard';
+import ProjectCard from '@/components/ui/ProjectCard';
 import { Button } from '@/components/ui/button';
 
-const Properties = () => {
-  const [activeFilter, setActiveFilter] = useState<'all' | 'sale' | 'rent'>('all');
+const Projects = () => {
+  const [activeFilter, setActiveFilter] = useState<'all' | 'urban' | 'smart'>('all');
   
-  const properties = [
+  const projects = [
     {
       id: 1,
-      image: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=992&q=80",
-      title: "Apartamento de Luxo",
-      price: "R$ 890.000",
-      location: "Vila Nova Conceição, São Paulo",
-      bedrooms: 3,
-      bathrooms: 2,
-      area: "120m²",
-      type: "sale" as const,
+      image: "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=992&q=80",
+      title: "Plano Diretor Vila Nova",
+      description: "Desenvolvimento do plano diretor para o município de Vila Nova, com foco em mobilidade urbana e sustentabilidade.",
+      client: "Prefeitura Municipal de Vila Nova",
+      year: "2023",
+      type: "urban" as const,
     },
     {
       id: 2,
-      image: "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
-      title: "Casa com Jardim",
-      price: "R$ 1.250.000",
-      location: "Alphaville, Barueri",
-      bedrooms: 4,
-      bathrooms: 3,
-      area: "280m²",
-      type: "sale" as const,
+      image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
+      title: "Parque Linear Águas Claras",
+      description: "Projeto de requalificação urbana com implementação de parque linear ao longo do Rio Águas Claras.",
+      client: "Secretaria de Meio Ambiente",
+      year: "2022",
+      type: "urban" as const,
     },
     {
       id: 3,
-      image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-      title: "Cobertura Duplex",
-      price: "R$ 5.900/mês",
-      location: "Jardins, São Paulo",
-      bedrooms: 2,
-      bathrooms: 2,
-      area: "150m²",
-      type: "rent" as const,
+      image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+      title: "Sistema de Monitoramento Integrado",
+      description: "Desenvolvimento e implementação de sistema de monitoramento urbano inteligente para segurança e gestão de tráfego.",
+      client: "Centro de Operações da Capital",
+      year: "2023",
+      type: "smart" as const,
     },
     {
       id: 4,
-      image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-      title: "Casa em Condomínio",
-      price: "R$ 8.500/mês",
-      location: "Granja Viana, Cotia",
-      bedrooms: 3,
-      bathrooms: 4,
-      area: "200m²",
-      type: "rent" as const,
+      image: "https://images.unsplash.com/photo-1486325212027-8081e485255e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+      title: "Rede de Iluminação Inteligente",
+      description: "Projeto de modernização da iluminação pública com tecnologia LED e sistema de gestão remota.",
+      client: "Consórcio Cidades Conectadas",
+      year: "2022",
+      type: "smart" as const,
     },
     {
       id: 5,
-      image: "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1165&q=80",
-      title: "Loft Moderno",
-      price: "R$ 650.000",
-      location: "Pinheiros, São Paulo",
-      bedrooms: 1,
-      bathrooms: 1,
-      area: "75m²",
-      type: "sale" as const,
+      image: "https://images.unsplash.com/photo-1587048595573-5f146cc899fc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1165&q=80",
+      title: "Requalificação Centro Histórico",
+      description: "Projeto de requalificação e restauro do centro histórico da cidade, incluindo praças e edificações tombadas.",
+      client: "Instituto do Patrimônio Histórico",
+      year: "2021",
+      type: "urban" as const,
     },
     {
       id: 6,
-      image: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-      title: "Sala Comercial",
-      price: "R$ 3.200/mês",
-      location: "Itaim Bibi, São Paulo",
-      bedrooms: 0,
-      bathrooms: 1,
-      area: "45m²",
-      type: "rent" as const,
+      image: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+      title: "Plataforma de Gestão Urbana",
+      description: "Desenvolvimento de plataforma digital para gestão integrada de serviços urbanos e atendimento ao cidadão.",
+      client: "Prefeitura Municipal da Capital",
+      year: "2023",
+      type: "smart" as const,
     },
   ];
 
-  const filteredProperties = activeFilter === 'all' 
-    ? properties 
-    : properties.filter(property => property.type === activeFilter);
+  const filteredProjects = activeFilter === 'all' 
+    ? projects 
+    : projects.filter(project => project.type === activeFilter);
 
   return (
-    <section id="properties" className="section-padding bg-white">
+    <section id="projects" className="section-padding bg-white">
       <div className="container-wrapper">
         <div className="text-center mb-12 animate-slide-up">
           <h2 className="text-3xl md:text-4xl font-bold text-urbis-navy mb-4">
-            Imóveis em Destaque
+            Projetos em Destaque
           </h2>
           <p className="text-urbis-darkGray max-w-3xl mx-auto">
-            Conheça nossos imóveis selecionados que atendem aos mais altos padrões de qualidade e conforto.
+            Conheça alguns dos nossos projetos mais inovadores em planejamento urbano e soluções para cidades inteligentes.
           </p>
         </div>
 
@@ -104,47 +92,45 @@ const Properties = () => {
               Todos
             </button>
             <button
-              onClick={() => setActiveFilter('sale')}
+              onClick={() => setActiveFilter('urban')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                activeFilter === 'sale' 
+                activeFilter === 'urban' 
                   ? 'bg-white text-urbis-navy shadow-sm' 
                   : 'text-urbis-darkGray hover:text-urbis-navy'
               }`}
             >
-              À Venda
+              Planejamento Urbano
             </button>
             <button
-              onClick={() => setActiveFilter('rent')}
+              onClick={() => setActiveFilter('smart')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                activeFilter === 'rent' 
+                activeFilter === 'smart' 
                   ? 'bg-white text-urbis-navy shadow-sm' 
                   : 'text-urbis-darkGray hover:text-urbis-navy'
               }`}
             >
-              Para Alugar
+              Cidades Inteligentes
             </button>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProperties.map((property) => (
-            <PropertyCard 
-              key={property.id}
-              image={property.image}
-              title={property.title}
-              price={property.price}
-              location={property.location}
-              bedrooms={property.bedrooms}
-              bathrooms={property.bathrooms}
-              area={property.area}
-              type={property.type}
+          {filteredProjects.map((project) => (
+            <ProjectCard 
+              key={project.id}
+              image={project.image}
+              title={project.title}
+              description={project.description}
+              client={project.client}
+              year={project.year}
+              type={project.type}
             />
           ))}
         </div>
 
         <div className="text-center mt-12">
           <Button asChild variant="outline" className="border-urbis-navy text-urbis-navy hover:bg-urbis-navy hover:text-white">
-            <a href="#contact">Ver Todos os Imóveis</a>
+            <a href="#contact">Ver Todos os Projetos</a>
           </Button>
         </div>
       </div>
@@ -152,4 +138,4 @@ const Properties = () => {
   );
 };
 
-export default Properties;
+export default Projects;

@@ -8,7 +8,7 @@ const Hero = () => {
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
         style={{ 
-          backgroundImage: 'url("https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1773&q=80")',
+          backgroundImage: 'url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1773&q=80")',
         }}
       >
         <div className="absolute inset-0 bg-black opacity-60"></div>
@@ -17,11 +17,11 @@ const Hero = () => {
       <div className="container-wrapper relative z-10 pt-20">
         <div className="max-w-3xl animate-slide-up">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-            Soluções imobiliárias para você e seu negócio
+            Soluções urbanas inovadoras para cidades inteligentes
           </h1>
           
           <p className="text-xl text-gray-200 mb-8">
-            Encontre o imóvel perfeito com a Urbis. Oferecemos serviços completos de compra, venda e locação para clientes em todo o Brasil.
+            Planejamento urbano, consultoria e desenvolvimento de projetos sustentáveis para transformar espaços e melhorar a qualidade de vida das pessoas.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4">
@@ -30,7 +30,7 @@ const Hero = () => {
             </Button>
             
             <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-urbis-navy text-lg px-8 py-6">
-              <a href="#properties">Ver Imóveis</a>
+              <a href="#projects">Nossos Projetos</a>
             </Button>
           </div>
         </div>

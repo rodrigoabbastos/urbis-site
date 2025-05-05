@@ -1,39 +1,39 @@
 
-import { Home, Building2, ClipboardCheck, Scale, MessageSquare, BadgePercent } from 'lucide-react';
+import { City, Building2, LineChart, Lightbulb, Users, Leaf } from 'lucide-react';
 import ServiceCard from '@/components/ui/ServiceCard';
 import { Button } from '@/components/ui/button';
 
 const Services = () => {
   const services = [
     {
-      icon: Home,
-      title: "Compra e Venda",
-      description: "Intermediamos toda a negociação, garantindo segurança jurídica e as melhores condições para nossos clientes."
+      icon: City,
+      title: "Planejamento Urbano",
+      description: "Desenvolvimento de planos diretores, planos de mobilidade urbana e estudos de viabilidade para cidades e bairros."
     },
     {
       icon: Building2,
-      title: "Locação",
-      description: "Oferecemos um portfólio diversificado de imóveis para locação residencial e comercial com contratos personalizados."
+      title: "Projetos Urbanos",
+      description: "Criação e implementação de projetos de intervenção urbana, requalificação de espaços públicos e desenvolvimento imobiliário."
     },
     {
-      icon: ClipboardCheck,
-      title: "Administração de Imóveis",
-      description: "Cuidamos de todos os aspectos da gestão do seu imóvel, desde a manutenção até a relação com inquilinos."
+      icon: LineChart,
+      title: "Consultoria Estratégica",
+      description: "Assessoria técnica para governos, empresas e organizações em políticas urbanas e desenvolvimento territorial."
     },
     {
-      icon: Scale,
-      title: "Consultoria Jurídica",
-      description: "Nosso time jurídico especializado garante a segurança em todas as transações imobiliárias."
+      icon: Lightbulb,
+      title: "Cidades Inteligentes",
+      description: "Implementação de soluções tecnológicas para tornar as cidades mais eficientes, sustentáveis e conectadas."
     },
     {
-      icon: MessageSquare,
-      title: "Avaliação Imobiliária",
-      description: "Realizamos análises de mercado precisas para determinar o valor justo do seu imóvel."
+      icon: Users,
+      title: "Participação Social",
+      description: "Metodologias de engajamento comunitário para garantir que os projetos atendam às necessidades reais da população."
     },
     {
-      icon: BadgePercent,
-      title: "Financiamento",
-      description: "Intermediamos as melhores condições de financiamento junto às instituições financeiras parceiras."
+      icon: Leaf,
+      title: "Sustentabilidade Urbana",
+      description: "Desenvolvimento de estratégias para cidades mais sustentáveis, resilientes e com baixa emissão de carbono."
     }
   ];
 
@@ -45,7 +45,7 @@ const Services = () => {
             Nossos Serviços
           </h2>
           <p className="text-urbis-darkGray max-w-3xl mx-auto">
-            Oferecemos uma gama completa de serviços imobiliários para atender às necessidades de nossos clientes, tanto para pessoas físicas quanto jurídicas.
+            Oferecemos soluções completas em planejamento urbano e consultoria para governos, empresas e organizações que buscam transformar e melhorar os espaços urbanos.
           </p>
         </div>
 

@@ -46,8 +46,8 @@ const Navbar = () => {
             <a href="#services" className="text-urbis-darkGray hover:text-urbis-navy transition-colors">
               Serviços
             </a>
-            <a href="#properties" className="text-urbis-darkGray hover:text-urbis-navy transition-colors">
-              Imóveis
+            <a href="#projects" className="text-urbis-darkGray hover:text-urbis-navy transition-colors">
+              Projetos
             </a>
             <a href="#testimonials" className="text-urbis-darkGray hover:text-urbis-navy transition-colors">
               Depoimentos
@@ -90,11 +90,11 @@ const Navbar = () => {
               Serviços
             </a>
             <a 
-              href="#properties" 
+              href="#projects" 
               className="text-urbis-darkGray hover:text-urbis-navy transition-colors py-2"
               onClick={toggleMobileMenu}
             >
-              Imóveis
+              Projetos
             </a>
             <a 
               href="#testimonials" 

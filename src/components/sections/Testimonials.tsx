@@ -4,22 +4,22 @@ import TestimonialCard from '@/components/ui/TestimonialCard';
 const Testimonials = () => {
   const testimonials = [
     {
-      name: "Roberto Silva",
-      role: "Proprietário",
-      content: "A equipe da Urbis foi excepcional durante todo o processo de venda do meu apartamento. Profissionais, transparentes e eficientes. Conseguiram vender meu imóvel em tempo recorde e pelo valor que eu esperava.",
+      name: "Secretaria de Desenvolvimento Urbano",
+      role: "Cliente Governamental",
+      content: "A equipe da Urbis foi essencial para o desenvolvimento do nosso plano diretor. Sua metodologia inovadora e participativa garantiu que as necessidades da população fossem ouvidas e incorporadas ao projeto.",
       rating: 5,
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
+      image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
     },
     {
-      name: "Carla Mendes",
-      role: "Compradora",
-      content: "Minha experiência com a Urbis foi maravilhosa! Meu corretor entendeu exatamente o que eu estava procurando e me mostrou opções perfeitas. O processo de compra foi tranquilo e sem complicações.",
+      name: "Instituto de Planejamento Regional",
+      role: "Parceiro Institucional",
+      content: "Nossa parceria com a Urbis resultou em projetos transformadores para a região. A capacidade técnica e o comprometimento da equipe fazem toda a diferença nos resultados entregues.",
       rating: 5,
     },
     {
-      name: "Empresa ABC Ltda.",
+      name: "Construtora Horizonte",
       role: "Cliente Corporativo",
-      content: "Contamos com a Urbis para encontrar o espaço ideal para nossa nova sede. Eles não só encontraram o imóvel perfeito, mas também negociaram excelentes condições e nos apoiaram em todo o processo legal.",
+      content: "Contamos com a Urbis para os estudos de viabilidade e planejamento urbano dos nossos empreendimentos. Sua abordagem sustentável e inovadora agregou valor significativo aos nossos projetos.",
       rating: 4,
     },
   ];
@@ -36,7 +36,7 @@ const Testimonials = () => {
             O Que Nossos Clientes Dizem
           </h2>
           <p className="text-gray-300 max-w-3xl mx-auto">
-            A satisfação de nossos clientes é nossa maior prioridade. Veja o que eles têm a dizer sobre nossas soluções imobiliárias.
+            A excelência técnica e o comprometimento com resultados são valores essenciais da Urbis, reconhecidos por nossos clientes e parceiros.
           </p>
         </div>
 

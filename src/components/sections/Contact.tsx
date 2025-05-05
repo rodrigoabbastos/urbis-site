@@ -52,7 +52,7 @@ const Contact = () => {
             Entre em Contato
           </h2>
           <p className="text-urbis-darkGray max-w-3xl mx-auto">
-            Estamos aqui para responder suas perguntas e ajudá-lo em sua jornada imobiliária. Entre em contato conosco hoje mesmo.
+            Estamos prontos para ajudar a transformar sua visão em realidade. Entre em contato para discutir seu projeto ou obter mais informações sobre nossos serviços.
           </p>
         </div>
 
@@ -122,11 +122,10 @@ const Contact = () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-urbis-navy"
                   >
                     <option value="">Selecione uma opção</option>
-                    <option value="Compra">Compra de imóvel</option>
-                    <option value="Venda">Venda de imóvel</option>
-                    <option value="Locação">Locação de imóvel</option>
-                    <option value="Administração">Administração de imóvel</option>
-                    <option value="Avaliação">Avaliação imobiliária</option>
+                    <option value="Planejamento">Planejamento Urbano</option>
+                    <option value="Projeto">Projetos Urbanos</option>
+                    <option value="Consultoria">Consultoria Estratégica</option>
+                    <option value="Cidades">Cidades Inteligentes</option>
                     <option value="Outro">Outro assunto</option>
                   </select>
                 </div>
@@ -195,7 +194,7 @@ const Contact = () => {
                     <h4 className="text-white font-medium mb-1">E-mail</h4>
                     <p className="text-gray-300">
                       contato@urbis.com.br<br />
-                      comercial@urbis.com.br
+                      projetos@urbis.com.br
                     </p>
                   </div>
                 </div>

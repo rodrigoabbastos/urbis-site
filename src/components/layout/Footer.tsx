@@ -12,7 +12,7 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-bold mb-4">URBIS</h3>
             <p className="text-gray-300 mb-4">
-              Soluções imobiliárias completas para você ou sua empresa, com foco em resultados e satisfação do cliente.
+              Soluções inovadoras em planejamento urbano e desenvolvimento de cidades inteligentes, focadas em sustentabilidade e qualidade de vida.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-white hover:text-urbis-blue transition-colors">
@@ -42,8 +42,8 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#properties" className="text-gray-300 hover:text-white transition-colors">
-                  Imóveis
+                <a href="#projects" className="text-gray-300 hover:text-white transition-colors">
+                  Projetos
                 </a>
               </li>
               <li>
@@ -63,11 +63,11 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-bold mb-4">Serviços</h3>
             <ul className="space-y-2">
-              <li className="text-gray-300">Compra e Venda</li>
-              <li className="text-gray-300">Locação</li>
-              <li className="text-gray-300">Administração de Imóveis</li>
-              <li className="text-gray-300">Avaliação Imobiliária</li>
-              <li className="text-gray-300">Consultoria Jurídica</li>
+              <li className="text-gray-300">Planejamento Urbano</li>
+              <li className="text-gray-300">Projetos Urbanos</li>
+              <li className="text-gray-300">Consultoria Estratégica</li>
+              <li className="text-gray-300">Cidades Inteligentes</li>
+              <li className="text-gray-300">Sustentabilidade Urbana</li>
             </ul>
           </div>
 
