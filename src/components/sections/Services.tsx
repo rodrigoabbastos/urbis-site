@@ -1,12 +1,12 @@
 
-import { City, Building2, LineChart, Lightbulb, Users, Leaf } from 'lucide-react';
+import { Building, Building2, LineChart, Lightbulb, Users, Leaf } from 'lucide-react';
 import ServiceCard from '@/components/ui/ServiceCard';
 import { Button } from '@/components/ui/button';
 
 const Services = () => {
   const services = [
     {
-      icon: City,
+      icon: Building,
       title: "Planejamento Urbano",
       description: "Desenvolvimento de planos diretores, planos de mobilidade urbana e estudos de viabilidade para cidades e bairros."
     },
