@@ -8,10 +8,10 @@ const Hero = () => {
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
         style={{ 
-          backgroundImage: 'url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1773&q=80")',
+          backgroundImage: 'url("https://images.unsplash.com/photo-1431576901776-e539bd916ba2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80")',
         }}
       >
-        <div className="absolute inset-0 bg-black opacity-60"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-urbis-primary/80 to-urbis-secondary/70"></div>
       </div>
       
       <div className="container-wrapper relative z-10 pt-20">
@@ -25,11 +25,11 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button asChild className="bg-urbis-navy text-white hover:bg-urbis-navy/90 text-lg px-8 py-6">
+            <Button asChild className="bg-urbis-primary text-white hover:bg-urbis-primary/90 text-lg px-8 py-6">
               <a href="#contact">Fale Conosco</a>
             </Button>
             
-            <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-urbis-navy text-lg px-8 py-6">
+            <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-urbis-primary text-lg px-8 py-6">
               <a href="#projects">Nossos Projetos</a>
             </Button>
           </div>

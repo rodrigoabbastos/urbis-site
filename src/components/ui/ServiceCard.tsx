@@ -27,23 +27,23 @@ const ServiceCard = ({ icon: Icon, title, description, detailedDescription }: Se
       onClick={toggleExpand}
     >
       <div className="flex justify-between items-start mb-6">
-        <div className="w-16 h-16 bg-urbis-teal/10 rounded-full flex items-center justify-center group-hover:bg-urbis-teal transition-colors duration-300">
-          <Icon className="h-8 w-8 text-urbis-teal" />
+        <div className="w-16 h-16 bg-urbis-primary/10 rounded-full flex items-center justify-center group-hover:bg-urbis-primary transition-colors duration-300">
+          <Icon className="h-8 w-8 text-urbis-primary" />
         </div>
         {detailedDescription && (
-          <button className="text-urbis-teal">
+          <button className="text-urbis-primary">
             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
           </button>
         )}
       </div>
       
-      <h3 className="text-xl font-semibold text-urbis-darkBlue mb-3 group-hover:text-urbis-teal transition-colors duration-300">{title}</h3>
+      <h3 className="text-xl font-semibold text-urbis-tertiary mb-3 group-hover:text-urbis-primary transition-colors duration-300">{title}</h3>
       
-      <p className="text-urbis-gray transition-colors duration-300">{description}</p>
+      <p className="text-urbis-neutral transition-colors duration-300">{description}</p>
       
       {detailedDescription && isExpanded && (
         <div className="mt-4 pt-4 border-t border-gray-100 animate-fade-in">
-          <p className="text-urbis-gray">{detailedDescription}</p>
+          <p className="text-urbis-neutral">{detailedDescription}</p>
         </div>
       )}
     </div>

@@ -44,13 +44,13 @@ const Services = () => {
   ];
 
   return (
-    <section id="services" className="section-padding bg-urbis-lightBlueGray">
+    <section id="services" className="section-padding bg-gradient-to-br from-white to-urbis-primary/5">
       <div className="container-wrapper">
         <div className="text-center mb-12 animate-slide-up">
-          <h2 className="text-3xl md:text-4xl font-bold text-urbis-darkBlue mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-urbis-primary mb-4">
             Nossos Serviços
           </h2>
-          <p className="text-urbis-gray max-w-3xl mx-auto">
+          <p className="text-urbis-neutral max-w-3xl mx-auto">
             Oferecemos soluções completas em planejamento urbano e consultoria para governos, empresas e organizações que buscam transformar e melhorar os espaços urbanos.
           </p>
         </div>
@@ -68,7 +68,7 @@ const Services = () => {
         </div>
 
         <div className="text-center">
-          <Button asChild className="bg-urbis-teal text-white hover:bg-urbis-teal/90 transition-all duration-300">
+          <Button asChild className="bg-urbis-primary text-white hover:bg-urbis-primary/90 transition-all duration-300">
             <a href="#contact">Solicitar Serviço</a>
           </Button>
         </div>

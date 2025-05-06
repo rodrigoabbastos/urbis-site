@@ -48,8 +48,8 @@ const Navbar = () => {
       <a 
         href={href} 
         className={cn(
-          "relative text-urbis-gray hover:text-urbis-darkBlue transition-colors duration-300 group",
-          isActive && "text-urbis-teal font-medium"
+          "relative text-urbis-neutral hover:text-urbis-primary transition-colors duration-300 group",
+          isActive && "text-urbis-primary font-medium"
         )}
         onClick={() => {
           if (isMobileMenuOpen) toggleMobileMenu();
@@ -58,7 +58,7 @@ const Navbar = () => {
         {label}
         <span 
           className={cn(
-            "absolute -bottom-1 left-0 w-0 h-0.5 bg-urbis-teal transition-all duration-300 group-hover:w-full",
+            "absolute -bottom-1 left-0 w-0 h-0.5 bg-urbis-primary transition-all duration-300 group-hover:w-full",
             isActive && "w-full"
           )}
         ></span>
@@ -76,8 +76,8 @@ const Navbar = () => {
       <div className="container-wrapper">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <a href="/" className="text-2xl font-bold text-urbis-darkBlue">
-              URBIS
+            <a href="/" className="text-2xl font-bold flex items-center">
+              <span className="text-urbis-primary">URBIS</span>
             </a>
           </div>
 
@@ -89,7 +89,7 @@ const Navbar = () => {
             <NavLink href="#testimonials" label="Depoimentos" />
             <Button 
               asChild 
-              className="bg-urbis-teal text-white hover:bg-urbis-teal/90 transition-all duration-300"
+              className="bg-urbis-primary text-white hover:bg-urbis-primary/90 transition-all duration-300"
             >
               <a href="#contact">
                 Contato
@@ -101,7 +101,7 @@ const Navbar = () => {
           <div className="md:hidden">
             <button 
               onClick={toggleMobileMenu}
-              className="text-urbis-gray focus:outline-none"
+              className="text-urbis-neutral focus:outline-none"
             >
               {isMobileMenuOpen ? <X /> : <Menu />}
             </button>
@@ -119,7 +119,7 @@ const Navbar = () => {
             <NavLink href="#testimonials" label="Depoimentos" />
             <Button 
               asChild 
-              className="w-full bg-urbis-teal text-white hover:bg-urbis-teal/90 transition-all duration-300"
+              className="w-full bg-urbis-primary text-white hover:bg-urbis-primary/90 transition-all duration-300"
             >
               <a href="#contact">
                 Contato

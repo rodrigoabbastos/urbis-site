@@ -112,15 +112,15 @@
   }
   
   .btn-primary {
-    @apply bg-urbis-teal text-white px-6 py-3 rounded hover:bg-opacity-90 transition-all duration-300 font-medium;
+    @apply bg-urbis-primary text-white px-6 py-3 rounded hover:bg-opacity-90 transition-all duration-300 font-medium;
   }
   
   .btn-secondary {
-    @apply bg-urbis-blue text-white px-6 py-3 rounded hover:bg-opacity-90 transition-all duration-300 font-medium;
+    @apply bg-urbis-secondary text-white px-6 py-3 rounded hover:bg-opacity-90 transition-all duration-300 font-medium;
   }
   
   .btn-outline {
-    @apply border-2 border-urbis-teal text-urbis-teal px-6 py-3 rounded hover:bg-urbis-teal hover:text-white transition-all duration-300 font-medium;
+    @apply border-2 border-urbis-primary text-urbis-primary px-6 py-3 rounded hover:bg-urbis-primary hover:text-white transition-all duration-300 font-medium;
   }
   
   /* Efeitos de transição para links e elementos interativos */
@@ -129,7 +129,7 @@
   }
   
   .link-hover::after {
-    @apply content-[''] absolute left-0 bottom-0 w-0 h-0.5 bg-urbis-teal transition-all duration-300 ease-in-out;
+    @apply content-[''] absolute left-0 bottom-0 w-0 h-0.5 bg-urbis-primary transition-all duration-300 ease-in-out;
   }
   
   .link-hover:hover::after {
