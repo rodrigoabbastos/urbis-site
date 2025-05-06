@@ -78,13 +78,14 @@ const Footer = () => {
               <li className="flex items-start">
                 <MapPin className="mr-2 h-5 w-5 text-urbis-blue flex-shrink-0 mt-0.5" />
                 <span className="text-gray-300">
-                  Av. Paulista, 1000 - Bela Vista, São Paulo - SP, 01310-100
+                  Rua Dr. Orlando Feirabend Filho, 230 - sala 701 C<br />
+                  Centro Empresarial Aquarius - São José dos Campos-SP
                 </span>
               </li>
               <li className="flex items-center">
                 <Phone className="mr-2 h-5 w-5 text-urbis-blue flex-shrink-0" />
-                <a href="tel:+551199999999" className="text-gray-300 hover:text-white transition-colors">
-                  +55 (11) 9999-9999
+                <a href="tel:+5512992031890" className="text-gray-300 hover:text-white transition-colors">
+                  (12) 99203-1890
                 </a>
               </li>
               <li className="flex items-center">

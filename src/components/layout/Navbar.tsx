@@ -78,9 +78,9 @@ const Navbar = () => {
           <div className="flex items-center">
             <a href="/" className="flex items-center">
               <img 
-                src="/lovable-uploads/e3c86816-081b-4598-b640-c5a307e0cd26.png" 
+                src="/lovable-uploads/215a016e-9d44-4975-88d2-d64c862e9a66.png" 
                 alt="URBIS Logo" 
-                className="h-10 w-auto"
+                className="h-15 w-auto" 
               />
             </a>
           </div>
