@@ -1,5 +1,5 @@
 
-import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone } from 'lucide-react';
+import { Instagram, Linkedin, Mail, MapPin, Phone } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -15,13 +15,10 @@ const Footer = () => {
               Soluções inovadoras em planejamento urbano e desenvolvimento de cidades inteligentes, focadas em sustentabilidade e qualidade de vida.
             </p>
             <div className="flex space-x-4">
-              <a href="https://facebook.com/urbisplanejamento" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gray-200 transition-colors">
-                <Facebook size={20} />
-              </a>
-              <a href="https://instagram.com/urbisplanejamento" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gray-200 transition-colors">
+              <a href="https://instagram.com/urbisdi" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gray-200 transition-colors">
                 <Instagram size={20} />
               </a>
-              <a href="https://linkedin.com/company/urbisplanejamento" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gray-200 transition-colors">
+              <a href="https://br.linkedin.com/company/urbis-inteligencia" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gray-200 transition-colors">
                 <Linkedin size={20} />
               </a>
             </div>

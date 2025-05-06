@@ -7,6 +7,7 @@ import Services from '@/components/sections/Services';
 import Projects from '@/components/sections/Properties';
 import Testimonials from '@/components/sections/Testimonials';
 import Contact from '@/components/sections/Contact';
+import WhatsAppButton from '@/components/ui/WhatsAppButton';
 
 const Index = () => {
   return (
@@ -20,6 +21,7 @@ const Index = () => {
         <Testimonials />
         <Contact />
       </main>
+      <WhatsAppButton />
       <Footer />
     </div>
   );
