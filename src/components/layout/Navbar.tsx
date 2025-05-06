@@ -48,7 +48,7 @@ const Navbar = () => {
       <a 
         href={href} 
         className={cn(
-          "relative text-urbis-neutral hover:text-urbis-primary transition-colors duration-300 group",
+          "relative text-white hover:text-urbis-primary transition-colors duration-300 group font-medium text-shadow-sm",
           isActive && "text-urbis-primary font-medium"
         )}
         onClick={() => {
@@ -80,7 +80,10 @@ const Navbar = () => {
               <img 
                 src="https://urbis.com.br/wp-content/uploads/2024/03/Logotipo_URBIS_2024-02.png" 
                 alt="URBIS Logo" 
-                className="h-10 w-auto"
+                className={cn(
+                  "h-10 w-auto",
+                  !isScrolled && "filter brightness-[1.2] drop-shadow-md"
+                )}
               />
             </a>
           </div>
@@ -93,7 +96,12 @@ const Navbar = () => {
             <NavLink href="#testimonials" label="Depoimentos" />
             <Button 
               asChild 
-              className="bg-urbis-primary text-white hover:bg-urbis-primary/90 transition-all duration-300"
+              className={cn(
+                "transition-all duration-300",
+                isScrolled 
+                  ? "bg-urbis-primary text-white hover:bg-urbis-primary/90" 
+                  : "bg-white text-urbis-primary hover:bg-white/90 shadow-md"
+              )}
             >
               <a href="#contact">
                 Contato
@@ -105,7 +113,10 @@ const Navbar = () => {
           <div className="md:hidden">
             <button 
               onClick={toggleMobileMenu}
-              className="text-urbis-neutral focus:outline-none"
+              className={cn(
+                "focus:outline-none",
+                isScrolled ? "text-urbis-neutral" : "text-white"
+              )}
             >
               {isMobileMenuOpen ? <X /> : <Menu />}
             </button>

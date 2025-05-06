@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 
 const Hero = () => {
@@ -8,12 +7,13 @@ const Hero = () => {
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
         style={{ 
-          backgroundImage: 'url("https://cdn.midjourney.com/4d595d61-195b-49c8-90f8-a9156431ab8b/0_0.png")',
+          backgroundImage: 'url("https://cdn.midjourney.com/8071897a-b5ac-4953-a3b8-b4a29bd2a053/0_0.png")',
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-urbis-primary/80 to-urbis-secondary/70"></div>
       </div>
       
+      {/* Hero content */}
       <div className="container-wrapper relative z-10 pt-20">
         <div className="max-w-3xl animate-slide-up">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
