@@ -80,7 +80,7 @@ const Navbar = () => {
               <img 
                 src="/lovable-uploads/215a016e-9d44-4975-88d2-d64c862e9a66.png" 
                 alt="URBIS Logo" 
-                className="h-15 w-auto" 
+                className="h-5 w-auto" 
               />
             </a>
           </div>
