@@ -48,7 +48,7 @@ const Navbar = () => {
       <a 
         href={href} 
         className={cn(
-          "relative text-white hover:text-urbis-primary transition-colors duration-300 group font-medium text-shadow-sm",
+          "relative text-urbis-neutral hover:text-urbis-primary transition-colors duration-300 group font-medium",
           isActive && "text-urbis-primary font-medium"
         )}
         onClick={() => {
@@ -69,8 +69,8 @@ const Navbar = () => {
   return (
     <nav 
       className={cn(
-        "fixed w-full top-0 z-50 transition-all duration-300",
-        isScrolled ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'
+        "fixed w-full top-0 z-50 bg-white transition-all duration-300",
+        isScrolled ? 'shadow-md py-3' : 'py-5'
       )}
     >
       <div className="container-wrapper">
@@ -80,10 +80,7 @@ const Navbar = () => {
               <img 
                 src="/lovable-uploads/e3c86816-081b-4598-b640-c5a307e0cd26.png" 
                 alt="URBIS Logo" 
-                className={cn(
-                  "h-10 w-auto",
-                  !isScrolled && "filter drop-shadow-lg"
-                )}
+                className="h-10 w-auto"
               />
             </a>
           </div>
@@ -96,12 +93,7 @@ const Navbar = () => {
             <NavLink href="#testimonials" label="Depoimentos" />
             <Button 
               asChild 
-              className={cn(
-                "transition-all duration-300",
-                isScrolled 
-                  ? "bg-urbis-primary text-white hover:bg-urbis-primary/90" 
-                  : "bg-white text-urbis-primary hover:bg-white/90 shadow-md"
-              )}
+              className="bg-urbis-primary text-white hover:bg-urbis-primary/90 transition-all duration-300"
             >
               <a href="#contact">
                 Contato
@@ -113,10 +105,7 @@ const Navbar = () => {
           <div className="md:hidden">
             <button 
               onClick={toggleMobileMenu}
-              className={cn(
-                "focus:outline-none",
-                isScrolled ? "text-urbis-neutral" : "text-white"
-              )}
+              className="text-urbis-neutral focus:outline-none"
             >
               {isMobileMenuOpen ? <X /> : <Menu />}
             </button>
