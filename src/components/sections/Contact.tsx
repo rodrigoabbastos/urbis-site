@@ -45,10 +45,10 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="section-padding bg-urbis-lightGray">
+    <section id="contact" className="section-padding bg-[#919494]/10">
       <div className="container-wrapper">
         <div className="text-center mb-12 animate-slide-up">
-          <h2 className="text-3xl md:text-4xl font-bold text-urbis-navy mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#BF3B6C] mb-4">
             Entre em Contato
           </h2>
           <p className="text-urbis-darkGray max-w-3xl mx-auto">
@@ -59,7 +59,7 @@ const Contact = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Contact Form */}
           <div className="bg-white p-6 md:p-8 rounded-lg shadow-lg">
-            <h3 className="text-2xl font-semibold text-urbis-navy mb-6">Envie uma mensagem</h3>
+            <h3 className="text-2xl font-semibold text-[#BF3B6C] mb-6">Envie uma mensagem</h3>
             
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -74,7 +74,7 @@ const Contact = () => {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-urbis-navy"
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#BF3B6C]"
                   />
                 </div>
                 
@@ -89,7 +89,7 @@ const Contact = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-urbis-navy"
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#BF3B6C]"
                   />
                 </div>
               </div>
@@ -105,7 +105,7 @@ const Contact = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-urbis-navy"
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#BF3B6C]"
                   />
                 </div>
                 
@@ -119,7 +119,7 @@ const Contact = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-urbis-navy"
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#BF3B6C]"
                   >
                     <option value="">Selecione uma opção</option>
                     <option value="Planejamento">Planejamento Urbano</option>
@@ -142,14 +142,14 @@ const Contact = () => {
                   onChange={handleChange}
                   required
                   rows={5}
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-urbis-navy"
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#BF3B6C]"
                 ></textarea>
               </div>
               
               <Button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="w-full bg-urbis-navy text-white hover:bg-urbis-navy/90 flex items-center justify-center gap-2"
+                className="w-full bg-[#BF3B6C] text-white hover:bg-[#BF3B6C]/90 flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <>Enviando...</>
@@ -162,15 +162,15 @@ const Contact = () => {
 
           {/* Contact Info */}
           <div>
-            <div className="bg-urbis-navy p-6 md:p-8 rounded-lg shadow-lg mb-8">
+            <div className="bg-[#D94848] p-6 md:p-8 rounded-lg shadow-lg mb-8">
               <h3 className="text-2xl font-semibold text-white mb-6">Informações de Contato</h3>
               
               <div className="space-y-6">
                 <div className="flex items-start">
-                  <MapPin className="h-6 w-6 text-urbis-blue mt-1 mr-4" />
+                  <MapPin className="h-6 w-6 text-white mt-1 mr-4" />
                   <div>
                     <h4 className="text-white font-medium mb-1">Endereço</h4>
-                    <p className="text-gray-300">
+                    <p className="text-gray-200">
                       Rua Dr. Orlando Feirabend Filho, 230 - sala 701 C<br />
                       Centro Empresarial Aquarius - São José dos Campos-SP
                     </p>
@@ -178,30 +178,30 @@ const Contact = () => {
                 </div>
                 
                 <div className="flex items-start">
-                  <Phone className="h-6 w-6 text-urbis-blue mt-1 mr-4" />
+                  <Phone className="h-6 w-6 text-white mt-1 mr-4" />
                   <div>
                     <h4 className="text-white font-medium mb-1">Telefone</h4>
-                    <p className="text-gray-300">
+                    <p className="text-gray-200">
                       (12) 99203-1890
                     </p>
                   </div>
                 </div>
                 
                 <div className="flex items-start">
-                  <Mail className="h-6 w-6 text-urbis-blue mt-1 mr-4" />
+                  <Mail className="h-6 w-6 text-white mt-1 mr-4" />
                   <div>
                     <h4 className="text-white font-medium mb-1">E-mail</h4>
-                    <p className="text-gray-300">
+                    <p className="text-gray-200">
                       contato@urbis.com.br
                     </p>
                   </div>
                 </div>
                 
                 <div className="flex items-start">
-                  <Clock className="h-6 w-6 text-urbis-blue mt-1 mr-4" />
+                  <Clock className="h-6 w-6 text-white mt-1 mr-4" />
                   <div>
                     <h4 className="text-white font-medium mb-1">Horário de Atendimento</h4>
-                    <p className="text-gray-300">
+                    <p className="text-gray-200">
                       Segunda à Sexta: 9h às 18h
                     </p>
                   </div>
