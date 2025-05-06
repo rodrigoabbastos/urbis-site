@@ -1,5 +1,5 @@
 
-import { Whatsapp } from 'lucide-react';
+import { MessageCircleMore } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -35,7 +35,7 @@ const WhatsAppButton = () => {
       )}
       aria-label="Contato via WhatsApp"
     >
-      <Whatsapp size={28} />
+      <MessageCircleMore size={28} />
     </a>
   );
 };
