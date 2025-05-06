@@ -1,8 +1,9 @@
+
 import { Button } from '@/components/ui/button';
 
 const Hero = () => {
   return (
-    <div className="relative bg-black min-h-[100vh] flex items-center">
+    <div id="home" className="relative bg-black min-h-[100vh] flex items-center">
       {/* Background Image with Overlay */}
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"

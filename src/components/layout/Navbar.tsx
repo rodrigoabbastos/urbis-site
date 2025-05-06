@@ -76,7 +76,7 @@ const Navbar = () => {
       <div className="container-wrapper">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <a href="/" className="flex items-center">
+            <a href="#home" className="flex items-center">
               <img 
                 src="/lovable-uploads/215a016e-9d44-4975-88d2-d64c862e9a66.png" 
                 alt="URBIS Logo" 

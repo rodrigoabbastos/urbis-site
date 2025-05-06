@@ -15,13 +15,13 @@ const Footer = () => {
               Soluções inovadoras em planejamento urbano e desenvolvimento de cidades inteligentes, focadas em sustentabilidade e qualidade de vida.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-white hover:text-urbis-blue transition-colors">
+              <a href="https://facebook.com/urbisplanejamento" target="_blank" rel="noopener noreferrer" className="text-white hover:text-urbis-blue transition-colors">
                 <Facebook size={20} />
               </a>
-              <a href="#" className="text-white hover:text-urbis-blue transition-colors">
+              <a href="https://instagram.com/urbisplanejamento" target="_blank" rel="noopener noreferrer" className="text-white hover:text-urbis-blue transition-colors">
                 <Instagram size={20} />
               </a>
-              <a href="#" className="text-white hover:text-urbis-blue transition-colors">
+              <a href="https://linkedin.com/company/urbisplanejamento" target="_blank" rel="noopener noreferrer" className="text-white hover:text-urbis-blue transition-colors">
                 <Linkedin size={20} />
               </a>
             </div>
@@ -63,11 +63,31 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-bold mb-4">Serviços</h3>
             <ul className="space-y-2">
-              <li className="text-gray-300">Planejamento Urbano</li>
-              <li className="text-gray-300">Projetos Urbanos</li>
-              <li className="text-gray-300">Consultoria Estratégica</li>
-              <li className="text-gray-300">Cidades Inteligentes</li>
-              <li className="text-gray-300">Sustentabilidade Urbana</li>
+              <li>
+                <a href="#services" className="text-gray-300 hover:text-white transition-colors">
+                  Planejamento Urbano
+                </a>
+              </li>
+              <li>
+                <a href="#services" className="text-gray-300 hover:text-white transition-colors">
+                  Projetos Urbanos
+                </a>
+              </li>
+              <li>
+                <a href="#services" className="text-gray-300 hover:text-white transition-colors">
+                  Consultoria Estratégica
+                </a>
+              </li>
+              <li>
+                <a href="#services" className="text-gray-300 hover:text-white transition-colors">
+                  Cidades Inteligentes
+                </a>
+              </li>
+              <li>
+                <a href="#services" className="text-gray-300 hover:text-white transition-colors">
+                  Sustentabilidade Urbana
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -77,10 +97,10 @@ const Footer = () => {
             <ul className="space-y-4">
               <li className="flex items-start">
                 <MapPin className="mr-2 h-5 w-5 text-urbis-blue flex-shrink-0 mt-0.5" />
-                <span className="text-gray-300">
+                <a href="https://maps.google.com/?q=Rua Dr. Orlando Feirabend Filho, 230 - sala 701 C, São José dos Campos-SP" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors">
                   Rua Dr. Orlando Feirabend Filho, 230 - sala 701 C<br />
                   Centro Empresarial Aquarius - São José dos Campos-SP
-                </span>
+                </a>
               </li>
               <li className="flex items-center">
                 <Phone className="mr-2 h-5 w-5 text-urbis-blue flex-shrink-0" />
