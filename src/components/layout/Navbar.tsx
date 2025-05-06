@@ -76,8 +76,12 @@ const Navbar = () => {
       <div className="container-wrapper">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <a href="/" className="text-2xl font-bold flex items-center">
-              <span className="text-urbis-primary">URBIS</span>
+            <a href="/" className="flex items-center">
+              <img 
+                src="https://urbis.com.br/wp-content/uploads/2024/03/Logotipo_URBIS_2024-02.png" 
+                alt="URBIS Logo" 
+                className="h-10 w-auto"
+              />
             </a>
           </div>
 

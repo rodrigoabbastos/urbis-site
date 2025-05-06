@@ -1,7 +1,6 @@
 
 import { useState } from 'react';
 import { LucideIcon, ChevronDown, ChevronUp } from 'lucide-react';
-import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
 import { cn } from '@/lib/utils';
 
 interface ServiceCardProps {
