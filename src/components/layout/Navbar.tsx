@@ -78,11 +78,11 @@ const Navbar = () => {
           <div className="flex items-center">
             <a href="/" className="flex items-center">
               <img 
-                src="https://urbis.com.br/wp-content/uploads/2024/03/Logotipo_URBIS_2024-02.png" 
+                src="/lovable-uploads/e3c86816-081b-4598-b640-c5a307e0cd26.png" 
                 alt="URBIS Logo" 
                 className={cn(
                   "h-10 w-auto",
-                  !isScrolled && "filter brightness-[1.2] drop-shadow-md"
+                  !isScrolled && "filter drop-shadow-lg"
                 )}
               />
             </a>
