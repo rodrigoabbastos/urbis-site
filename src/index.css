@@ -94,6 +94,7 @@
 
   body {
     @apply bg-background text-foreground font-sans;
+    scroll-behavior: smooth;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -111,14 +112,35 @@
   }
   
   .btn-primary {
-    @apply bg-urbis-navy text-white px-6 py-3 rounded hover:bg-opacity-90 transition-all font-medium;
+    @apply bg-urbis-teal text-white px-6 py-3 rounded hover:bg-opacity-90 transition-all duration-300 font-medium;
   }
   
   .btn-secondary {
-    @apply bg-urbis-blue text-white px-6 py-3 rounded hover:bg-opacity-90 transition-all font-medium;
+    @apply bg-urbis-blue text-white px-6 py-3 rounded hover:bg-opacity-90 transition-all duration-300 font-medium;
   }
   
   .btn-outline {
-    @apply border-2 border-urbis-navy text-urbis-navy px-6 py-3 rounded hover:bg-urbis-navy hover:text-white transition-all font-medium;
+    @apply border-2 border-urbis-teal text-urbis-teal px-6 py-3 rounded hover:bg-urbis-teal hover:text-white transition-all duration-300 font-medium;
+  }
+  
+  /* Efeitos de transição para links e elementos interativos */
+  .link-hover {
+    @apply relative inline-block;
+  }
+  
+  .link-hover::after {
+    @apply content-[''] absolute left-0 bottom-0 w-0 h-0.5 bg-urbis-teal transition-all duration-300 ease-in-out;
+  }
+  
+  .link-hover:hover::after {
+    @apply w-full;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 ease-in-out;
+  }
+  
+  .card-hover:hover {
+    @apply -translate-y-1 shadow-xl;
   }
 }

@@ -58,11 +58,16 @@ export default {
 					foreground: 'hsl(var(--card-foreground))'
 				},
 				urbis: {
+					// Cores atualizadas baseadas no site urbis.com.br
 					navy: '#0A2463',
 					blue: '#3E92CC',
-					red: '#D8315B',
-					lightGray: '#F5F5F5',
+					teal: '#00A6A6', // Nova cor principal do site da Urbis
+					darkBlue: '#072A52', // Cor de texto principal
+					gray: '#4A5568', // Cor de texto secundária
+					lightBlueGray: '#F5F8FA', // Cor de fundo clara
 					darkGray: '#333333',
+					sand: '#E4D6A7', // Cor de destaque/acentuação
+					lightGreen: '#9FD8CB', // Cor complementar
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',

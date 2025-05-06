@@ -1,22 +1,51 @@
 
-import { LucideIcon } from 'lucide-react';
+import { useState } from 'react';
+import { LucideIcon, ChevronDown, ChevronUp } from 'lucide-react';
+import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
+import { cn } from '@/lib/utils';
 
 interface ServiceCardProps {
   icon: LucideIcon;
   title: string;
   description: string;
+  detailedDescription?: string;
 }
 
-const ServiceCard = ({ icon: Icon, title, description }: ServiceCardProps) => {
+const ServiceCard = ({ icon: Icon, title, description, detailedDescription }: ServiceCardProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg transition-all hover:shadow-xl hover:-translate-y-1 group">
-      <div className="w-16 h-16 bg-urbis-navy/10 rounded-full flex items-center justify-center mb-6 group-hover:bg-urbis-navy transition-colors">
-        <Icon className="h-8 w-8 text-urbis-navy" />
+    <div 
+      className={cn(
+        "bg-white p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl cursor-pointer group",
+        isExpanded ? "scale-105" : "hover:-translate-y-1"
+      )} 
+      onClick={toggleExpand}
+    >
+      <div className="flex justify-between items-start mb-6">
+        <div className="w-16 h-16 bg-urbis-teal/10 rounded-full flex items-center justify-center group-hover:bg-urbis-teal transition-colors duration-300">
+          <Icon className="h-8 w-8 text-urbis-teal" />
+        </div>
+        {detailedDescription && (
+          <button className="text-urbis-teal">
+            {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+          </button>
+        )}
       </div>
       
-      <h3 className="text-xl font-semibold text-urbis-navy mb-3">{title}</h3>
+      <h3 className="text-xl font-semibold text-urbis-darkBlue mb-3 group-hover:text-urbis-teal transition-colors duration-300">{title}</h3>
       
-      <p className="text-urbis-darkGray">{description}</p>
+      <p className="text-urbis-gray transition-colors duration-300">{description}</p>
+      
+      {detailedDescription && isExpanded && (
+        <div className="mt-4 pt-4 border-t border-gray-100 animate-fade-in">
+          <p className="text-urbis-gray">{detailedDescription}</p>
+        </div>
+      )}
     </div>
   );
 };

@@ -2,10 +2,12 @@
 import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -13,6 +15,21 @@ const Navbar = () => {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
+      }
+
+      // Determine which section is currently visible
+      const sections = ['home', 'about', 'services', 'projects', 'testimonials', 'contact'];
+      const current = sections.find(section => {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          return rect.top <= 200 && rect.bottom >= 200;
+        }
+        return false;
+      });
+
+      if (current) {
+        setActiveSection(current);
       }
     };
 
@@ -24,36 +41,57 @@ const Navbar = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const NavLink = ({ href, label }: { href: string; label: string }) => {
+    const isActive = activeSection === href.replace('#', '');
+    
+    return (
+      <a 
+        href={href} 
+        className={cn(
+          "relative text-urbis-gray hover:text-urbis-darkBlue transition-colors duration-300 group",
+          isActive && "text-urbis-teal font-medium"
+        )}
+        onClick={() => {
+          if (isMobileMenuOpen) toggleMobileMenu();
+        }}
+      >
+        {label}
+        <span 
+          className={cn(
+            "absolute -bottom-1 left-0 w-0 h-0.5 bg-urbis-teal transition-all duration-300 group-hover:w-full",
+            isActive && "w-full"
+          )}
+        ></span>
+      </a>
+    );
+  };
+
   return (
     <nav 
-      className={`fixed w-full top-0 z-50 transition-all duration-300 ${
+      className={cn(
+        "fixed w-full top-0 z-50 transition-all duration-300",
         isScrolled ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'
-      }`}
+      )}
     >
       <div className="container-wrapper">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <a href="/" className="text-2xl font-bold text-urbis-navy">
+            <a href="/" className="text-2xl font-bold text-urbis-darkBlue">
               URBIS
             </a>
           </div>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#about" className="text-urbis-darkGray hover:text-urbis-navy transition-colors">
-              Sobre
-            </a>
-            <a href="#services" className="text-urbis-darkGray hover:text-urbis-navy transition-colors">
-              Serviços
-            </a>
-            <a href="#projects" className="text-urbis-darkGray hover:text-urbis-navy transition-colors">
-              Projetos
-            </a>
-            <a href="#testimonials" className="text-urbis-darkGray hover:text-urbis-navy transition-colors">
-              Depoimentos
-            </a>
-            <Button asChild>
-              <a href="#contact" className="bg-urbis-navy text-white hover:bg-urbis-navy/90">
+            <NavLink href="#about" label="Sobre" />
+            <NavLink href="#services" label="Serviços" />
+            <NavLink href="#projects" label="Projetos" />
+            <NavLink href="#testimonials" label="Depoimentos" />
+            <Button 
+              asChild 
+              className="bg-urbis-teal text-white hover:bg-urbis-teal/90 transition-all duration-300"
+            >
+              <a href="#contact">
                 Contato
               </a>
             </Button>
@@ -63,7 +101,7 @@ const Navbar = () => {
           <div className="md:hidden">
             <button 
               onClick={toggleMobileMenu}
-              className="text-urbis-darkGray focus:outline-none"
+              className="text-urbis-gray focus:outline-none"
             >
               {isMobileMenuOpen ? <X /> : <Menu />}
             </button>
@@ -75,40 +113,15 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white shadow-lg absolute top-full left-0 w-full animate-fade-in">
           <div className="container-wrapper py-5 flex flex-col space-y-4">
-            <a 
-              href="#about" 
-              className="text-urbis-darkGray hover:text-urbis-navy transition-colors py-2"
-              onClick={toggleMobileMenu}
-            >
-              Sobre
-            </a>
-            <a 
-              href="#services" 
-              className="text-urbis-darkGray hover:text-urbis-navy transition-colors py-2"
-              onClick={toggleMobileMenu}
-            >
-              Serviços
-            </a>
-            <a 
-              href="#projects" 
-              className="text-urbis-darkGray hover:text-urbis-navy transition-colors py-2"
-              onClick={toggleMobileMenu}
-            >
-              Projetos
-            </a>
-            <a 
-              href="#testimonials" 
-              className="text-urbis-darkGray hover:text-urbis-navy transition-colors py-2"
-              onClick={toggleMobileMenu}
-            >
-              Depoimentos
-            </a>
+            <NavLink href="#about" label="Sobre" />
+            <NavLink href="#services" label="Serviços" />
+            <NavLink href="#projects" label="Projetos" />
+            <NavLink href="#testimonials" label="Depoimentos" />
             <Button 
               asChild 
-              className="w-full"
-              onClick={toggleMobileMenu}
+              className="w-full bg-urbis-teal text-white hover:bg-urbis-teal/90 transition-all duration-300"
             >
-              <a href="#contact" className="bg-urbis-navy text-white hover:bg-urbis-navy/90">
+              <a href="#contact">
                 Contato
               </a>
             </Button>
