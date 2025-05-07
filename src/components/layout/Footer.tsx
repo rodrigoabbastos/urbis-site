@@ -117,9 +117,17 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-white/20 mt-12 pt-6">
-          <p className="text-center text-gray-200 text-sm">
-            &copy; {currentYear} Urbis. Todos os direitos reservados.
-          </p>
+          <div className="flex flex-col md:flex-row items-center justify-center md:justify-between text-sm">
+            <p className="text-gray-200">
+              &copy; {currentYear} Urbis. Todos os direitos reservados.
+            </p>
+            <a 
+              href="/admin" 
+              className="text-gray-200 hover:text-white mt-2 md:mt-0 opacity-70 hover:opacity-100 text-xs transition-opacity"
+            >
+              Área Administrativa
+            </a>
+          </div>
         </div>
       </div>
     </footer>
