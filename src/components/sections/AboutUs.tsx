@@ -3,12 +3,12 @@ import { CheckCircle } from 'lucide-react';
 
 const AboutUs = () => {
   const features = [
-    "Mais de 20 anos de experiência em planejamento urbano",
-    "Equipe multidisciplinar de especialistas",
-    "Projetos sustentáveis e inovadores",
-    "Metodologia própria de desenvolvimento",
-    "Compromisso com o desenvolvimento social",
-    "Soluções personalizadas para cada cliente"
+    "Inteligência técnica e visão estratégica",
+    "Expertise em urbanismo e meio ambiente",
+    "Conhecimento profundo em legislação",
+    "Agilidade nos processos de aprovação",
+    "Foco em valorização do empreendimento",
+    "Suporte completo do estudo à implantação"
   ];
 
   return (
@@ -18,15 +18,15 @@ const AboutUs = () => {
           {/* Text Content */}
           <div className="animate-slide-up">
             <h2 className="text-3xl md:text-4xl font-bold text-urbis-primary mb-6">
-              Sobre a Urbis
+              Quem somos
             </h2>
             
             <p className="text-urbis-darkGray mb-6">
-              A Urbis é uma empresa líder em planejamento urbano e desenvolvimento de projetos sustentáveis, oferecendo soluções inovadoras para cidades inteligentes. Com mais de 20 anos de experiência, nossa missão é transformar espaços urbanos, criando ambientes mais eficientes, inclusivos e sustentáveis.
+              A URBIS é uma consultoria especializada na estruturação de empreendimentos urbanos com inteligência técnica, visão estratégica e agilidade. Atuamos desde o estudo de viabilidade até a aprovação e implantação, transformando terrenos em projetos viáveis, valorizados e legalmente seguros.
             </p>
 
             <p className="text-urbis-darkGray mb-8">
-              Nossa equipe multidisciplinar reúne urbanistas, arquitetos, engenheiros e consultores especializados, comprometidos em desenvolver projetos que integram tecnologia, sustentabilidade e bem-estar social, criando valor para comunidades e organizações.
+              Com experiência consolidada, integrando áreas como urbanismo, meio ambiente, infraestrutura e legislação, a URBIS é o parceiro ideal para destravar terrenos e criar valor duradouro para loteadores, investidores e incorporadores.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">

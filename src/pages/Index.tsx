@@ -4,7 +4,8 @@ import Footer from '@/components/layout/Footer';
 import Hero from '@/components/sections/Hero';
 import AboutUs from '@/components/sections/AboutUs';
 import Services from '@/components/sections/Services';
-import Projects from '@/components/sections/Properties';
+import Projects from '@/components/sections/Projects';
+import Methodology from '@/components/sections/Methodology';
 import Testimonials from '@/components/sections/Testimonials';
 import Contact from '@/components/sections/Contact';
 import WhatsAppButton from '@/components/ui/WhatsAppButton';
@@ -17,6 +18,7 @@ const Index = () => {
         <Hero />
         <AboutUs />
         <Services />
+        <Methodology />
         <Projects />
         <Testimonials />
         <Contact />
