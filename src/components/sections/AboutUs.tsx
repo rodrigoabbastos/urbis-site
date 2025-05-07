@@ -39,14 +39,14 @@ const AboutUs = () => {
             </div>
           </div>
 
-          {/* Image */}
+          {/* Image - Updated with new image and better sizing/responsiveness */}
           <div className="order-first lg:order-last">
             <div className="relative">
               <div className="w-full h-full bg-urbis-primary absolute -bottom-4 -left-4 rounded-lg z-0"></div>
               <img 
-                src="https://images.unsplash.com/photo-1512187849-463fdb898f21?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80" 
-                alt="Urbis Office" 
-                className="w-full h-auto object-cover rounded-lg shadow-lg z-10 relative"
+                src="https://urbis.com.br/wp-content/uploads/2023/08/infografico_ppt-02-1.png" 
+                alt="Urbis Infográfico" 
+                className="w-full h-auto object-contain rounded-lg shadow-lg z-10 relative"
               />
             </div>
           </div>
