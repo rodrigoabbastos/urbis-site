@@ -1,5 +1,5 @@
+
 import React from 'react';
-import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 
 // Sample project data (replace with your actual data)
@@ -48,27 +48,19 @@ const Projects = () => {
     <section id="projects" className="py-20 bg-gray-50">
       <div className="container-wrapper">
         {/* Section Title */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           <h2 className="text-3xl font-bold text-gray-800 mb-4">Nossos Projetos</h2>
           <p className="text-gray-600">
             Explore alguns dos nossos projetos mais recentes e inovadores em planejamento urbano e cidades inteligentes.
           </p>
-        </motion.div>
+        </div>
 
         {/* Projects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projectsData.map((project: Project) => (
-            <motion.div
+            <div
               key={project.id}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 * parseInt(project.id) }}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
+              className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
             >
               <img src={project.image} alt={project.name} className="w-full h-56 object-cover" />
               <div className="p-6">
@@ -82,21 +74,16 @@ const Projects = () => {
                   </a>
                 )}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {/* View All Projects Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mt-12"
-        >
+        <div className="text-center mt-12">
           <a href="/projects" className="btn-primary">
             Ver Todos os Projetos
           </a>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

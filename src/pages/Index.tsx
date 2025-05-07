@@ -8,6 +8,7 @@ import Projects from '@/components/sections/Projects';
 import Methodology from '@/components/sections/Methodology';
 import Testimonials from '@/components/sections/Testimonials';
 import Contact from '@/components/sections/Contact';
+import LinkedInFeed from '@/components/sections/LinkedInFeed';
 import WhatsAppButton from '@/components/ui/WhatsAppButton';
 
 const Index = () => {
@@ -20,6 +21,7 @@ const Index = () => {
         <Services />
         <Methodology />
         <Projects />
+        <LinkedInFeed />
         <Testimonials />
         <Contact />
       </main>
