@@ -27,15 +27,32 @@ const ProjectsEditor = () => {
     type: 'urban'
   });
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
-    const content = cmsService.getContent();
-    setTitle(content.projects.title);
-    setDescription(content.projects.description);
-    setProjects(content.projects.items);
+    loadContent();
   }, []);
   
-  const handleSaveSection = () => {
+  const loadContent = async () => {
+    try {
+      setIsLoading(true);
+      const content = await cmsService.getContent();
+      setTitle(content.projects.title);
+      setDescription(content.projects.description);
+      setProjects(content.projects.items);
+    } catch (error) {
+      console.error('Error loading content:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar o conteúdo dos projetos.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const handleSaveSection = async () => {
     if (!title) {
       toast({
         title: "Erro",
@@ -46,11 +63,12 @@ const ProjectsEditor = () => {
     }
     
     try {
-      cmsService.updateProjects({
+      await cmsService.updateProjects({
         title,
         description,
         items: projects
       });
+      
       toast({
         title: "Sucesso",
         description: "Informações da seção atualizadas com sucesso!",
@@ -94,11 +112,11 @@ const ProjectsEditor = () => {
     setIsDialogOpen(true);
   };
   
-  const handleDeleteProject = (id: string) => {
+  const handleDeleteProject = async (id: string) => {
     if (window.confirm("Tem certeza de que deseja excluir este projeto?")) {
       try {
-        cmsService.deleteProject(id);
-        setProjects(prev => prev.filter(project => project.id !== id));
+        await cmsService.deleteProject(id);
+        await loadContent();
       } catch (error) {
         console.error('Error deleting project:', error);
         toast({
@@ -110,7 +128,7 @@ const ProjectsEditor = () => {
     }
   };
   
-  const handleSaveProject = () => {
+  const handleSaveProject = async () => {
     if (!currentProject.title || !currentProject.description || !currentProject.image) {
       toast({
         title: "Erro",
@@ -121,20 +139,9 @@ const ProjectsEditor = () => {
     }
     
     try {
-      cmsService.updateProject(currentProject);
-      
-      setProjects(prev => {
-        const index = prev.findIndex(p => p.id === currentProject.id);
-        if (index !== -1) {
-          const updated = [...prev];
-          updated[index] = currentProject;
-          return updated;
-        } else {
-          return [...prev, currentProject];
-        }
-      });
-      
+      await cmsService.updateProject(currentProject);
       setIsDialogOpen(false);
+      await loadContent();
     } catch (error) {
       console.error('Error saving project:', error);
       toast({
@@ -144,6 +151,16 @@ const ProjectsEditor = () => {
       });
     }
   };
+  
+  if (isLoading) {
+    return (
+      <AdminLayout title="Projetos">
+        <div className="flex justify-center p-8">
+          <p>Carregando projetos...</p>
+        </div>
+      </AdminLayout>
+    );
+  }
   
   return (
     <AdminLayout title="Projetos">

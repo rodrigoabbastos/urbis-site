@@ -1,26 +1,38 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from 'lucide-react';
 import LinkedInPostCard from '../linkedin/LinkedInPostCard';
 import LoadingState from '../linkedin/LoadingState';
 import EmptyState from '../linkedin/EmptyState';
 import { cmsService } from '@/services/cmsService';
+import { LinkedInPost } from '../linkedin/types';
 
 const LinkedInFeed = () => {
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [posts, setPosts] = useState<LinkedInPost[]>([]);
 
-  React.useEffect(() => {
-    // Simulate loading delay for better UX
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
-    
-    return () => clearTimeout(timer);
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setIsLoading(true);
+        const fetchedPosts = await cmsService.getLinkedInPosts();
+        setPosts(fetchedPosts);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching LinkedIn posts:', err);
+        setError('Não foi possível carregar as publicações.');
+      } finally {
+        // Add a small delay for better UX
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 800);
+      }
+    };
+
+    fetchPosts();
   }, []);
-
-  const posts = cmsService.getLinkedInPosts();
 
   return (
     <section id="linkedin-feed" className="py-20 bg-white">

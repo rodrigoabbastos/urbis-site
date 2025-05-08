@@ -1,6 +1,8 @@
+
 import { toast } from '@/components/ui/use-toast';
 import { LucideIcon } from 'lucide-react';
 import { LinkedInPost } from '@/components/linkedin/types';
+import { supabase } from '@/lib/supabase';
 
 // Types for our CMS content
 export interface HeroContent {
@@ -40,7 +42,7 @@ export interface Project {
   description: string;
   client: string;
   year: string;
-  type: 'urban' | 'smart';
+  type: 'urban' | 'smart' | string;
 }
 
 export interface ContactInfo {
@@ -271,30 +273,244 @@ const defaultContent: SiteContent = {
   ]
 };
 
-// Simple localStorage-based CMS service
 class CMSService {
   private readonly STORAGE_KEY = 'urbis_cms_content';
+  private contentCache: SiteContent | null = null;
   
   constructor() {
-    // Initialize with default content if not exists
-    if (!localStorage.getItem(this.STORAGE_KEY)) {
-      this.saveContent(defaultContent);
+    // Initialize migrations if needed
+    this.initializeDatabase();
+  }
+  
+  private async initializeDatabase() {
+    try {
+      // Check if tables exist, if not create them
+      await this.createTablesIfNotExist();
+      
+      // Check if we need to migrate data from localStorage
+      const localContent = this.getLocalContent();
+      if (localContent) {
+        await this.migrateFromLocalStorage(localContent);
+      }
+      
+      // Load content from Supabase to cache
+      await this.loadContentToCache();
+    } catch (error) {
+      console.error('Error initializing database:', error);
     }
   }
   
-  getContent(): SiteContent {
+  private async createTablesIfNotExist() {
+    // Create content table
+    const { error: contentError } = await supabase
+      .from('content')
+      .select('id')
+      .limit(1)
+      .catch(() => ({ error: { message: 'Table does not exist' }, data: null }));
+    
+    if (contentError) {
+      // Table doesn't exist, create it
+      await supabase.rpc('create_content_table');
+    }
+    
+    // Create linkedin_posts table
+    const { error: postsError } = await supabase
+      .from('linkedin_posts')
+      .select('id')
+      .limit(1)
+      .catch(() => ({ error: { message: 'Table does not exist' }, data: null }));
+    
+    if (postsError) {
+      // Table doesn't exist, create it
+      await supabase.rpc('create_linkedin_posts_table');
+    }
+    
+    // Create projects table
+    const { error: projectsError } = await supabase
+      .from('projects')
+      .select('id')
+      .limit(1)
+      .catch(() => ({ error: { message: 'Table does not exist' }, data: null }));
+    
+    if (projectsError) {
+      // Table doesn't exist, create it
+      await supabase.rpc('create_projects_table');
+    }
+  }
+  
+  private getLocalContent(): SiteContent | null {
     try {
       const content = localStorage.getItem(this.STORAGE_KEY);
-      return content ? JSON.parse(content) : defaultContent;
+      return content ? JSON.parse(content) : null;
     } catch (error) {
-      console.error('Error retrieving content:', error);
-      return defaultContent;
+      console.error('Error retrieving local content:', error);
+      return null;
     }
   }
   
-  saveContent(content: SiteContent): void {
+  private async migrateFromLocalStorage(localContent: SiteContent) {
     try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(content));
+      // Check if we have content in Supabase
+      const { data: existingContent } = await supabase
+        .from('content')
+        .select('*')
+        .eq('id', 'main')
+        .single();
+      
+      // If no content exists in Supabase, insert from localStorage
+      if (!existingContent) {
+        // Store main content
+        const { hero, about, services, methodology, contact } = localContent;
+        await supabase
+          .from('content')
+          .upsert({ 
+            id: 'main',
+            hero,
+            about,
+            services,
+            methodology,
+            contact
+          });
+        
+        // Store projects
+        const projectsContent = {
+          id: 'projects',
+          title: localContent.projects.title,
+          description: localContent.projects.description
+        };
+        
+        await supabase
+          .from('content')
+          .upsert(projectsContent);
+        
+        // Store individual projects
+        if (localContent.projects.items.length > 0) {
+          await supabase
+            .from('projects')
+            .upsert(localContent.projects.items);
+        }
+        
+        // Store LinkedIn posts
+        if (localContent.linkedInPosts && localContent.linkedInPosts.length > 0) {
+          await supabase
+            .from('linkedin_posts')
+            .upsert(localContent.linkedInPosts);
+        }
+        
+        // Clear localStorage after successful migration
+        localStorage.removeItem(this.STORAGE_KEY);
+        
+        toast({
+          title: "Migração concluída",
+          description: "Os dados foram migrados com sucesso para o Supabase.",
+        });
+      }
+    } catch (error) {
+      console.error('Error migrating data from localStorage:', error);
+      toast({
+        title: "Erro na migração",
+        description: "Não foi possível migrar os dados. Tente novamente mais tarde.",
+        variant: "destructive",
+      });
+    }
+  }
+  
+  private async loadContentToCache() {
+    try {
+      const content: SiteContent = { ...defaultContent };
+      
+      // Get main content
+      const { data: mainContent, error: mainError } = await supabase
+        .from('content')
+        .select('*')
+        .eq('id', 'main')
+        .single();
+      
+      if (mainError) {
+        throw new Error(mainError.message);
+      }
+      
+      if (mainContent) {
+        content.hero = mainContent.hero;
+        content.about = mainContent.about;
+        content.services = mainContent.services;
+        content.methodology = mainContent.methodology;
+        content.contact = mainContent.contact;
+      }
+      
+      // Get projects info
+      const { data: projectsInfo, error: projectsInfoError } = await supabase
+        .from('content')
+        .select('*')
+        .eq('id', 'projects')
+        .single();
+      
+      if (!projectsInfoError && projectsInfo) {
+        content.projects.title = projectsInfo.title;
+        content.projects.description = projectsInfo.description;
+      }
+      
+      // Get projects
+      const { data: projects, error: projectsError } = await supabase
+        .from('projects')
+        .select('*');
+      
+      if (!projectsError && projects) {
+        content.projects.items = projects;
+      }
+      
+      // Get LinkedIn posts
+      const { data: linkedInPosts, error: postsError } = await supabase
+        .from('linkedin_posts')
+        .select('*')
+        .order('date', { ascending: false });
+      
+      if (!postsError && linkedInPosts) {
+        content.linkedInPosts = linkedInPosts;
+      }
+      
+      this.contentCache = content;
+    } catch (error) {
+      console.error('Error loading content from Supabase:', error);
+    }
+  }
+  
+  async getContent(): Promise<SiteContent> {
+    if (!this.contentCache) {
+      await this.loadContentToCache();
+    }
+    return this.contentCache || defaultContent;
+  }
+  
+  async saveContent(content: SiteContent): Promise<void> {
+    try {
+      // Update cache
+      this.contentCache = content;
+      
+      // Store main content
+      const { hero, about, services, methodology, contact } = content;
+      await supabase
+        .from('content')
+        .upsert({ 
+          id: 'main',
+          hero,
+          about,
+          services,
+          methodology,
+          contact
+        });
+      
+      // Store projects info
+      const projectsContent = {
+        id: 'projects',
+        title: content.projects.title,
+        description: content.projects.description
+      };
+      
+      await supabase
+        .from('content')
+        .upsert(projectsContent);
+        
     } catch (error) {
       console.error('Error saving content:', error);
       toast({
@@ -305,186 +521,382 @@ class CMSService {
     }
   }
   
-  updateHero(hero: HeroContent): void {
-    const content = this.getContent();
-    content.hero = hero;
-    this.saveContent(content);
-    toast({
-      title: "Sucesso",
-      description: "Conteúdo da seção Hero atualizado com sucesso!",
-    });
-  }
-  
-  updateAbout(about: AboutContent): void {
-    const content = this.getContent();
-    content.about = about;
-    this.saveContent(content);
-    toast({
-      title: "Sucesso",
-      description: "Conteúdo da seção Sobre atualizado com sucesso!",
-    });
-  }
-  
-  updateService(service: Service): void {
-    const content = this.getContent();
-    const index = content.services.findIndex(s => s.id === service.id);
-    
-    if (index !== -1) {
-      content.services[index] = service;
-    } else {
-      content.services.push(service);
+  async updateHero(hero: HeroContent): Promise<void> {
+    try {
+      const content = await this.getContent();
+      content.hero = hero;
+      await this.saveContent(content);
+      
+      toast({
+        title: "Sucesso",
+        description: "Conteúdo da seção Hero atualizado com sucesso!",
+      });
+    } catch (error) {
+      console.error('Error updating hero:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar o conteúdo do Hero.",
+        variant: "destructive",
+      });
     }
-    
-    this.saveContent(content);
-    toast({
-      title: "Sucesso",
-      description: "Serviço atualizado com sucesso!",
-    });
   }
   
-  deleteService(id: string): void {
-    const content = this.getContent();
-    content.services = content.services.filter(s => s.id !== id);
-    this.saveContent(content);
-    toast({
-      title: "Sucesso",
-      description: "Serviço excluído com sucesso!",
-    });
-  }
-  
-  updateMethodology(methodology: typeof defaultContent.methodology): void {
-    const content = this.getContent();
-    content.methodology = methodology;
-    this.saveContent(content);
-    toast({
-      title: "Sucesso",
-      description: "Conteúdo da seção Metodologia atualizado com sucesso!",
-    });
-  }
-  
-  updateMethodologyStep(step: MethodologyStep): void {
-    const content = this.getContent();
-    const index = content.methodology.steps.findIndex(s => s.id === step.id);
-    
-    if (index !== -1) {
-      content.methodology.steps[index] = step;
-    } else {
-      content.methodology.steps.push(step);
+  async updateAbout(about: AboutContent): Promise<void> {
+    try {
+      const content = await this.getContent();
+      content.about = about;
+      await this.saveContent(content);
+      
+      toast({
+        title: "Sucesso",
+        description: "Conteúdo da seção Sobre atualizado com sucesso!",
+      });
+    } catch (error) {
+      console.error('Error updating about:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar o conteúdo da seção Sobre.",
+        variant: "destructive",
+      });
     }
-    
-    this.saveContent(content);
-    toast({
-      title: "Sucesso",
-      description: "Etapa da metodologia atualizada com sucesso!",
-    });
   }
   
-  deleteMethodologyStep(id: string): void {
-    const content = this.getContent();
-    content.methodology.steps = content.methodology.steps.filter(s => s.id !== id);
-    this.saveContent(content);
-    toast({
-      title: "Sucesso",
-      description: "Etapa da metodologia excluída com sucesso!",
-    });
-  }
-  
-  updateProjects(projects: typeof defaultContent.projects): void {
-    const content = this.getContent();
-    content.projects = projects;
-    this.saveContent(content);
-    toast({
-      title: "Sucesso",
-      description: "Conteúdo da seção Projetos atualizado com sucesso!",
-    });
-  }
-  
-  updateProject(project: Project): void {
-    const content = this.getContent();
-    const index = content.projects.items.findIndex(p => p.id === project.id);
-    
-    if (index !== -1) {
-      content.projects.items[index] = project;
-    } else {
-      content.projects.items.push(project);
+  async updateService(service: Service): Promise<void> {
+    try {
+      const content = await this.getContent();
+      const index = content.services.findIndex(s => s.id === service.id);
+      
+      if (index !== -1) {
+        content.services[index] = service;
+      } else {
+        content.services.push(service);
+      }
+      
+      await this.saveContent(content);
+      
+      toast({
+        title: "Sucesso",
+        description: "Serviço atualizado com sucesso!",
+      });
+    } catch (error) {
+      console.error('Error updating service:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar o serviço.",
+        variant: "destructive",
+      });
     }
-    
-    this.saveContent(content);
-    toast({
-      title: "Sucesso",
-      description: "Projeto atualizado com sucesso!",
-    });
   }
   
-  deleteProject(id: string): void {
-    const content = this.getContent();
-    content.projects.items = content.projects.items.filter(p => p.id !== id);
-    this.saveContent(content);
-    toast({
-      title: "Sucesso",
-      description: "Projeto excluído com sucesso!",
-    });
-  }
-  
-  updateContactInfo(contact: ContactInfo): void {
-    const content = this.getContent();
-    content.contact = contact;
-    this.saveContent(content);
-    toast({
-      title: "Sucesso",
-      description: "Informações de contato atualizadas com sucesso!",
-    });
-  }
-  
-  resetToDefault(): void {
-    this.saveContent(defaultContent);
-    toast({
-      title: "Conteúdo Resetado",
-      description: "Todo o conteúdo foi restaurado para os valores padrão.",
-    });
-  }
-  
-  updateLinkedInPost(post: LinkedInPost): void {
-    const content = this.getContent();
-    
-    // Initialize the array if it doesn't exist yet
-    if (!content.linkedInPosts) {
-      content.linkedInPosts = [];
+  async deleteService(id: string): Promise<void> {
+    try {
+      const content = await this.getContent();
+      content.services = content.services.filter(s => s.id !== id);
+      await this.saveContent(content);
+      
+      toast({
+        title: "Sucesso",
+        description: "Serviço excluído com sucesso!",
+      });
+    } catch (error) {
+      console.error('Error deleting service:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível excluir o serviço.",
+        variant: "destructive",
+      });
     }
-    
-    const index = content.linkedInPosts.findIndex(p => p.id === post.id);
-    
-    if (index !== -1) {
-      content.linkedInPosts[index] = post;
-    } else {
-      content.linkedInPosts.push(post);
-    }
-    
-    this.saveContent(content);
-    toast({
-      title: "Sucesso",
-      description: "Publicação do LinkedIn atualizada com sucesso!",
-    });
   }
   
-  deleteLinkedInPost(id: string): void {
-    const content = this.getContent();
-    
-    if (!content.linkedInPosts) {
-      return;
+  async updateMethodology(methodology: typeof defaultContent.methodology): Promise<void> {
+    try {
+      const content = await this.getContent();
+      content.methodology = methodology;
+      await this.saveContent(content);
+      
+      toast({
+        title: "Sucesso",
+        description: "Conteúdo da seção Metodologia atualizado com sucesso!",
+      });
+    } catch (error) {
+      console.error('Error updating methodology:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar o conteúdo da seção Metodologia.",
+        variant: "destructive",
+      });
     }
-    
-    content.linkedInPosts = content.linkedInPosts.filter(p => p.id !== id);
-    this.saveContent(content);
-    toast({
-      title: "Sucesso",
-      description: "Publicação do LinkedIn excluída com sucesso!",
-    });
   }
   
-  getLinkedInPosts(): LinkedInPost[] {
-    const content = this.getContent();
-    return content.linkedInPosts || [];
+  async updateMethodologyStep(step: MethodologyStep): Promise<void> {
+    try {
+      const content = await this.getContent();
+      const index = content.methodology.steps.findIndex(s => s.id === step.id);
+      
+      if (index !== -1) {
+        content.methodology.steps[index] = step;
+      } else {
+        content.methodology.steps.push(step);
+      }
+      
+      await this.saveContent(content);
+      
+      toast({
+        title: "Sucesso",
+        description: "Etapa da metodologia atualizada com sucesso!",
+      });
+    } catch (error) {
+      console.error('Error updating methodology step:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar a etapa da metodologia.",
+        variant: "destructive",
+      });
+    }
+  }
+  
+  async deleteMethodologyStep(id: string): Promise<void> {
+    try {
+      const content = await this.getContent();
+      content.methodology.steps = content.methodology.steps.filter(s => s.id !== id);
+      await this.saveContent(content);
+      
+      toast({
+        title: "Sucesso",
+        description: "Etapa da metodologia excluída com sucesso!",
+      });
+    } catch (error) {
+      console.error('Error deleting methodology step:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível excluir a etapa da metodologia.",
+        variant: "destructive",
+      });
+    }
+  }
+  
+  async updateProjects(projects: typeof defaultContent.projects): Promise<void> {
+    try {
+      // Update projects info
+      const projectsInfo = {
+        id: 'projects',
+        title: projects.title,
+        description: projects.description
+      };
+      
+      await supabase.from('content').upsert(projectsInfo);
+      
+      // Update cache
+      const content = await this.getContent();
+      content.projects.title = projects.title;
+      content.projects.description = projects.description;
+      this.contentCache = content;
+      
+      toast({
+        title: "Sucesso",
+        description: "Conteúdo da seção Projetos atualizado com sucesso!",
+      });
+    } catch (error) {
+      console.error('Error updating projects:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar o conteúdo da seção Projetos.",
+        variant: "destructive",
+      });
+    }
+  }
+  
+  async updateProject(project: Project): Promise<void> {
+    try {
+      // Update project in Supabase
+      await supabase.from('projects').upsert(project);
+      
+      // Update cache
+      const content = await this.getContent();
+      const index = content.projects.items.findIndex(p => p.id === project.id);
+      
+      if (index !== -1) {
+        content.projects.items[index] = project;
+      } else {
+        content.projects.items.push(project);
+      }
+      
+      this.contentCache = content;
+      
+      toast({
+        title: "Sucesso",
+        description: "Projeto atualizado com sucesso!",
+      });
+    } catch (error) {
+      console.error('Error updating project:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar o projeto.",
+        variant: "destructive",
+      });
+    }
+  }
+  
+  async deleteProject(id: string): Promise<void> {
+    try {
+      // Delete from Supabase
+      await supabase.from('projects').delete().eq('id', id);
+      
+      // Update cache
+      const content = await this.getContent();
+      content.projects.items = content.projects.items.filter(p => p.id !== id);
+      this.contentCache = content;
+      
+      toast({
+        title: "Sucesso",
+        description: "Projeto excluído com sucesso!",
+      });
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível excluir o projeto.",
+        variant: "destructive",
+      });
+    }
+  }
+  
+  async updateContactInfo(contact: ContactInfo): Promise<void> {
+    try {
+      const content = await this.getContent();
+      content.contact = contact;
+      await this.saveContent(content);
+      
+      toast({
+        title: "Sucesso",
+        description: "Informações de contato atualizadas com sucesso!",
+      });
+    } catch (error) {
+      console.error('Error updating contact info:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar as informações de contato.",
+        variant: "destructive",
+      });
+    }
+  }
+  
+  async resetToDefault(): Promise<void> {
+    try {
+      // Reset content in Supabase
+      await this.saveContent(defaultContent);
+      
+      // Reset projects
+      await supabase.from('projects').delete().neq('id', '0');
+      await supabase.from('projects').upsert(defaultContent.projects.items);
+      
+      // Reset LinkedIn posts
+      await supabase.from('linkedin_posts').delete().neq('id', '0');
+      await supabase.from('linkedin_posts').upsert(defaultContent.linkedInPosts || []);
+      
+      // Update cache
+      this.contentCache = defaultContent;
+      
+      toast({
+        title: "Conteúdo Resetado",
+        description: "Todo o conteúdo foi restaurado para os valores padrão.",
+      });
+    } catch (error) {
+      console.error('Error resetting to default:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível resetar o conteúdo.",
+        variant: "destructive",
+      });
+    }
+  }
+  
+  async updateLinkedInPost(post: LinkedInPost): Promise<void> {
+    try {
+      // Update in Supabase
+      await supabase.from('linkedin_posts').upsert(post);
+      
+      // Update cache
+      const content = await this.getContent();
+      
+      // Initialize the array if it doesn't exist yet
+      if (!content.linkedInPosts) {
+        content.linkedInPosts = [];
+      }
+      
+      const index = content.linkedInPosts.findIndex(p => p.id === post.id);
+      
+      if (index !== -1) {
+        content.linkedInPosts[index] = post;
+      } else {
+        content.linkedInPosts.push(post);
+      }
+      
+      this.contentCache = content;
+      
+      toast({
+        title: "Sucesso",
+        description: "Publicação do LinkedIn atualizada com sucesso!",
+      });
+    } catch (error) {
+      console.error('Error updating LinkedIn post:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar a publicação do LinkedIn.",
+        variant: "destructive",
+      });
+    }
+  }
+  
+  async deleteLinkedInPost(id: string): Promise<void> {
+    try {
+      // Delete from Supabase
+      await supabase.from('linkedin_posts').delete().eq('id', id);
+      
+      // Update cache
+      const content = await this.getContent();
+      
+      if (!content.linkedInPosts) {
+        return;
+      }
+      
+      content.linkedInPosts = content.linkedInPosts.filter(p => p.id !== id);
+      this.contentCache = content;
+      
+      toast({
+        title: "Sucesso",
+        description: "Publicação do LinkedIn excluída com sucesso!",
+      });
+    } catch (error) {
+      console.error('Error deleting LinkedIn post:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível excluir a publicação do LinkedIn.",
+        variant: "destructive",
+      });
+    }
+  }
+  
+  async getLinkedInPosts(): Promise<LinkedInPost[]> {
+    try {
+      // Get LinkedIn posts directly from Supabase
+      const { data, error } = await supabase
+        .from('linkedin_posts')
+        .select('*')
+        .order('date', { ascending: false });
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+      
+      return data || [];
+    } catch (error) {
+      console.error('Error getting LinkedIn posts:', error);
+      
+      // Fallback to cache
+      const content = await this.getContent();
+      return content.linkedInPosts || [];
+    }
   }
 }
 

@@ -18,13 +18,37 @@ const Projects = () => {
   const [projectsData, setProjectsData] = useState<Project[]>([]);
   const [projectsTitle, setProjectsTitle] = useState('');
   const [projectsDescription, setProjectsDescription] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
-    const content = cmsService.getContent();
-    setProjectsData(content.projects.items);
-    setProjectsTitle(content.projects.title);
-    setProjectsDescription(content.projects.description);
+    async function loadContent() {
+      try {
+        setIsLoading(true);
+        const content = await cmsService.getContent();
+        setProjectsData(content.projects.items);
+        setProjectsTitle(content.projects.title);
+        setProjectsDescription(content.projects.description);
+      } catch (error) {
+        console.error('Error loading projects:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    loadContent();
   }, []);
+
+  if (isLoading) {
+    return (
+      <section id="projects" className="py-20 bg-gray-50">
+        <div className="container-wrapper">
+          <div className="text-center">
+            <p>Carregando projetos...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="projects" className="py-20 bg-gray-50">

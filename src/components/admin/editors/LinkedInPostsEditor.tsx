@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../AdminLayout';
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ const LinkedInPostsEditor = () => {
   const [posts, setPosts] = useState<LinkedInPost[]>([]);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [currentPost, setCurrentPost] = useState<LinkedInPost | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   const form = useForm<PostFormValues>({
     resolver: zodResolver(postSchema),
@@ -51,10 +53,15 @@ const LinkedInPostsEditor = () => {
     loadPosts();
   }, []);
 
-  const loadPosts = () => {
-    const content = cmsService.getContent();
-    if (content.linkedInPosts) {
-      setPosts(content.linkedInPosts);
+  const loadPosts = async () => {
+    try {
+      setIsLoading(true);
+      const fetchedPosts = await cmsService.getLinkedInPosts();
+      setPosts(fetchedPosts);
+    } catch (error) {
+      console.error('Error loading posts:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -72,10 +79,14 @@ const LinkedInPostsEditor = () => {
     setIsEditDialogOpen(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm("Tem certeza de que deseja excluir esta publicação?")) {
-      cmsService.deleteLinkedInPost(id);
-      loadPosts();
+      try {
+        await cmsService.deleteLinkedInPost(id);
+        await loadPosts();
+      } catch (error) {
+        console.error('Error deleting post:', error);
+      }
     }
   };
 
@@ -93,21 +104,25 @@ const LinkedInPostsEditor = () => {
     setIsEditDialogOpen(true);
   };
 
-  const onSubmit = (data: PostFormValues) => {
-    // Ensure we have all required fields for LinkedInPost
-    const postData: LinkedInPost = {
-      id: data.id || String(Date.now()),
-      text_snippet: data.text_snippet,
-      image_url: data.image_url,
-      post_url: data.post_url,
-      date: data.date,
-      likes: data.likes,
-      comments: data.comments,
-    };
-    
-    cmsService.updateLinkedInPost(postData);
-    setIsEditDialogOpen(false);
-    loadPosts();
+  const onSubmit = async (data: PostFormValues) => {
+    try {
+      // Ensure we have all required fields for LinkedInPost
+      const postData: LinkedInPost = {
+        id: data.id || String(Date.now()),
+        text_snippet: data.text_snippet,
+        image_url: data.image_url,
+        post_url: data.post_url,
+        date: data.date,
+        likes: data.likes,
+        comments: data.comments,
+      };
+      
+      await cmsService.updateLinkedInPost(postData);
+      setIsEditDialogOpen(false);
+      await loadPosts();
+    } catch (error) {
+      console.error('Error saving post:', error);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -135,64 +150,70 @@ const LinkedInPostsEditor = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {posts.length > 0 ? (
-          posts.map((post) => (
-            <Card key={post.id} className="overflow-hidden">
-              <CardHeader className="pb-0">
-                <div className="text-sm text-gray-500">
-                  {formatDate(post.date)}
-                </div>
-              </CardHeader>
-              <CardContent className="py-4">
-                <p className="text-gray-700 mb-4 line-clamp-3">{post.text_snippet}</p>
-                {post.image_url && (
-                  <div className="relative h-32 overflow-hidden rounded-md mb-2">
-                    <img
-                      src={post.image_url}
-                      alt="Imagem da publicação"
-                      className="object-cover w-full h-full"
-                    />
+      {isLoading ? (
+        <div className="flex justify-center">
+          <p>Carregando publicações...</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {posts.length > 0 ? (
+            posts.map((post) => (
+              <Card key={post.id} className="overflow-hidden">
+                <CardHeader className="pb-0">
+                  <div className="text-sm text-gray-500">
+                    {formatDate(post.date)}
                   </div>
-                )}
-                <div className="flex items-center space-x-4 text-sm text-gray-500">
-                  <div>👍 {post.likes}</div>
-                  <div>💬 {post.comments}</div>
-                </div>
-              </CardContent>
-              <CardFooter className="flex justify-end space-x-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="px-2"
-                  onClick={() => handleEdit(post)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="px-2 text-red-500 hover:text-red-700"
-                  onClick={() => handleDelete(post.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </CardFooter>
-            </Card>
-          ))
-        ) : (
-          <div className="col-span-full text-center py-8 bg-gray-50 rounded-lg">
-            <p className="text-gray-500">Não há publicações do LinkedIn cadastradas.</p>
-            <Button 
-              onClick={handleCreate}
-              variant="outline" 
-              className="mt-2"
-            >
-              Adicionar primeira publicação
-            </Button>
-          </div>
-        )}
-      </div>
+                </CardHeader>
+                <CardContent className="py-4">
+                  <p className="text-gray-700 mb-4 line-clamp-3">{post.text_snippet}</p>
+                  {post.image_url && (
+                    <div className="relative h-32 overflow-hidden rounded-md mb-2">
+                      <img
+                        src={post.image_url}
+                        alt="Imagem da publicação"
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                  )}
+                  <div className="flex items-center space-x-4 text-sm text-gray-500">
+                    <div>👍 {post.likes}</div>
+                    <div>💬 {post.comments}</div>
+                  </div>
+                </CardContent>
+                <CardFooter className="flex justify-end space-x-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="px-2"
+                    onClick={() => handleEdit(post)}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="px-2 text-red-500 hover:text-red-700"
+                    onClick={() => handleDelete(post.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-8 bg-gray-50 rounded-lg">
+              <p className="text-gray-500">Não há publicações do LinkedIn cadastradas.</p>
+              <Button 
+                onClick={handleCreate}
+                variant="outline" 
+                className="mt-2"
+              >
+                Adicionar primeira publicação
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
       
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="max-w-lg">
