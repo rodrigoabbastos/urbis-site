@@ -8,8 +8,10 @@ import { toast } from '@/components/ui/use-toast';
 // Função para verificar se o Supabase está configurado corretamente
 export const isSupabaseConfigured = () => {
   try {
-    // Tenta fazer uma consulta simples para verificar a conexão
-    supabase.from('linkedin_posts').select('count').limit(1).single();
+    // Verificamos se as variáveis de ambiente estão definidas
+    if (!supabase) {
+      return false;
+    }
     return true;
   } catch (error) {
     console.error('Erro ao verificar a conexão com o Supabase:', error);

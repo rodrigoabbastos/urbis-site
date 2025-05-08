@@ -1,16 +1,10 @@
 
 import { LinkedInPost } from './types';
-import { supabase } from '@/integrations/supabase/client';
+import { cmsService } from '@/services/cms/cmsService';
 
 export const getLinkedInPosts = async (): Promise<LinkedInPost[]> => {
   try {
-    const { data, error } = await supabase
-      .from('linkedin_posts')
-      .select('*')
-      .order('date', { ascending: false });
-    
-    if (error) throw error;
-    return data || [];
+    return await cmsService.getLinkedInPosts();
   } catch (error) {
     console.error('Erro ao buscar posts do LinkedIn:', error);
     return [];
