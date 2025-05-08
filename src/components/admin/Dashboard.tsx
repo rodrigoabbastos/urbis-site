@@ -2,7 +2,7 @@
 import AdminLayout from './AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Image, Settings, User } from 'lucide-react';
+import { FileText, Image, Settings, User, Linkedin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cmsService } from '@/services/cmsService';
 
@@ -45,6 +45,13 @@ const Dashboard = () => {
       description: "Gerenciar projetos em destaque",
       count: content.projects.items.length,
       path: "/admin/projects"
+    },
+    {
+      title: "LinkedIn Posts",
+      icon: Linkedin,
+      description: "Gerenciar publicações do LinkedIn",
+      count: content.linkedInPosts ? content.linkedInPosts.length : 0,
+      path: "/admin/linkedin"
     },
     {
       title: "Informações de Contato",

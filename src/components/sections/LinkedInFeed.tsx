@@ -5,34 +5,22 @@ import { ExternalLink } from 'lucide-react';
 import LinkedInPostCard from '../linkedin/LinkedInPostCard';
 import LoadingState from '../linkedin/LoadingState';
 import EmptyState from '../linkedin/EmptyState';
-import { LinkedInPost } from '../linkedin/types';
-import { urbisLinkedInPosts } from '../linkedin/linkedInData';
+import { cmsService } from '@/services/cmsService';
 
 const LinkedInFeed = () => {
-  const [posts, setPosts] = React.useState<LinkedInPost[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    // This would be replaced with actual API call in production
-    const fetchPosts = async () => {
-      try {
-        // Simulate API fetch delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // For now, use our Urbis LinkedIn content
-        // In production, this would be an API call to LinkedIn API or similar
-        setPosts(urbisLinkedInPosts);
-        setIsLoading(false);
-      } catch (err) {
-        console.error("Failed to fetch LinkedIn posts", err);
-        setError("Não foi possível carregar as postagens do LinkedIn");
-        setIsLoading(false);
-      }
-    };
-
-    fetchPosts();
+    // Simulate loading delay for better UX
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+    
+    return () => clearTimeout(timer);
   }, []);
+
+  const posts = cmsService.getLinkedInPosts();
 
   return (
     <section id="linkedin-feed" className="py-20 bg-white">

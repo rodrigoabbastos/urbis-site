@@ -3,7 +3,7 @@ import React from 'react';
 import { useAdminAuth } from '@/context/AdminAuthContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Home, Image, Menu, Settings, User, X } from 'lucide-react';
+import { FileText, Home, Image, Menu, Settings, User, X, Linkedin } from 'lucide-react';
 import { useState } from 'react';
 
 interface AdminLayoutProps {
@@ -23,6 +23,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
     { label: 'Services', icon: FileText, path: '/admin/services' },
     { label: 'Methodology', icon: FileText, path: '/admin/methodology' },
     { label: 'Projects', icon: Image, path: '/admin/projects' },
+    { label: 'LinkedIn Posts', icon: Linkedin, path: '/admin/linkedin' },
     { label: 'Contact Info', icon: Settings, path: '/admin/contact' },
   ];
 

@@ -1,6 +1,6 @@
-
 import { toast } from '@/components/ui/use-toast';
 import { LucideIcon } from 'lucide-react';
+import { LinkedInPost } from '@/components/linkedin/types';
 
 // Types for our CMS content
 export interface HeroContent {
@@ -66,6 +66,7 @@ export interface SiteContent {
     items: Project[];
   };
   contact: ContactInfo;
+  linkedInPosts: LinkedInPost[];
 }
 
 // Default content (based on current site)
@@ -239,7 +240,35 @@ const defaultContent: SiteContent = {
     whatsapp: "+5551999999999",
     address: "Av. Carlos Gomes, 1001, Sala 801, Porto Alegre - RS",
     mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d27629.333276641605!2d-51.20332761738281!3d-30.034064699999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x951979a41bcb2fef%3A0x5c12e4e0077fd9ff!2sAv.%20Carlos%20Gomes%2C%201001%20-%20Auxiliadora%2C%20Porto%20Alegre%20-%20RS%2C%2090480-004!5e0!3m2!1spt-BR!2sbr!4v1665510254489!5m2!1spt-BR!2sbr"
-  }
+  },
+  linkedInPosts: [
+    {
+      id: '1',
+      text_snippet: 'Hoje o presidente da @urbisinteligencia, @rodrigoabb, esteve presente no 1o. Encontro de Desenvolvimento Imobiliário no SINDUSCON-RS. Um evento importante para discutir as oportunidades e desafios que este setor apresenta no Rio Grande do Sul.',
+      image_url: '/images/projects/project1.jpg',
+      post_url: 'https://www.linkedin.com/posts/rodrigoabb_desenvolvimentoimobiliaerrio-loteamentos-activity-7322577696763404288-fD4z',
+      date: new Date(2024, 4, 1).toISOString(),
+      likes: 75,
+      comments: 12,
+    },
+    {
+      id: '2',
+      text_snippet: 'A URBIS é especialista em aprovação de loteamentos. Temos um histórico de sucesso em projetos complexos, com um método exclusivo que reduz prazos e maximiza resultados para nossos clientes.',
+      post_url: 'https://www.linkedin.com/company/urbis-inteligencia/posts/',
+      date: new Date(2024, 3, 20).toISOString(),
+      likes: 63,
+      comments: 8,
+    },
+    {
+      id: '3',
+      text_snippet: 'Somos referência em aprovação e viabilidade de empreendimentos imobiliários. Nossa equipe multidisciplinar garante que seu projeto tenha todas as aprovações necessárias, com segurança jurídica e eficiência técnica.',
+      image_url: '/images/projects/project2.jpg',
+      post_url: 'https://www.linkedin.com/company/urbis-inteligencia/posts/',
+      date: new Date(2024, 3, 15).toISOString(),
+      likes: 92,
+      comments: 17,
+    },
+  ]
 };
 
 // Simple localStorage-based CMS service
@@ -413,6 +442,49 @@ class CMSService {
       title: "Conteúdo Resetado",
       description: "Todo o conteúdo foi restaurado para os valores padrão.",
     });
+  }
+  
+  updateLinkedInPost(post: LinkedInPost): void {
+    const content = this.getContent();
+    
+    // Initialize the array if it doesn't exist yet
+    if (!content.linkedInPosts) {
+      content.linkedInPosts = [];
+    }
+    
+    const index = content.linkedInPosts.findIndex(p => p.id === post.id);
+    
+    if (index !== -1) {
+      content.linkedInPosts[index] = post;
+    } else {
+      content.linkedInPosts.push(post);
+    }
+    
+    this.saveContent(content);
+    toast({
+      title: "Sucesso",
+      description: "Publicação do LinkedIn atualizada com sucesso!",
+    });
+  }
+  
+  deleteLinkedInPost(id: string): void {
+    const content = this.getContent();
+    
+    if (!content.linkedInPosts) {
+      return;
+    }
+    
+    content.linkedInPosts = content.linkedInPosts.filter(p => p.id !== id);
+    this.saveContent(content);
+    toast({
+      title: "Sucesso",
+      description: "Publicação do LinkedIn excluída com sucesso!",
+    });
+  }
+  
+  getLinkedInPosts(): LinkedInPost[] {
+    const content = this.getContent();
+    return content.linkedInPosts || [];
   }
 }
 

@@ -9,6 +9,7 @@ import ServicesEditor from '@/components/admin/editors/ServicesEditor';
 import MethodologyEditor from '@/components/admin/editors/MethodologyEditor';
 import ProjectsEditor from '@/components/admin/editors/ProjectsEditor';
 import ContactEditor from '@/components/admin/editors/ContactEditor';
+import LinkedInPostsEditor from '@/components/admin/editors/LinkedInPostsEditor';
 
 // Protected route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -68,6 +69,11 @@ const Admin = () => {
       <Route path="/contact" element={
         <ProtectedRoute>
           <ContactEditor />
+        </ProtectedRoute>
+      } />
+      <Route path="/linkedin" element={
+        <ProtectedRoute>
+          <LinkedInPostsEditor />
         </ProtectedRoute>
       } />
     </Routes>
