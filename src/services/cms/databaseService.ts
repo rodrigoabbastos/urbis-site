@@ -44,7 +44,7 @@ export class DatabaseService {
       if (contentError) {
         console.error('Error creating content table:', contentError);
         // Fallback if RPC fails - direct SQL execution
-        const { error: fallbackError } = await supabase.from('content').select('id').limit(1);
+        const { error: fallbackError } = await supabase.from('content' as any).select('id').limit(1);
         if (fallbackError && fallbackError.message.includes('does not exist')) {
           await this.createContentTableFallback();
         }
@@ -74,7 +74,7 @@ export class DatabaseService {
       if (postsError) {
         console.error('Error creating linkedin_posts table:', postsError);
         // Fallback if RPC fails - direct SQL execution
-        const { error: fallbackError } = await supabase.from('linkedin_posts').select('id').limit(1);
+        const { error: fallbackError } = await supabase.from('linkedin_posts' as any).select('id').limit(1);
         if (fallbackError && fallbackError.message.includes('does not exist')) {
           await this.createLinkedInPostsTableFallback();
         }
@@ -105,7 +105,7 @@ export class DatabaseService {
       if (projectsError) {
         console.error('Error creating projects table:', projectsError);
         // Fallback if RPC fails - direct SQL execution
-        const { error: fallbackError } = await supabase.from('projects').select('id').limit(1);
+        const { error: fallbackError } = await supabase.from('projects' as any).select('id').limit(1);
         if (fallbackError && fallbackError.message.includes('does not exist')) {
           await this.createProjectsTableFallback();
         }
@@ -189,9 +189,8 @@ export class DatabaseService {
   async fetchMainContent() {
     try {
       // Use explicit type casting to bypass type checking
-      const client = supabase as any;
-      const { data, error } = await client
-        .from('content')
+      const { data, error } = await supabase
+        .from('content' as any)
         .select('*')
         .eq('id', 'main')
         .single();
@@ -211,9 +210,8 @@ export class DatabaseService {
   async fetchProjectsInfo() {
     try {
       // Use explicit type casting to bypass type checking
-      const client = supabase as any;
-      const { data, error } = await client
-        .from('content')
+      const { data, error } = await supabase
+        .from('content' as any)
         .select('*')
         .eq('id', 'projects')
         .single();
@@ -233,9 +231,8 @@ export class DatabaseService {
   async fetchProjects() {
     try {
       // Use explicit type casting to bypass type checking
-      const client = supabase as any;
-      const { data, error } = await client
-        .from('projects')
+      const { data, error } = await supabase
+        .from('projects' as any)
         .select('*');
       
       if (error) {
@@ -256,9 +253,8 @@ export class DatabaseService {
       await this.createTablesIfNotExist();
       
       // Use explicit type casting to bypass type checking
-      const client = supabase as any;
-      const { data, error } = await client
-        .from('linkedin_posts')
+      const { data, error } = await supabase
+        .from('linkedin_posts' as any)
         .select('*')
         .order('date', { ascending: false });
       
@@ -283,9 +279,8 @@ export class DatabaseService {
   }) {
     try {
       // Use explicit type casting to bypass type checking
-      const client = supabase as any;
-      const { error } = await client
-        .from('content')
+      const { error } = await supabase
+        .from('content' as any)
         .upsert({ 
           id: 'main',
           ...content
@@ -302,9 +297,8 @@ export class DatabaseService {
   async saveProjectsInfo(projectsInfo: { title: string; description: string }) {
     try {
       // Use explicit type casting to bypass type checking
-      const client = supabase as any;
-      const { error } = await client
-        .from('content')
+      const { error } = await supabase
+        .from('content' as any)
         .upsert({ 
           id: 'projects',
           ...projectsInfo
@@ -321,9 +315,8 @@ export class DatabaseService {
   async saveProject(project: any) {
     try {
       // Use explicit type casting to bypass type checking
-      const client = supabase as any;
-      const { error } = await client
-        .from('projects')
+      const { error } = await supabase
+        .from('projects' as any)
         .upsert(project);
       
       if (error) throw error;
@@ -337,9 +330,8 @@ export class DatabaseService {
   async deleteProject(id: string) {
     try {
       // Use explicit type casting to bypass type checking
-      const client = supabase as any;
-      const { error } = await client
-        .from('projects')
+      const { error } = await supabase
+        .from('projects' as any)
         .delete()
         .eq('id', id);
       
@@ -357,9 +349,8 @@ export class DatabaseService {
       await this.createTablesIfNotExist();
       
       // Use explicit type casting to bypass type checking
-      const client = supabase as any;
-      const { error } = await client
-        .from('linkedin_posts')
+      const { error } = await supabase
+        .from('linkedin_posts' as any)
         .upsert(post);
       
       if (error) throw error;
@@ -373,9 +364,8 @@ export class DatabaseService {
   async deleteLinkedInPost(id: string) {
     try {
       // Use explicit type casting to bypass type checking
-      const client = supabase as any;
-      const { error } = await client
-        .from('linkedin_posts')
+      const { error } = await supabase
+        .from('linkedin_posts' as any)
         .delete()
         .eq('id', id);
       
@@ -391,9 +381,8 @@ export class DatabaseService {
     try {
       // Check if we have content in Supabase
       // Use explicit type casting to bypass type checking
-      const client = supabase as any;
-      const { data: existingContent, error } = await client
-        .from('content')
+      const { data: existingContent, error } = await supabase
+        .from('content' as any)
         .select('*')
         .eq('id', 'main')
         .single();
@@ -460,8 +449,9 @@ export class DatabaseService {
       
       // Reset projects - first delete all existing projects
       // Use explicit type casting to bypass type checking
-      const client = supabase as any;
-      await client.from('projects').delete().neq('id', '0');
+      const { error } = await supabase
+        .from('projects' as any)
+        .delete().neq('id', '0');
       
       // Then insert default projects
       for (const project of defaultData.projects.items) {
@@ -470,7 +460,9 @@ export class DatabaseService {
       
       // Reset LinkedIn posts - first delete all existing posts
       // Use explicit type casting to bypass type checking
-      await client.from('linkedin_posts').delete().neq('id', '0');
+      await supabase
+        .from('linkedin_posts' as any)
+        .delete().neq('id', '0');
       
       // Then insert default posts
       if (defaultData.linkedInPosts && defaultData.linkedInPosts.length > 0) {
