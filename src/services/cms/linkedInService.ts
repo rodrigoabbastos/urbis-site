@@ -6,6 +6,9 @@ import { databaseService } from './databaseService';
 export class LinkedInService {
   async getLinkedInPosts(): Promise<LinkedInPost[]> {
     try {
+      // Ensure tables exist before fetching
+      await databaseService.createTablesIfNotExist();
+      
       const posts = await databaseService.fetchLinkedInPosts();
       return posts || [];
     } catch (error) {
@@ -16,6 +19,9 @@ export class LinkedInService {
 
   async updateLinkedInPost(post: LinkedInPost): Promise<void> {
     try {
+      // Ensure tables exist before saving
+      await databaseService.createTablesIfNotExist();
+      
       const success = await databaseService.saveLinkedInPost(post);
       
       if (success) {
@@ -38,6 +44,9 @@ export class LinkedInService {
 
   async deleteLinkedInPost(id: string): Promise<void> {
     try {
+      // Ensure tables exist before deleting
+      await databaseService.createTablesIfNotExist();
+      
       const success = await databaseService.deleteLinkedInPost(id);
       
       if (success) {
