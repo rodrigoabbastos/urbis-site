@@ -52,21 +52,21 @@ class CMSService {
       const mainContent = await databaseService.fetchMainContent();
       
       if (mainContent) {
-        // Use safe property access with type assertion
-        content.hero = mainContent.hero as HeroContent || content.hero;
-        content.about = mainContent.about as AboutContent || content.about;
-        content.services = mainContent.services as Service[] || content.services;
+        // Use safe property access with fallback to default content
+        content.hero = mainContent.hero || content.hero;
+        content.about = mainContent.about || content.about;
+        content.services = mainContent.services || content.services;
         content.methodology = mainContent.methodology || content.methodology;
-        content.contact = mainContent.contact as ContactInfo || content.contact;
+        content.contact = mainContent.contact || content.contact;
       }
       
       // Get projects info
       const projectsInfo = await databaseService.fetchProjectsInfo();
       
       if (projectsInfo) {
-        // Use safe property access with type assertion
-        content.projects.title = projectsInfo.title as string || content.projects.title;
-        content.projects.description = projectsInfo.description as string || content.projects.description;
+        // Use safe property access with fallback to default content
+        content.projects.title = projectsInfo.title || content.projects.title;
+        content.projects.description = projectsInfo.description || content.projects.description;
       }
       
       // Get projects

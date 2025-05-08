@@ -1,8 +1,41 @@
-
 import { toast } from '@/components/ui/use-toast';
 import { supabase } from '@/lib/supabase';
 import { SiteContent } from './types';
 import { defaultContent } from './defaultContent';
+
+// Define a interface Database para ajudar com o TypeScript
+interface Database {
+  public: {
+    Tables: {
+      content: {
+        Row: any;
+        Insert: any;
+      };
+      projects: {
+        Row: any;
+        Insert: any;
+      };
+      linkedin_posts: {
+        Row: any;
+        Insert: any;
+      };
+    };
+    Functions: {
+      create_content_table: {
+        Args: Record<string, never>;
+        Returns: void;
+      };
+      create_linkedin_posts_table: {
+        Args: Record<string, never>;
+        Returns: void;
+      };
+      create_projects_table: {
+        Args: Record<string, never>;
+        Returns: void;
+      };
+    };
+  };
+}
 
 export class DatabaseService {
   async createTablesIfNotExist() {
@@ -45,14 +78,12 @@ export class DatabaseService {
 
   async fetchMainContent() {
     try {
-      // Type assertion to avoid TypeScript errors
-      const query = supabase
-        .from('content' as any)
+      // Type safe query with casting for backward compatibility
+      const { data, error } = await (supabase as any)
+        .from('content')
         .select('*')
         .eq('id', 'main')
         .single();
-      
-      const { data, error } = await query;
       
       if (error) {
         console.warn('Erro ao carregar conteúdo principal:', error.message);
@@ -68,14 +99,12 @@ export class DatabaseService {
 
   async fetchProjectsInfo() {
     try {
-      // Type assertion to avoid TypeScript errors
-      const query = supabase
-        .from('content' as any)
+      // Type safe query with casting for backward compatibility
+      const { data, error } = await (supabase as any)
+        .from('content')
         .select('*')
         .eq('id', 'projects')
         .single();
-      
-      const { data, error } = await query;
       
       if (error) {
         console.warn('Erro ao carregar informações dos projetos:', error.message);
@@ -91,12 +120,10 @@ export class DatabaseService {
 
   async fetchProjects() {
     try {
-      // Type assertion to avoid TypeScript errors
-      const query = supabase
-        .from('projects' as any)
+      // Type safe query with casting for backward compatibility
+      const { data, error } = await (supabase as any)
+        .from('projects')
         .select('*');
-      
-      const { data, error } = await query;
       
       if (error) {
         console.warn('Erro ao carregar projetos:', error.message);
@@ -112,13 +139,11 @@ export class DatabaseService {
 
   async fetchLinkedInPosts() {
     try {
-      // Type assertion to avoid TypeScript errors
-      const query = supabase
-        .from('linkedin_posts' as any)
+      // Type safe query with casting for backward compatibility
+      const { data, error } = await (supabase as any)
+        .from('linkedin_posts')
         .select('*')
         .order('date', { ascending: false });
-      
-      const { data, error } = await query;
       
       if (error) {
         console.warn('Erro ao carregar posts do LinkedIn:', error.message);
@@ -140,15 +165,13 @@ export class DatabaseService {
     contact: any;
   }) {
     try {
-      // Type assertion to avoid TypeScript errors
-      const query = supabase
-        .from('content' as any)
+      // Type safe query with casting for backward compatibility
+      const { error } = await (supabase as any)
+        .from('content')
         .upsert({ 
           id: 'main',
           ...content
-        } as any);
-      
-      const { error } = await query;
+        });
       
       if (error) throw error;
       return true;
@@ -251,15 +274,13 @@ export class DatabaseService {
   async migrateFromLocalStorage(localContent: SiteContent, storageKey: string) {
     try {
       // Check if we have content in Supabase
-      // Type assertion to avoid TypeScript errors
-      const contentQuery = supabase
-        .from('content' as any)
+      // Type safe query with casting for backward compatibility
+      const { data: existingContent, error } = await (supabase as any)
+        .from('content')
         .select('*')
         .eq('id', 'main')
         .single();
         
-      const { data: existingContent } = await contentQuery;
-      
       // If no content exists in Supabase, insert from localStorage
       if (!existingContent) {
         // Store main content
