@@ -21,8 +21,8 @@ const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefin
 // In a real application, you would use a more secure authentication method
 const DEMO_USER = {
   id: '1',
-  email: 'admin@urbis.com.br',
-  password: 'admin123' // In a real app, never store plaintext passwords
+  email: 'rodrigo',
+  password: '!67943Ro' // In a real app, never store plaintext passwords
 };
 
 export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {

@@ -29,11 +29,11 @@ const LoginPage = () => {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Usuário</Label>
               <Input
                 id="email"
-                type="email"
-                placeholder="admin@urbis.com.br"
+                type="text"
+                placeholder="Digite seu usuário"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -50,12 +50,6 @@ const LoginPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-            </div>
-            
-            <div className="text-sm text-gray-500">
-              <p>Para demonstração, use:</p>
-              <p>Email: admin@urbis.com.br</p>
-              <p>Senha: admin123</p>
             </div>
           </CardContent>
           
