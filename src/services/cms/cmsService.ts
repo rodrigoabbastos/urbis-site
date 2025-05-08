@@ -52,33 +52,35 @@ class CMSService {
       const mainContent = await databaseService.fetchMainContent();
       
       if (mainContent) {
-        content.hero = mainContent.hero;
-        content.about = mainContent.about;
-        content.services = mainContent.services;
-        content.methodology = mainContent.methodology;
-        content.contact = mainContent.contact;
+        // Use safe property access with type assertion
+        content.hero = mainContent.hero as HeroContent || content.hero;
+        content.about = mainContent.about as AboutContent || content.about;
+        content.services = mainContent.services as Service[] || content.services;
+        content.methodology = mainContent.methodology || content.methodology;
+        content.contact = mainContent.contact as ContactInfo || content.contact;
       }
       
       // Get projects info
       const projectsInfo = await databaseService.fetchProjectsInfo();
       
       if (projectsInfo) {
-        content.projects.title = projectsInfo.title;
-        content.projects.description = projectsInfo.description;
+        // Use safe property access with type assertion
+        content.projects.title = projectsInfo.title as string || content.projects.title;
+        content.projects.description = projectsInfo.description as string || content.projects.description;
       }
       
       // Get projects
       const projects = await databaseService.fetchProjects();
       
       if (projects) {
-        content.projects.items = projects;
+        content.projects.items = projects || content.projects.items;
       }
       
       // Get LinkedIn posts
       const linkedInPosts = await databaseService.fetchLinkedInPosts();
       
       if (linkedInPosts) {
-        content.linkedInPosts = linkedInPosts;
+        content.linkedInPosts = linkedInPosts || content.linkedInPosts;
       }
       
       this.contentCache = content;

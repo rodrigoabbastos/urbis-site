@@ -8,14 +8,11 @@ export class DatabaseService {
   async createTablesIfNotExist() {
     try {
       // Check if content table exists
-      const { error: contentError } = await supabase
-        .from('content')
-        .select('id')
-        .limit(1);
+      let { error: contentError } = await supabase
+        .rpc('create_content_table');
       
-      if (contentError) {
-        // Table doesn't exist, create it
-        await supabase.rpc('create_content_table');
+      if (contentError && !contentError.message.includes('already exists')) {
+        console.error('Error creating content table:', contentError);
       }
     } catch (error) {
       console.error('Error checking content table:', error);
@@ -23,14 +20,11 @@ export class DatabaseService {
     
     try {
       // Check if linkedin_posts table exists
-      const { error: postsError } = await supabase
-        .from('linkedin_posts')
-        .select('id')
-        .limit(1);
+      let { error: postsError } = await supabase
+        .rpc('create_linkedin_posts_table');
       
-      if (postsError) {
-        // Table doesn't exist, create it
-        await supabase.rpc('create_linkedin_posts_table');
+      if (postsError && !postsError.message.includes('already exists')) {
+        console.error('Error creating linkedin_posts table:', postsError);
       }
     } catch (error) {
       console.error('Error checking linkedin_posts table:', error);
@@ -38,14 +32,11 @@ export class DatabaseService {
     
     try {
       // Check if projects table exists
-      const { error: projectsError } = await supabase
-        .from('projects')
-        .select('id')
-        .limit(1);
+      let { error: projectsError } = await supabase
+        .rpc('create_projects_table');
       
-      if (projectsError) {
-        // Table doesn't exist, create it
-        await supabase.rpc('create_projects_table');
+      if (projectsError && !projectsError.message.includes('already exists')) {
+        console.error('Error creating projects table:', projectsError);
       }
     } catch (error) {
       console.error('Error checking projects table:', error);
@@ -54,11 +45,14 @@ export class DatabaseService {
 
   async fetchMainContent() {
     try {
-      const { data, error } = await supabase
-        .from('content')
+      // Type assertion to avoid TypeScript errors
+      const query = supabase
+        .from('content' as any)
         .select('*')
         .eq('id', 'main')
         .single();
+      
+      const { data, error } = await query;
       
       if (error) {
         console.warn('Erro ao carregar conteúdo principal:', error.message);
@@ -74,11 +68,14 @@ export class DatabaseService {
 
   async fetchProjectsInfo() {
     try {
-      const { data, error } = await supabase
-        .from('content')
+      // Type assertion to avoid TypeScript errors
+      const query = supabase
+        .from('content' as any)
         .select('*')
         .eq('id', 'projects')
         .single();
+      
+      const { data, error } = await query;
       
       if (error) {
         console.warn('Erro ao carregar informações dos projetos:', error.message);
@@ -94,9 +91,12 @@ export class DatabaseService {
 
   async fetchProjects() {
     try {
-      const { data, error } = await supabase
-        .from('projects')
+      // Type assertion to avoid TypeScript errors
+      const query = supabase
+        .from('projects' as any)
         .select('*');
+      
+      const { data, error } = await query;
       
       if (error) {
         console.warn('Erro ao carregar projetos:', error.message);
@@ -112,10 +112,13 @@ export class DatabaseService {
 
   async fetchLinkedInPosts() {
     try {
-      const { data, error } = await supabase
-        .from('linkedin_posts')
+      // Type assertion to avoid TypeScript errors
+      const query = supabase
+        .from('linkedin_posts' as any)
         .select('*')
         .order('date', { ascending: false });
+      
+      const { data, error } = await query;
       
       if (error) {
         console.warn('Erro ao carregar posts do LinkedIn:', error.message);
@@ -137,12 +140,15 @@ export class DatabaseService {
     contact: any;
   }) {
     try {
-      const { error } = await supabase
-        .from('content')
+      // Type assertion to avoid TypeScript errors
+      const query = supabase
+        .from('content' as any)
         .upsert({ 
           id: 'main',
           ...content
-        });
+        } as any);
+      
+      const { error } = await query;
       
       if (error) throw error;
       return true;
@@ -154,12 +160,15 @@ export class DatabaseService {
 
   async saveProjectsInfo(projectsInfo: { title: string; description: string }) {
     try {
-      const { error } = await supabase
-        .from('content')
+      // Type assertion to avoid TypeScript errors
+      const query = supabase
+        .from('content' as any)
         .upsert({ 
           id: 'projects',
           ...projectsInfo
-        });
+        } as any);
+      
+      const { error } = await query;
       
       if (error) throw error;
       return true;
@@ -171,9 +180,12 @@ export class DatabaseService {
 
   async saveProject(project: any) {
     try {
-      const { error } = await supabase
-        .from('projects')
-        .upsert(project);
+      // Type assertion to avoid TypeScript errors
+      const query = supabase
+        .from('projects' as any)
+        .upsert(project as any);
+      
+      const { error } = await query;
       
       if (error) throw error;
       return true;
@@ -185,10 +197,13 @@ export class DatabaseService {
 
   async deleteProject(id: string) {
     try {
-      const { error } = await supabase
-        .from('projects')
+      // Type assertion to avoid TypeScript errors
+      const query = supabase
+        .from('projects' as any)
         .delete()
         .eq('id', id);
+      
+      const { error } = await query;
       
       if (error) throw error;
       return true;
@@ -200,9 +215,12 @@ export class DatabaseService {
 
   async saveLinkedInPost(post: any) {
     try {
-      const { error } = await supabase
-        .from('linkedin_posts')
-        .upsert(post);
+      // Type assertion to avoid TypeScript errors
+      const query = supabase
+        .from('linkedin_posts' as any)
+        .upsert(post as any);
+      
+      const { error } = await query;
       
       if (error) throw error;
       return true;
@@ -214,10 +232,13 @@ export class DatabaseService {
 
   async deleteLinkedInPost(id: string) {
     try {
-      const { error } = await supabase
-        .from('linkedin_posts')
+      // Type assertion to avoid TypeScript errors
+      const query = supabase
+        .from('linkedin_posts' as any)
         .delete()
         .eq('id', id);
+      
+      const { error } = await query;
       
       if (error) throw error;
       return true;
@@ -230,11 +251,14 @@ export class DatabaseService {
   async migrateFromLocalStorage(localContent: SiteContent, storageKey: string) {
     try {
       // Check if we have content in Supabase
-      const { data: existingContent } = await supabase
-        .from('content')
+      // Type assertion to avoid TypeScript errors
+      const contentQuery = supabase
+        .from('content' as any)
         .select('*')
         .eq('id', 'main')
         .single();
+        
+      const { data: existingContent } = await contentQuery;
       
       // If no content exists in Supabase, insert from localStorage
       if (!existingContent) {
@@ -297,7 +321,8 @@ export class DatabaseService {
       });
       
       // Reset projects - first delete all existing projects
-      await supabase.from('projects').delete().neq('id', '0');
+      // Type assertion to avoid TypeScript errors
+      await supabase.from('projects' as any).delete().neq('id', '0' as any);
       
       // Then insert default projects
       for (const project of defaultData.projects.items) {
@@ -305,7 +330,8 @@ export class DatabaseService {
       }
       
       // Reset LinkedIn posts - first delete all existing posts
-      await supabase.from('linkedin_posts').delete().neq('id', '0');
+      // Type assertion to avoid TypeScript errors
+      await supabase.from('linkedin_posts' as any).delete().neq('id', '0' as any);
       
       // Then insert default posts
       if (defaultData.linkedInPosts && defaultData.linkedInPosts.length > 0) {
