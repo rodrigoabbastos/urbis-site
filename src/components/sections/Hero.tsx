@@ -5,9 +5,9 @@ import { useEffect, useState } from 'react';
 
 const Hero = () => {
   const [heroContent, setHeroContent] = useState({
-    title: "Não gaste 1 centavo sequer antes de falar com a URBIS.",
-    subtitle: "Somos o melhor investimento para o seu empreendimento. Unimos estratégia, engenharia e inteligência territorial para transformar terrenos em grandes negócios.",
-    ctaText: "Fale com um especialista",
+    title: "Não gaste um real sequer antes de falar com a URBIS.",
+    subtitle: "Somos o melhor investimento para o seu empreendimento imobiliário. Unimos experiência, conhecimento, inteligência e estratégia para transformar sua idéia em um grande negócio.",
+    ctaText: "Fale Conosco",
     ctaLink: "#contact",
     backgroundImage: "https://cdn.midjourney.com/8071897a-b5ac-4953-a3b8-b4a29bd2a053/0_0.png"
   });
@@ -42,11 +42,11 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button asChild className="bg-urbis-primary text-white hover:bg-urbis-primary/90 text-lg px-8 py-6">
+            <Button asChild className="bg-urbis-primary text-white hover:bg-urbis-primary/90 text-lg px-8 py-6 transition-all duration-300">
               <a href={heroContent.ctaLink}>{heroContent.ctaText}</a>
             </Button>
             
-            <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-urbis-primary text-lg px-8 py-6">
+            <Button asChild variant="outline" className="border-urbis-primary bg-transparent text-white hover:bg-urbis-primary hover:text-white text-lg px-8 py-6 transition-all duration-300">
               <a href="#projects">Nossos Projetos</a>
             </Button>
           </div>

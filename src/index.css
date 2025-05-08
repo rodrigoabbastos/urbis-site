@@ -92,13 +92,26 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px; /* Adjust based on navbar height */
+  }
+
   body {
     @apply bg-background text-foreground font-sans;
-    scroll-behavior: smooth;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading font-semibold;
+  }
+  
+  /* Smooth anchor link navigation */
+  a {
+    @apply transition-colors duration-300;
+  }
+  
+  button {
+    @apply transition-all duration-300;
   }
 }
 

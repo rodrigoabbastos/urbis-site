@@ -45,8 +45,18 @@ const Navbar = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      // Smooth scroll with animation
+      element.scrollIntoView({ behavior: 'smooth' });
+      if (isMobileMenuOpen) toggleMobileMenu();
+    }
+  };
+
   const NavLink = ({ href, label }: { href: string; label: string }) => {
-    const isActive = activeSection === href.replace('#', '');
+    const sectionId = href.replace('#', '');
+    const isActive = activeSection === sectionId;
     
     return (
       <a 
@@ -55,8 +65,9 @@ const Navbar = () => {
           "relative text-urbis-neutral hover:text-urbis-primary transition-colors duration-300 group font-medium",
           isActive && "text-urbis-primary font-medium"
         )}
-        onClick={() => {
-          if (isMobileMenuOpen) toggleMobileMenu();
+        onClick={(e) => {
+          e.preventDefault();
+          scrollToSection(sectionId);
         }}
       >
         {label}
@@ -80,7 +91,14 @@ const Navbar = () => {
       <div className="container-wrapper">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <a href="#home" className="flex items-center">
+            <a 
+              href="#home" 
+              className="flex items-center"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection('home');
+              }}
+            >
               <img 
                 src="/lovable-uploads/215a016e-9d44-4975-88d2-d64c862e9a66.png" 
                 alt="URBIS Logo" 
@@ -100,12 +118,10 @@ const Navbar = () => {
             <NavLink href="#projects" label="Projetos" />
             <NavLink href="#testimonials" label="Depoimentos" />
             <Button 
-              asChild 
+              onClick={() => scrollToSection('contact')}
               className="bg-urbis-primary text-white hover:bg-urbis-primary/90 transition-all duration-300"
             >
-              <a href="#contact">
-                Contato
-              </a>
+              Contato
             </Button>
           </div>
 
@@ -113,7 +129,7 @@ const Navbar = () => {
           <div className="md:hidden">
             <button 
               onClick={toggleMobileMenu}
-              className="text-urbis-neutral focus:outline-none"
+              className="text-urbis-neutral focus:outline-none transition-transform duration-200 hover:scale-110"
             >
               {isMobileMenuOpen ? <X /> : <Menu />}
             </button>
@@ -130,12 +146,10 @@ const Navbar = () => {
             <NavLink href="#projects" label="Projetos" />
             <NavLink href="#testimonials" label="Depoimentos" />
             <Button 
-              asChild 
+              onClick={() => scrollToSection('contact')}
               className="w-full bg-urbis-primary text-white hover:bg-urbis-primary/90 transition-all duration-300"
             >
-              <a href="#contact">
-                Contato
-              </a>
+              Contato
             </Button>
           </div>
         </div>
