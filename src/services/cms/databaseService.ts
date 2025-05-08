@@ -1,4 +1,3 @@
-
 import { toast } from '@/components/ui/use-toast';
 import { supabase } from '@/lib/supabase';
 import { SiteContent } from './types';
@@ -41,8 +40,8 @@ interface Database {
 export class DatabaseService {
   async createTablesIfNotExist() {
     try {
-      // Check if content table exists
-      let { error: contentError } = await supabase
+      // Check if content table exists - using type assertion to bypass TypeScript errors
+      const { error: contentError } = await (supabase as any)
         .rpc('create_content_table');
       
       if (contentError && !contentError.message.includes('already exists')) {
@@ -53,8 +52,8 @@ export class DatabaseService {
     }
     
     try {
-      // Check if linkedin_posts table exists
-      let { error: postsError } = await supabase
+      // Check if linkedin_posts table exists - using type assertion to bypass TypeScript errors
+      const { error: postsError } = await (supabase as any)
         .rpc('create_linkedin_posts_table');
       
       if (postsError && !postsError.message.includes('already exists')) {
@@ -65,8 +64,8 @@ export class DatabaseService {
     }
     
     try {
-      // Check if projects table exists
-      let { error: projectsError } = await supabase
+      // Check if projects table exists - using type assertion to bypass TypeScript errors
+      const { error: projectsError } = await (supabase as any)
         .rpc('create_projects_table');
       
       if (projectsError && !projectsError.message.includes('already exists')) {
