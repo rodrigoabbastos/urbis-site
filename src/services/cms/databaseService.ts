@@ -4,11 +4,16 @@ import { supabase } from '@/lib/supabase';
 import { SiteContent } from './types';
 import { defaultContent } from './defaultContent';
 
+// Define TypeScript type for Supabase database operations
+// This helps us avoid type errors when TypeScript doesn't know about our tables
+type SupabaseTable = any;
+type SupabaseParam = any;
+
 export class DatabaseService {
   async createTablesIfNotExist() {
     try {
       // First, check if tables exist directly using SQL queries
-      const { data: contentTableExists } = await supabase.rpc('table_exists', { table_name: 'content' } as any);
+      const { data: contentTableExists } = await supabase.rpc('table_exists', { table_name: 'content' } as SupabaseParam);
       
       if (!contentTableExists) {
         const { error: contentError } = await supabase.rpc('run_sql', {
@@ -24,14 +29,14 @@ export class DatabaseService {
               updated_at TIMESTAMPTZ DEFAULT NOW()
             );
           `
-        } as any);
+        } as SupabaseParam);
         
         if (contentError) {
           console.error('Error creating content table:', contentError);
         }
       }
       
-      const { data: linkedinPostsTableExists } = await supabase.rpc('table_exists', { table_name: 'linkedin_posts' } as any);
+      const { data: linkedinPostsTableExists } = await supabase.rpc('table_exists', { table_name: 'linkedin_posts' } as SupabaseParam);
       
       if (!linkedinPostsTableExists) {
         const { error: postsError } = await supabase.rpc('run_sql', {
@@ -48,14 +53,14 @@ export class DatabaseService {
               updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
             );
           `
-        } as any);
+        } as SupabaseParam);
         
         if (postsError) {
           console.error('Error creating linkedin_posts table:', postsError);
         }
       }
       
-      const { data: projectsTableExists } = await supabase.rpc('table_exists', { table_name: 'projects' } as any);
+      const { data: projectsTableExists } = await supabase.rpc('table_exists', { table_name: 'projects' } as SupabaseParam);
       
       if (!projectsTableExists) {
         const { error: projectsError } = await supabase.rpc('run_sql', {
@@ -73,7 +78,7 @@ export class DatabaseService {
               updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
             );
           `
-        } as any);
+        } as SupabaseParam);
         
         if (projectsError) {
           console.error('Error creating projects table:', projectsError);
@@ -123,7 +128,7 @@ export class DatabaseService {
               updated_at TIMESTAMPTZ DEFAULT NOW()
             );
           `
-        } as any);
+        } as SupabaseParam);
       } catch (fallbackError) {
         console.error('Failed to create tables with fallback method:', fallbackError);
       }
@@ -136,7 +141,7 @@ export class DatabaseService {
       await this.createTablesIfNotExist();
       
       const { data, error } = await supabase
-        .from('content' as any)
+        .from('content' as SupabaseTable)
         .select('*')
         .eq('id', 'main')
         .single();
@@ -159,7 +164,7 @@ export class DatabaseService {
       await this.createTablesIfNotExist();
       
       const { data, error } = await supabase
-        .from('content' as any)
+        .from('content' as SupabaseTable)
         .select('*')
         .eq('id', 'projects')
         .single();
@@ -182,7 +187,7 @@ export class DatabaseService {
       await this.createTablesIfNotExist();
       
       const { data, error } = await supabase
-        .from('projects' as any)
+        .from('projects' as SupabaseTable)
         .select('*');
       
       if (error) {
@@ -203,7 +208,7 @@ export class DatabaseService {
       await this.createTablesIfNotExist();
       
       const { data, error } = await supabase
-        .from('linkedin_posts' as any)
+        .from('linkedin_posts' as SupabaseTable)
         .select('*')
         .order('date', { ascending: false });
       
@@ -231,11 +236,11 @@ export class DatabaseService {
       await this.createTablesIfNotExist();
       
       const { error } = await supabase
-        .from('content' as any)
+        .from('content' as SupabaseTable)
         .upsert({ 
           id: 'main',
           ...content
-        } as any);
+        } as SupabaseParam);
       
       if (error) throw error;
       return true;
@@ -251,11 +256,11 @@ export class DatabaseService {
       await this.createTablesIfNotExist();
       
       const { error } = await supabase
-        .from('content' as any)
+        .from('content' as SupabaseTable)
         .upsert({ 
           id: 'projects',
           ...projectsInfo
-        } as any);
+        } as SupabaseParam);
       
       if (error) throw error;
       return true;
@@ -271,8 +276,8 @@ export class DatabaseService {
       await this.createTablesIfNotExist();
       
       const { error } = await supabase
-        .from('projects' as any)
-        .upsert(project as any);
+        .from('projects' as SupabaseTable)
+        .upsert(project as SupabaseParam);
       
       if (error) throw error;
       return true;
@@ -288,7 +293,7 @@ export class DatabaseService {
       await this.createTablesIfNotExist();
       
       const { error } = await supabase
-        .from('projects' as any)
+        .from('projects' as SupabaseTable)
         .delete()
         .eq('id', id);
       
@@ -306,8 +311,8 @@ export class DatabaseService {
       await this.createTablesIfNotExist();
       
       const { error } = await supabase
-        .from('linkedin_posts' as any)
-        .upsert(post as any);
+        .from('linkedin_posts' as SupabaseTable)
+        .upsert(post as SupabaseParam);
       
       if (error) throw error;
       return true;
@@ -323,7 +328,7 @@ export class DatabaseService {
       await this.createTablesIfNotExist();
       
       const { error } = await supabase
-        .from('linkedin_posts' as any)
+        .from('linkedin_posts' as SupabaseTable)
         .delete()
         .eq('id', id);
       
@@ -342,7 +347,7 @@ export class DatabaseService {
       
       // Check if we have content in Supabase
       const { data: existingContent, error } = await supabase
-        .from('content' as any)
+        .from('content' as SupabaseTable)
         .select('*')
         .eq('id', 'main')
         .single();
@@ -412,7 +417,7 @@ export class DatabaseService {
       
       // Reset projects - first delete all existing projects
       await supabase
-        .from('projects' as any)
+        .from('projects' as SupabaseTable)
         .delete().neq('id', '0');
       
       // Then insert default projects
@@ -422,7 +427,7 @@ export class DatabaseService {
       
       // Reset LinkedIn posts - first delete all existing posts
       await supabase
-        .from('linkedin_posts' as any)
+        .from('linkedin_posts' as SupabaseTable)
         .delete().neq('id', '0');
       
       // Then insert default posts

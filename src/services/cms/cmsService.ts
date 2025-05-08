@@ -1,4 +1,3 @@
-
 import { toast } from '@/components/ui/use-toast';
 import { SiteContent, HeroContent, AboutContent, Service, MethodologyStep, ContactInfo } from './types';
 import { defaultContent } from './defaultContent';
@@ -52,21 +51,25 @@ class CMSService {
       const mainContent = await databaseService.fetchMainContent();
       
       if (mainContent) {
+        // Use type assertion to avoid TypeScript errors
+        const typedMainContent = mainContent as any;
         // Use safe property access with fallback to default content
-        content.hero = (mainContent as any).hero || content.hero;
-        content.about = (mainContent as any).about || content.about;
-        content.services = (mainContent as any).services || content.services;
-        content.methodology = (mainContent as any).methodology || content.methodology;
-        content.contact = (mainContent as any).contact || content.contact;
+        content.hero = typedMainContent.hero || content.hero;
+        content.about = typedMainContent.about || content.about;
+        content.services = typedMainContent.services || content.services;
+        content.methodology = typedMainContent.methodology || content.methodology;
+        content.contact = typedMainContent.contact || content.contact;
       }
       
       // Get projects info
       const projectsInfo = await databaseService.fetchProjectsInfo();
       
       if (projectsInfo) {
+        // Use type assertion to avoid TypeScript errors
+        const typedProjectsInfo = projectsInfo as any;
         // Use safe property access with fallback to default content
-        content.projects.title = (projectsInfo as any).title || content.projects.title;
-        content.projects.description = (projectsInfo as any).description || content.projects.description;
+        content.projects.title = typedProjectsInfo.title || content.projects.title;
+        content.projects.description = typedProjectsInfo.description || content.projects.description;
       }
       
       // Get projects
