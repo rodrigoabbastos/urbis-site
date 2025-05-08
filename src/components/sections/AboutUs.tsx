@@ -44,9 +44,13 @@ const AboutUs = () => {
             <div className="relative">
               <div className="w-full h-full bg-urbis-primary absolute -bottom-4 -left-4 rounded-lg z-0"></div>
               <img 
-                src="https://urbis.com.br/wp-content/uploads/2023/08/infografico_ppt-02-1.png" 
+                src="https://images.unsplash.com/photo-1622547748225-3fc4abd2cca0?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
                 alt="Urbis Infográfico" 
                 className="w-full h-auto object-contain rounded-lg shadow-lg z-10 relative"
+                onError={(e) => {
+                  console.error("Failed to load primary image");
+                  e.currentTarget.src = "https://via.placeholder.com/800x500?text=Urbis+Infografico";
+                }}
               />
             </div>
           </div>
