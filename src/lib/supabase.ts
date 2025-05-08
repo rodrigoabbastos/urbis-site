@@ -1,29 +1,21 @@
 
-import { createClient } from '@supabase/supabase-js';
+// Este arquivo agora apenas re-exporta o cliente criado em integrations/supabase/client.ts
+// para manter a compatibilidade com código existente
 
-// Get environment variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/components/ui/use-toast';
 
-// Check for required environment variables
-if (!supabaseUrl) {
-  console.error('ERROR: Missing VITE_SUPABASE_URL. Make sure you have connected your project to Supabase.');
-  // Provide a fallback to prevent the app from crashing immediately, but it won't work correctly
-  // This allows the UI to load and show a proper error message instead of a blank screen
-}
-
-if (!supabaseKey) {
-  console.error('ERROR: Missing VITE_SUPABASE_ANON_KEY. Make sure you have connected your project to Supabase.');
-}
-
-// Create the Supabase client with fallbacks to empty strings to prevent immediate crashes
-// This will still result in Supabase operations failing, but the UI can load and display error messages
-export const supabase = createClient(
-  supabaseUrl || 'https://placeholder-url.supabase.co',
-  supabaseKey || 'placeholder-key'
-);
-
-// Export a function to check if Supabase is properly configured
+// Função para verificar se o Supabase está configurado corretamente
 export const isSupabaseConfigured = () => {
-  return !!supabaseUrl && !!supabaseKey;
+  try {
+    // Tenta fazer uma consulta simples para verificar a conexão
+    supabase.from('linkedin_posts').select('count').limit(1).single();
+    return true;
+  } catch (error) {
+    console.error('Erro ao verificar a conexão com o Supabase:', error);
+    return false;
+  }
 };
+
+// Re-exporta o cliente Supabase
+export { supabase };

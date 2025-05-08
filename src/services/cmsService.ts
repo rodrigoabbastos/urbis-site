@@ -1,4 +1,3 @@
-
 import { toast } from '@/components/ui/use-toast';
 import { LucideIcon } from 'lucide-react';
 import { LinkedInPost } from '@/components/linkedin/types';
@@ -436,7 +435,7 @@ class CMSService {
         .single();
       
       if (mainError) {
-        throw new Error(mainError.message);
+        console.warn('Erro ao carregar conteúdo principal:', mainError.message);
       }
       
       if (mainContent) {
@@ -481,6 +480,8 @@ class CMSService {
       this.contentCache = content;
     } catch (error) {
       console.error('Error loading content from Supabase:', error);
+      // Even if we have an error, set the cache to the default content
+      this.contentCache = defaultContent;
     }
   }
   
