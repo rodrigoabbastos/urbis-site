@@ -42,11 +42,11 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button asChild className="bg-urbis-primary text-white hover:bg-urbis-primary/90 text-lg px-8 py-6 transition-all duration-300">
+            <Button asChild className="bg-[#D94848] hover:bg-[#D94848]/90 text-white text-lg px-8 py-6 transition-all duration-300">
               <a href={heroContent.ctaLink}>{heroContent.ctaText}</a>
             </Button>
             
-            <Button asChild variant="outline" className="border-urbis-primary bg-transparent text-white hover:bg-urbis-primary hover:text-white text-lg px-8 py-6 transition-all duration-300">
+            <Button asChild variant="outline" className="border-[#BF3B6C] bg-[#BF3B6C] text-white hover:bg-[#BF3B6C]/80 text-lg px-8 py-6 transition-all duration-300">
               <a href="#projects">Nossos Projetos</a>
             </Button>
           </div>
