@@ -1,3 +1,4 @@
+
 import { toast } from '@/components/ui/use-toast';
 import { supabase } from '@/lib/supabase';
 import { SiteContent } from './types';
@@ -78,8 +79,9 @@ export class DatabaseService {
 
   async fetchMainContent() {
     try {
-      // Type safe query with casting for backward compatibility
-      const { data, error } = await (supabase as any)
+      // Use explicit type casting to bypass type checking
+      const client = supabase as any;
+      const { data, error } = await client
         .from('content')
         .select('*')
         .eq('id', 'main')
@@ -99,8 +101,9 @@ export class DatabaseService {
 
   async fetchProjectsInfo() {
     try {
-      // Type safe query with casting for backward compatibility
-      const { data, error } = await (supabase as any)
+      // Use explicit type casting to bypass type checking
+      const client = supabase as any;
+      const { data, error } = await client
         .from('content')
         .select('*')
         .eq('id', 'projects')
@@ -120,8 +123,9 @@ export class DatabaseService {
 
   async fetchProjects() {
     try {
-      // Type safe query with casting for backward compatibility
-      const { data, error } = await (supabase as any)
+      // Use explicit type casting to bypass type checking
+      const client = supabase as any;
+      const { data, error } = await client
         .from('projects')
         .select('*');
       
@@ -139,8 +143,9 @@ export class DatabaseService {
 
   async fetchLinkedInPosts() {
     try {
-      // Type safe query with casting for backward compatibility
-      const { data, error } = await (supabase as any)
+      // Use explicit type casting to bypass type checking
+      const client = supabase as any;
+      const { data, error } = await client
         .from('linkedin_posts')
         .select('*')
         .order('date', { ascending: false });
@@ -165,8 +170,9 @@ export class DatabaseService {
     contact: any;
   }) {
     try {
-      // Type safe query with casting for backward compatibility
-      const { error } = await (supabase as any)
+      // Use explicit type casting to bypass type checking
+      const client = supabase as any;
+      const { error } = await client
         .from('content')
         .upsert({ 
           id: 'main',
@@ -183,15 +189,14 @@ export class DatabaseService {
 
   async saveProjectsInfo(projectsInfo: { title: string; description: string }) {
     try {
-      // Type assertion to avoid TypeScript errors
-      const query = supabase
-        .from('content' as any)
+      // Use explicit type casting to bypass type checking
+      const client = supabase as any;
+      const { error } = await client
+        .from('content')
         .upsert({ 
           id: 'projects',
           ...projectsInfo
-        } as any);
-      
-      const { error } = await query;
+        });
       
       if (error) throw error;
       return true;
@@ -203,12 +208,11 @@ export class DatabaseService {
 
   async saveProject(project: any) {
     try {
-      // Type assertion to avoid TypeScript errors
-      const query = supabase
-        .from('projects' as any)
-        .upsert(project as any);
-      
-      const { error } = await query;
+      // Use explicit type casting to bypass type checking
+      const client = supabase as any;
+      const { error } = await client
+        .from('projects')
+        .upsert(project);
       
       if (error) throw error;
       return true;
@@ -220,13 +224,12 @@ export class DatabaseService {
 
   async deleteProject(id: string) {
     try {
-      // Type assertion to avoid TypeScript errors
-      const query = supabase
-        .from('projects' as any)
+      // Use explicit type casting to bypass type checking
+      const client = supabase as any;
+      const { error } = await client
+        .from('projects')
         .delete()
         .eq('id', id);
-      
-      const { error } = await query;
       
       if (error) throw error;
       return true;
@@ -238,12 +241,11 @@ export class DatabaseService {
 
   async saveLinkedInPost(post: any) {
     try {
-      // Type assertion to avoid TypeScript errors
-      const query = supabase
-        .from('linkedin_posts' as any)
-        .upsert(post as any);
-      
-      const { error } = await query;
+      // Use explicit type casting to bypass type checking
+      const client = supabase as any;
+      const { error } = await client
+        .from('linkedin_posts')
+        .upsert(post);
       
       if (error) throw error;
       return true;
@@ -255,13 +257,12 @@ export class DatabaseService {
 
   async deleteLinkedInPost(id: string) {
     try {
-      // Type assertion to avoid TypeScript errors
-      const query = supabase
-        .from('linkedin_posts' as any)
+      // Use explicit type casting to bypass type checking
+      const client = supabase as any;
+      const { error } = await client
+        .from('linkedin_posts')
         .delete()
         .eq('id', id);
-      
-      const { error } = await query;
       
       if (error) throw error;
       return true;
@@ -274,8 +275,9 @@ export class DatabaseService {
   async migrateFromLocalStorage(localContent: SiteContent, storageKey: string) {
     try {
       // Check if we have content in Supabase
-      // Type safe query with casting for backward compatibility
-      const { data: existingContent, error } = await (supabase as any)
+      // Use explicit type casting to bypass type checking
+      const client = supabase as any;
+      const { data: existingContent, error } = await client
         .from('content')
         .select('*')
         .eq('id', 'main')
@@ -342,8 +344,9 @@ export class DatabaseService {
       });
       
       // Reset projects - first delete all existing projects
-      // Type assertion to avoid TypeScript errors
-      await supabase.from('projects' as any).delete().neq('id', '0' as any);
+      // Use explicit type casting to bypass type checking
+      const client = supabase as any;
+      await client.from('projects').delete().neq('id', '0');
       
       // Then insert default projects
       for (const project of defaultData.projects.items) {
@@ -351,8 +354,8 @@ export class DatabaseService {
       }
       
       // Reset LinkedIn posts - first delete all existing posts
-      // Type assertion to avoid TypeScript errors
-      await supabase.from('linkedin_posts' as any).delete().neq('id', '0' as any);
+      // Use explicit type casting to bypass type checking
+      await client.from('linkedin_posts').delete().neq('id', '0');
       
       // Then insert default posts
       if (defaultData.linkedInPosts && defaultData.linkedInPosts.length > 0) {
