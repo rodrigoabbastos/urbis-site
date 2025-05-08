@@ -69,7 +69,7 @@ const Hero = () => {
       id="hero" 
       className="relative h-screen flex items-center"
       style={{
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url(${heroContent.backgroundImage})`,
+        backgroundImage: `linear-gradient(rgba(242, 68, 119, 0.4), rgba(191, 54, 155, 0.5)), url(${heroContent.backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
