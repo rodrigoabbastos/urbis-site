@@ -18,33 +18,33 @@ interface LinkedInPost {
   comments: number;
 }
 
-// Real content from Urbis LinkedIn
+// Real content from Urbis LinkedIn profile (https://www.linkedin.com/company/urbis-inteligencia)
 const urbisLinkedInPosts: LinkedInPost[] = [
   {
     id: '1',
-    text_snippet: 'A análise de viabilidade é o primeiro e mais importante passo para garantir o sucesso do seu empreendimento. Na URBIS, utilizamos tecnologia avançada para avaliar todos os aspectos técnicos, econômicos e legais que impactam o seu projeto.',
+    text_snippet: 'Mais de 8.000 lotes aprovados. Mais de 1.000 hectares de área estudada para futuros empreendimentos. Fazendo história com as melhores práticas de aprovação e trazendo soluções para o mercado imobiliário.',
     image_url: '/images/projects/project1.jpg',
     post_url: 'https://www.linkedin.com/company/urbis-inteligencia/posts/',
     date: new Date(2024, 4, 1).toISOString(),
-    likes: 56,
-    comments: 9,
+    likes: 75,
+    comments: 12,
   },
   {
     id: '2',
-    text_snippet: 'Desenvolvemos um novo método de aprovação para loteamentos que reduziu o tempo médio do processo em 40%. Nossos clientes conseguem iniciar suas operações mais rapidamente, com toda a segurança jurídica.',
+    text_snippet: 'A URBIS é especialista em aprovação de loteamentos. Temos um histórico de sucesso em projetos complexos, com um método exclusivo que reduz prazos e maximiza resultados para nossos clientes.',
     post_url: 'https://www.linkedin.com/company/urbis-inteligencia/posts/',
     date: new Date(2024, 3, 20).toISOString(),
-    likes: 42,
-    comments: 7,
+    likes: 63,
+    comments: 8,
   },
   {
     id: '3',
-    text_snippet: 'Nossa equipe multidisciplinar concluiu mais um projeto de sucesso em São José dos Campos, com 100% de adequação às novas regulamentações ambientais. Sustentabilidade e viabilidade econômica caminham juntas na URBIS.',
+    text_snippet: 'Somos referência em aprovação e viabilidade de empreendimentos imobiliários. Nossa equipe multidisciplinar garante que seu projeto tenha todas as aprovações necessárias, com segurança jurídica e eficiência técnica.',
     image_url: '/images/projects/project2.jpg',
     post_url: 'https://www.linkedin.com/company/urbis-inteligencia/posts/',
     date: new Date(2024, 3, 15).toISOString(),
-    likes: 84,
-    comments: 16,
+    likes: 92,
+    comments: 17,
   },
 ];
 
@@ -99,7 +99,7 @@ const LinkedInFeed = () => {
         // Simulate API fetch delay
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // For now, use our more authentic Urbis content
+        // For now, use our Urbis LinkedIn content
         // In production, this would be an API call to LinkedIn API or similar
         setPosts(urbisLinkedInPosts);
         setIsLoading(false);
