@@ -9,6 +9,7 @@ import { LinkedInPost } from '../linkedin/types';
 import { getLinkedInPosts } from '../linkedin/linkedInData';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { supabase } from '@/lib/supabase';
 
 const LinkedInFeed = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -23,6 +24,13 @@ const LinkedInFeed = () => {
         // Check if Supabase is configured
         if (!isSupabaseConfigured()) {
           throw new Error('Supabase configuration is missing. Please make sure your project is connected to Supabase.');
+        }
+        
+        // First ensure tables exist
+        try {
+          await supabase.rpc('table_exists', { table_name: 'linkedin_posts' });
+        } catch (err) {
+          console.error('Error checking table existence:', err);
         }
         
         const fetchedPosts = await getLinkedInPosts();

@@ -1,196 +1,142 @@
+
 import { toast } from '@/components/ui/use-toast';
 import { supabase } from '@/lib/supabase';
 import { SiteContent } from './types';
 import { defaultContent } from './defaultContent';
 
-// Define a interface Database para ajudar com o TypeScript
-interface Database {
-  public: {
-    Tables: {
-      content: {
-        Row: any;
-        Insert: any;
-      };
-      projects: {
-        Row: any;
-        Insert: any;
-      };
-      linkedin_posts: {
-        Row: any;
-        Insert: any;
-      };
-    };
-  };
-}
-
 export class DatabaseService {
   async createTablesIfNotExist() {
     try {
-      // Create content table directly with SQL
-      const { error: contentError } = await supabase.rpc('create_table_if_not_exists', {
-        table_name: 'content',
-        table_definition: `
-          id TEXT PRIMARY KEY,
-          hero JSONB,
-          about JSONB,
-          services JSONB,
-          methodology JSONB,
-          contact JSONB,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-        `
-      });
+      // First, check if tables exist directly using SQL queries
+      const { data: contentTableExists } = await supabase.rpc('table_exists', { table_name: 'content' });
       
-      if (contentError) {
-        console.error('Error creating content table:', contentError);
-        // Fallback if RPC fails - direct SQL execution
-        const { error: fallbackError } = await supabase.from('content' as any).select('id').limit(1);
-        if (fallbackError && fallbackError.message.includes('does not exist')) {
-          await this.createContentTableFallback();
+      if (!contentTableExists) {
+        const { error: contentError } = await supabase.rpc('run_sql', {
+          sql: `
+            CREATE TABLE IF NOT EXISTS public.content (
+              id TEXT PRIMARY KEY,
+              hero JSONB,
+              about JSONB,
+              services JSONB,
+              methodology JSONB,
+              contact JSONB,
+              created_at TIMESTAMPTZ DEFAULT NOW(),
+              updated_at TIMESTAMPTZ DEFAULT NOW()
+            );
+          `
+        });
+        
+        if (contentError) {
+          console.error('Error creating content table:', contentError);
+        }
+      }
+      
+      const { data: linkedinPostsTableExists } = await supabase.rpc('table_exists', { table_name: 'linkedin_posts' });
+      
+      if (!linkedinPostsTableExists) {
+        const { error: postsError } = await supabase.rpc('run_sql', {
+          sql: `
+            CREATE TABLE IF NOT EXISTS public.linkedin_posts (
+              id TEXT PRIMARY KEY,
+              text_snippet TEXT NOT NULL,
+              image_url TEXT,
+              post_url TEXT NOT NULL,
+              date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+              likes INTEGER DEFAULT 0,
+              comments INTEGER DEFAULT 0,
+              created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+              updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+            );
+          `
+        });
+        
+        if (postsError) {
+          console.error('Error creating linkedin_posts table:', postsError);
+        }
+      }
+      
+      const { data: projectsTableExists } = await supabase.rpc('table_exists', { table_name: 'projects' });
+      
+      if (!projectsTableExists) {
+        const { error: projectsError } = await supabase.rpc('run_sql', {
+          sql: `
+            CREATE TABLE IF NOT EXISTS public.projects (
+              id TEXT PRIMARY KEY,
+              title TEXT NOT NULL,
+              description TEXT NOT NULL,
+              image TEXT NOT NULL,
+              client TEXT NOT NULL,
+              year TEXT NOT NULL,
+              type TEXT NOT NULL,
+              link TEXT,
+              created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+              updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+            );
+          `
+        });
+        
+        if (projectsError) {
+          console.error('Error creating projects table:', projectsError);
         }
       }
     } catch (error) {
-      console.error('Error checking content table:', error);
-      await this.createContentTableFallback();
-    }
-    
-    try {
-      // Create linkedin_posts table directly with SQL
-      const { error: postsError } = await supabase.rpc('create_table_if_not_exists', {
-        table_name: 'linkedin_posts',
-        table_definition: `
-          id TEXT PRIMARY KEY,
-          text_snippet TEXT NOT NULL,
-          image_url TEXT,
-          post_url TEXT NOT NULL,
-          date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          likes INTEGER DEFAULT 0,
-          comments INTEGER DEFAULT 0,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-        `
-      });
+      console.error('Error checking tables:', error);
       
-      if (postsError) {
-        console.error('Error creating linkedin_posts table:', postsError);
-        // Fallback if RPC fails - direct SQL execution
-        const { error: fallbackError } = await supabase.from('linkedin_posts' as any).select('id').limit(1);
-        if (fallbackError && fallbackError.message.includes('does not exist')) {
-          await this.createLinkedInPostsTableFallback();
-        }
+      // Fallback to direct SQL execution
+      try {
+        // Execute raw SQL to create tables
+        await supabase.rpc('run_sql', {
+          sql: `
+            CREATE TABLE IF NOT EXISTS public.content (
+              id TEXT PRIMARY KEY,
+              hero JSONB,
+              about JSONB,
+              services JSONB,
+              methodology JSONB,
+              contact JSONB,
+              created_at TIMESTAMPTZ DEFAULT NOW(),
+              updated_at TIMESTAMPTZ DEFAULT NOW()
+            );
+            
+            CREATE TABLE IF NOT EXISTS public.linkedin_posts (
+              id TEXT PRIMARY KEY,
+              text_snippet TEXT NOT NULL,
+              image_url TEXT,
+              post_url TEXT NOT NULL,
+              date TIMESTAMPTZ DEFAULT NOW(),
+              likes INTEGER DEFAULT 0,
+              comments INTEGER DEFAULT 0,
+              created_at TIMESTAMPTZ DEFAULT NOW(),
+              updated_at TIMESTAMPTZ DEFAULT NOW()
+            );
+            
+            CREATE TABLE IF NOT EXISTS public.projects (
+              id TEXT PRIMARY KEY,
+              title TEXT NOT NULL,
+              description TEXT NOT NULL,
+              image TEXT NOT NULL,
+              client TEXT NOT NULL,
+              year TEXT NOT NULL,
+              type TEXT NOT NULL,
+              link TEXT,
+              created_at TIMESTAMPTZ DEFAULT NOW(),
+              updated_at TIMESTAMPTZ DEFAULT NOW()
+            );
+          `
+        });
+      } catch (fallbackError) {
+        console.error('Failed to create tables with fallback method:', fallbackError);
       }
-    } catch (error) {
-      console.error('Error checking linkedin_posts table:', error);
-      await this.createLinkedInPostsTableFallback();
-    }
-    
-    try {
-      // Create projects table directly with SQL
-      const { error: projectsError } = await supabase.rpc('create_table_if_not_exists', {
-        table_name: 'projects',
-        table_definition: `
-          id TEXT PRIMARY KEY,
-          title TEXT NOT NULL,
-          description TEXT NOT NULL,
-          image TEXT NOT NULL,
-          client TEXT NOT NULL,
-          year TEXT NOT NULL,
-          type TEXT NOT NULL,
-          link TEXT,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-        `
-      });
-      
-      if (projectsError) {
-        console.error('Error creating projects table:', projectsError);
-        // Fallback if RPC fails - direct SQL execution
-        const { error: fallbackError } = await supabase.from('projects' as any).select('id').limit(1);
-        if (fallbackError && fallbackError.message.includes('does not exist')) {
-          await this.createProjectsTableFallback();
-        }
-      }
-    } catch (error) {
-      console.error('Error checking projects table:', error);
-      await this.createProjectsTableFallback();
-    }
-  }
-  
-  // Fallback methods using direct SQL to create tables when RPC fails
-  async createContentTableFallback() {
-    try {
-      const { error } = await supabase.rpc('run_sql', {
-        sql: `
-          CREATE TABLE IF NOT EXISTS public.content (
-            id TEXT PRIMARY KEY,
-            hero JSONB,
-            about JSONB,
-            services JSONB,
-            methodology JSONB,
-            contact JSONB,
-            created_at TIMESTAMPTZ DEFAULT NOW(),
-            updated_at TIMESTAMPTZ DEFAULT NOW()
-          );
-        `
-      });
-      if (error) console.error('Fallback content table creation error:', error);
-    } catch (error) {
-      console.error('Error in fallback content table creation:', error);
-    }
-  }
-  
-  async createLinkedInPostsTableFallback() {
-    try {
-      const { error } = await supabase.rpc('run_sql', {
-        sql: `
-          CREATE TABLE IF NOT EXISTS public.linkedin_posts (
-            id TEXT PRIMARY KEY,
-            text_snippet TEXT NOT NULL,
-            image_url TEXT,
-            post_url TEXT NOT NULL,
-            date TIMESTAMPTZ DEFAULT NOW(),
-            likes INTEGER DEFAULT 0,
-            comments INTEGER DEFAULT 0,
-            created_at TIMESTAMPTZ DEFAULT NOW(),
-            updated_at TIMESTAMPTZ DEFAULT NOW()
-          );
-        `
-      });
-      if (error) console.error('Fallback linkedin_posts table creation error:', error);
-    } catch (error) {
-      console.error('Error in fallback linkedin_posts table creation:', error);
-    }
-  }
-  
-  async createProjectsTableFallback() {
-    try {
-      const { error } = await supabase.rpc('run_sql', {
-        sql: `
-          CREATE TABLE IF NOT EXISTS public.projects (
-            id TEXT PRIMARY KEY,
-            title TEXT NOT NULL,
-            description TEXT NOT NULL,
-            image TEXT NOT NULL,
-            client TEXT NOT NULL,
-            year TEXT NOT NULL,
-            type TEXT NOT NULL,
-            link TEXT,
-            created_at TIMESTAMPTZ DEFAULT NOW(),
-            updated_at TIMESTAMPTZ DEFAULT NOW()
-          );
-        `
-      });
-      if (error) console.error('Fallback projects table creation error:', error);
-    } catch (error) {
-      console.error('Error in fallback projects table creation:', error);
     }
   }
 
   async fetchMainContent() {
     try {
-      // Use explicit type casting to bypass type checking
+      // Ensure tables exist before fetching
+      await this.createTablesIfNotExist();
+      
       const { data, error } = await supabase
-        .from('content' as any)
+        .from('content')
         .select('*')
         .eq('id', 'main')
         .single();
@@ -209,9 +155,11 @@ export class DatabaseService {
 
   async fetchProjectsInfo() {
     try {
-      // Use explicit type casting to bypass type checking
+      // Ensure tables exist before fetching
+      await this.createTablesIfNotExist();
+      
       const { data, error } = await supabase
-        .from('content' as any)
+        .from('content')
         .select('*')
         .eq('id', 'projects')
         .single();
@@ -230,9 +178,11 @@ export class DatabaseService {
 
   async fetchProjects() {
     try {
-      // Use explicit type casting to bypass type checking
+      // Ensure tables exist before fetching
+      await this.createTablesIfNotExist();
+      
       const { data, error } = await supabase
-        .from('projects' as any)
+        .from('projects')
         .select('*');
       
       if (error) {
@@ -252,9 +202,8 @@ export class DatabaseService {
       // Make sure tables are created before fetching
       await this.createTablesIfNotExist();
       
-      // Use explicit type casting to bypass type checking
       const { data, error } = await supabase
-        .from('linkedin_posts' as any)
+        .from('linkedin_posts')
         .select('*')
         .order('date', { ascending: false });
       
@@ -278,9 +227,11 @@ export class DatabaseService {
     contact: any;
   }) {
     try {
-      // Use explicit type casting to bypass type checking
+      // Ensure tables exist before saving
+      await this.createTablesIfNotExist();
+      
       const { error } = await supabase
-        .from('content' as any)
+        .from('content')
         .upsert({ 
           id: 'main',
           ...content
@@ -296,9 +247,11 @@ export class DatabaseService {
 
   async saveProjectsInfo(projectsInfo: { title: string; description: string }) {
     try {
-      // Use explicit type casting to bypass type checking
+      // Ensure tables exist before saving
+      await this.createTablesIfNotExist();
+      
       const { error } = await supabase
-        .from('content' as any)
+        .from('content')
         .upsert({ 
           id: 'projects',
           ...projectsInfo
@@ -314,9 +267,11 @@ export class DatabaseService {
 
   async saveProject(project: any) {
     try {
-      // Use explicit type casting to bypass type checking
+      // Ensure tables exist before saving
+      await this.createTablesIfNotExist();
+      
       const { error } = await supabase
-        .from('projects' as any)
+        .from('projects')
         .upsert(project);
       
       if (error) throw error;
@@ -329,9 +284,11 @@ export class DatabaseService {
 
   async deleteProject(id: string) {
     try {
-      // Use explicit type casting to bypass type checking
+      // Ensure tables exist before deleting
+      await this.createTablesIfNotExist();
+      
       const { error } = await supabase
-        .from('projects' as any)
+        .from('projects')
         .delete()
         .eq('id', id);
       
@@ -348,9 +305,8 @@ export class DatabaseService {
       // Make sure tables are created before saving
       await this.createTablesIfNotExist();
       
-      // Use explicit type casting to bypass type checking
       const { error } = await supabase
-        .from('linkedin_posts' as any)
+        .from('linkedin_posts')
         .upsert(post);
       
       if (error) throw error;
@@ -363,9 +319,11 @@ export class DatabaseService {
 
   async deleteLinkedInPost(id: string) {
     try {
-      // Use explicit type casting to bypass type checking
+      // Ensure tables exist before deleting
+      await this.createTablesIfNotExist();
+      
       const { error } = await supabase
-        .from('linkedin_posts' as any)
+        .from('linkedin_posts')
         .delete()
         .eq('id', id);
       
@@ -379,10 +337,12 @@ export class DatabaseService {
 
   async migrateFromLocalStorage(localContent: SiteContent, storageKey: string) {
     try {
+      // Ensure tables exist before migrating
+      await this.createTablesIfNotExist();
+      
       // Check if we have content in Supabase
-      // Use explicit type casting to bypass type checking
       const { data: existingContent, error } = await supabase
-        .from('content' as any)
+        .from('content')
         .select('*')
         .eq('id', 'main')
         .single();
@@ -437,6 +397,9 @@ export class DatabaseService {
 
   async resetToDefault(defaultData: SiteContent) {
     try {
+      // Ensure tables exist before resetting
+      await this.createTablesIfNotExist();
+      
       // Reset main content
       const { hero, about, services, methodology, contact } = defaultData;
       await this.saveMainContent({ hero, about, services, methodology, contact });
@@ -448,9 +411,8 @@ export class DatabaseService {
       });
       
       // Reset projects - first delete all existing projects
-      // Use explicit type casting to bypass type checking
-      const { error } = await supabase
-        .from('projects' as any)
+      await supabase
+        .from('projects')
         .delete().neq('id', '0');
       
       // Then insert default projects
@@ -459,9 +421,8 @@ export class DatabaseService {
       }
       
       // Reset LinkedIn posts - first delete all existing posts
-      // Use explicit type casting to bypass type checking
       await supabase
-        .from('linkedin_posts' as any)
+        .from('linkedin_posts')
         .delete().neq('id', '0');
       
       // Then insert default posts

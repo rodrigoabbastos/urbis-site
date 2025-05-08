@@ -14,7 +14,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { cmsService } from '@/services/cmsService';
+import { cmsService } from '@/services/cms';
 
 // Form validation schema
 const postSchema = z.object({

@@ -119,6 +119,9 @@ class CMSService {
       };
       
       await databaseService.saveProjectsInfo(projectsContent);
+      
+      // Reload cache after saving
+      await this.loadContentToCache();
     } catch (error) {
       console.error('Error saving content:', error);
       toast({

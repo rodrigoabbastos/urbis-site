@@ -1,9 +1,52 @@
 
-// Este arquivo agora apenas re-exporta o cliente criado em integrations/supabase/client.ts
-// para manter a compatibilidade com código existente
+// This file now re-exports the client created in integrations/supabase/client.ts
+// to maintain compatibility with existing code
 
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
+
+// Create a table_exists function for Supabase
+const createTableExistsFunction = async () => {
+  try {
+    // Check if the function already exists
+    const { data, error } = await supabase.rpc('check_function_exists', { 
+      function_name: 'table_exists' 
+    }).single();
+    
+    if (error) {
+      // Create the function if it doesn't exist
+      await supabase.rpc('run_sql', {
+        sql: `
+          CREATE OR REPLACE FUNCTION table_exists(table_name text)
+          RETURNS boolean AS $$
+          BEGIN
+            RETURN EXISTS (
+              SELECT FROM pg_catalog.pg_tables
+              WHERE schemaname = 'public'
+              AND tablename = table_name
+            );
+          END;
+          $$ LANGUAGE plpgsql;
+          
+          CREATE OR REPLACE FUNCTION check_function_exists(function_name text)
+          RETURNS boolean AS $$
+          BEGIN
+            RETURN EXISTS (
+              SELECT FROM pg_catalog.pg_proc
+              WHERE proname = function_name
+            );
+          END;
+          $$ LANGUAGE plpgsql;
+        `
+      });
+    }
+  } catch (error) {
+    console.error('Error creating table_exists function:', error);
+  }
+};
+
+// Initialize function creation
+createTableExistsFunction();
 
 // Função para verificar se o Supabase está configurado corretamente
 export const isSupabaseConfigured = () => {
