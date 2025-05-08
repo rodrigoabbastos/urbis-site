@@ -1,14 +1,30 @@
 
 import { Button } from '@/components/ui/button';
+import { cmsService } from '@/services/cmsService';
+import { useEffect, useState } from 'react';
 
 const Hero = () => {
+  const [heroContent, setHeroContent] = useState({
+    title: "Não gaste 1 centavo sequer antes de falar com a URBIS.",
+    subtitle: "Somos o melhor investimento para o seu empreendimento. Unimos estratégia, engenharia e inteligência territorial para transformar terrenos em grandes negócios.",
+    ctaText: "Fale com um especialista",
+    ctaLink: "#contact",
+    backgroundImage: "https://cdn.midjourney.com/8071897a-b5ac-4953-a3b8-b4a29bd2a053/0_0.png"
+  });
+
+  useEffect(() => {
+    // Get content from CMS service
+    const content = cmsService.getContent();
+    setHeroContent(content.hero);
+  }, []);
+
   return (
     <div id="home" className="relative bg-black min-h-[100vh] flex items-center">
       {/* Background Image with Overlay */}
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
         style={{ 
-          backgroundImage: 'url("https://cdn.midjourney.com/8071897a-b5ac-4953-a3b8-b4a29bd2a053/0_0.png")',
+          backgroundImage: `url("${heroContent.backgroundImage}")`,
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-urbis-primary/80 to-urbis-secondary/70"></div>
@@ -18,16 +34,16 @@ const Hero = () => {
       <div className="container-wrapper relative z-10 pt-20">
         <div className="max-w-3xl animate-slide-up">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-            Não gaste 1 centavo sequer antes de falar com a URBIS.
+            {heroContent.title}
           </h1>
           
           <p className="text-xl text-gray-200 mb-8">
-            Somos o melhor investimento para o seu empreendimento. Unimos estratégia, engenharia e inteligência territorial para transformar terrenos em grandes negócios.
+            {heroContent.subtitle}
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4">
             <Button asChild className="bg-urbis-primary text-white hover:bg-urbis-primary/90 text-lg px-8 py-6">
-              <a href="#contact">Fale com um especialista</a>
+              <a href={heroContent.ctaLink}>{heroContent.ctaText}</a>
             </Button>
             
             <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-urbis-primary text-lg px-8 py-6">

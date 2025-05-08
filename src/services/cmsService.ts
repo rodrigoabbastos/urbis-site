@@ -71,8 +71,8 @@ export interface SiteContent {
 // Default content (based on current site)
 const defaultContent: SiteContent = {
   hero: {
-    title: "Não gaste 1 centavo sequer antes de falar com a URBIS.",
-    subtitle: "Somos o melhor investimento para o seu empreendimento. Unimos estratégia, engenharia e inteligência territorial para transformar terrenos em grandes negócios.",
+    title: "Não gaste um real sequer antes de falar com a URBIS.",
+    subtitle: "Somos o melhor investimento para o seu empreendimento imobiliário. Unimos experiência, conhecimento, inteligência e estratégia para transformar sua idéia em um grande negócio.",
     ctaText: "Fale com um especialista",
     ctaLink: "#contact",
     backgroundImage: "https://cdn.midjourney.com/8071897a-b5ac-4953-a3b8-b4a29bd2a053/0_0.png"
