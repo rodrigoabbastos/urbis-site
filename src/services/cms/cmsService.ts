@@ -53,11 +53,11 @@ class CMSService {
       
       if (mainContent) {
         // Use safe property access with fallback to default content
-        content.hero = mainContent.hero || content.hero;
-        content.about = mainContent.about || content.about;
-        content.services = mainContent.services || content.services;
-        content.methodology = mainContent.methodology || content.methodology;
-        content.contact = mainContent.contact || content.contact;
+        content.hero = (mainContent as any).hero || content.hero;
+        content.about = (mainContent as any).about || content.about;
+        content.services = (mainContent as any).services || content.services;
+        content.methodology = (mainContent as any).methodology || content.methodology;
+        content.contact = (mainContent as any).contact || content.contact;
       }
       
       // Get projects info
@@ -65,8 +65,8 @@ class CMSService {
       
       if (projectsInfo) {
         // Use safe property access with fallback to default content
-        content.projects.title = projectsInfo.title || content.projects.title;
-        content.projects.description = projectsInfo.description || content.projects.description;
+        content.projects.title = (projectsInfo as any).title || content.projects.title;
+        content.projects.description = (projectsInfo as any).description || content.projects.description;
       }
       
       // Get projects

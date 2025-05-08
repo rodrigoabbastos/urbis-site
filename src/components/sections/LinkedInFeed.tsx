@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { ExternalLink, AlertCircle } from 'lucide-react';
@@ -28,7 +27,7 @@ const LinkedInFeed = () => {
         
         // First ensure tables exist
         try {
-          await supabase.rpc('table_exists', { table_name: 'linkedin_posts' });
+          await supabase.rpc('table_exists', { table_name: 'linkedin_posts' } as any);
         } catch (err) {
           console.error('Error checking table existence:', err);
         }
