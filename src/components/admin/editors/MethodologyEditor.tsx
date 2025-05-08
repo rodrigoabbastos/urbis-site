@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import AdminLayout from '../AdminLayout';
 import { cmsService, MethodologyStep } from '@/services/cmsService';
@@ -25,10 +24,14 @@ const MethodologyEditor = () => {
   const [isEditing, setIsEditing] = useState(false);
   
   useEffect(() => {
-    const content = cmsService.getContent();
-    setTitle(content.methodology.title);
-    setDescription(content.methodology.description);
-    setSteps(content.methodology.steps);
+    const loadContent = async () => {
+      const content = await cmsService.getContent();
+      setTitle(content.methodology.title);
+      setDescription(content.methodology.description);
+      setSteps(content.methodology.steps);
+    };
+    
+    loadContent();
   }, []);
   
   const handleSaveSection = () => {

@@ -5,10 +5,21 @@ import { Button } from '@/components/ui/button';
 import { FileText, Image, Settings, User, Linkedin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cmsService } from '@/services/cmsService';
+import { useEffect, useState } from 'react';
+import { SiteContent } from '@/services/cmsService';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const content = cmsService.getContent();
+  const [content, setContent] = useState<SiteContent>(cmsService.getContentSync());
+  
+  useEffect(() => {
+    const loadContent = async () => {
+      const fetchedContent = await cmsService.getContent();
+      setContent(fetchedContent);
+    };
+    
+    loadContent();
+  }, []);
   
   const sections = [
     {

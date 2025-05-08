@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import AdminLayout from '../AdminLayout';
 import { cmsService, Service } from '@/services/cmsService';
@@ -24,8 +23,12 @@ const ServicesEditor = () => {
   const [isEditing, setIsEditing] = useState(false);
   
   useEffect(() => {
-    const content = cmsService.getContent();
-    setServices(content.services);
+    const loadContent = async () => {
+      const content = await cmsService.getContent();
+      setServices(content.services);
+    };
+    
+    loadContent();
   }, []);
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

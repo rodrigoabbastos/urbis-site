@@ -18,8 +18,12 @@ const ContactEditor = () => {
   });
   
   useEffect(() => {
-    const content = cmsService.getContent();
-    setFormData(content.contact);
+    const loadContent = async () => {
+      const content = await cmsService.getContent();
+      setFormData(content.contact);
+    };
+    
+    loadContent();
   }, []);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

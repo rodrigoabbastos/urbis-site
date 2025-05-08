@@ -302,39 +302,48 @@ class CMSService {
   
   private async createTablesIfNotExist() {
     // Create content table
-    const { error: contentError } = await supabase
-      .from('content')
-      .select('id')
-      .limit(1)
-      .catch(() => ({ error: { message: 'Table does not exist' }, data: null }));
-    
-    if (contentError) {
-      // Table doesn't exist, create it
-      await supabase.rpc('create_content_table');
+    try {
+      const { error: contentError } = await supabase
+        .from('content')
+        .select('id')
+        .limit(1);
+      
+      if (contentError) {
+        // Table doesn't exist, create it
+        await supabase.rpc('create_content_table');
+      }
+    } catch (error) {
+      console.error('Error checking content table:', error);
     }
     
     // Create linkedin_posts table
-    const { error: postsError } = await supabase
-      .from('linkedin_posts')
-      .select('id')
-      .limit(1)
-      .catch(() => ({ error: { message: 'Table does not exist' }, data: null }));
-    
-    if (postsError) {
-      // Table doesn't exist, create it
-      await supabase.rpc('create_linkedin_posts_table');
+    try {
+      const { error: postsError } = await supabase
+        .from('linkedin_posts')
+        .select('id')
+        .limit(1);
+      
+      if (postsError) {
+        // Table doesn't exist, create it
+        await supabase.rpc('create_linkedin_posts_table');
+      }
+    } catch (error) {
+      console.error('Error checking linkedin_posts table:', error);
     }
     
     // Create projects table
-    const { error: projectsError } = await supabase
-      .from('projects')
-      .select('id')
-      .limit(1)
-      .catch(() => ({ error: { message: 'Table does not exist' }, data: null }));
-    
-    if (projectsError) {
-      // Table doesn't exist, create it
-      await supabase.rpc('create_projects_table');
+    try {
+      const { error: projectsError } = await supabase
+        .from('projects')
+        .select('id')
+        .limit(1);
+      
+      if (projectsError) {
+        // Table doesn't exist, create it
+        await supabase.rpc('create_projects_table');
+      }
+    } catch (error) {
+      console.error('Error checking projects table:', error);
     }
   }
   
@@ -479,6 +488,11 @@ class CMSService {
     if (!this.contentCache) {
       await this.loadContentToCache();
     }
+    return this.contentCache || defaultContent;
+  }
+  
+  // Método síncrono que retorna o conteúdo em cache ou o conteúdo padrão
+  getContentSync(): SiteContent {
     return this.contentCache || defaultContent;
   }
   

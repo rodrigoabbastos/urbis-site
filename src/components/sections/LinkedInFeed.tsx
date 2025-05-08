@@ -5,8 +5,8 @@ import { ExternalLink } from 'lucide-react';
 import LinkedInPostCard from '../linkedin/LinkedInPostCard';
 import LoadingState from '../linkedin/LoadingState';
 import EmptyState from '../linkedin/EmptyState';
-import { cmsService } from '@/services/cmsService';
 import { LinkedInPost } from '../linkedin/types';
+import { getLinkedInPosts } from '../linkedin/linkedInData';
 
 const LinkedInFeed = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -17,7 +17,7 @@ const LinkedInFeed = () => {
     const fetchPosts = async () => {
       try {
         setIsLoading(true);
-        const fetchedPosts = await cmsService.getLinkedInPosts();
+        const fetchedPosts = await getLinkedInPosts();
         setPosts(fetchedPosts);
         setError(null);
       } catch (err) {

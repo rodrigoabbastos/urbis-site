@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import AdminLayout from '../AdminLayout';
 import { cmsService, AboutContent } from '@/services/cmsService';
@@ -20,8 +19,12 @@ const AboutEditor = () => {
   });
   
   useEffect(() => {
-    const content = cmsService.getContent();
-    setFormData(content.about);
+    const loadContent = async () => {
+      const content = await cmsService.getContent();
+      setFormData(content.about);
+    };
+    
+    loadContent();
   }, []);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

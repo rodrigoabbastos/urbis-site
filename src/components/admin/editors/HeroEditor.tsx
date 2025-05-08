@@ -19,8 +19,12 @@ const HeroEditor = () => {
   });
   
   useEffect(() => {
-    const content = cmsService.getContent();
-    setFormData(content.hero);
+    const loadContent = async () => {
+      const content = await cmsService.getContent();
+      setFormData(content.hero);
+    };
+    
+    loadContent();
   }, []);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
