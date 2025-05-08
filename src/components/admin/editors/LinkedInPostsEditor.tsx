@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../AdminLayout';
 import { Button } from "@/components/ui/button";
@@ -95,9 +94,15 @@ const LinkedInPostsEditor = () => {
   };
 
   const onSubmit = (data: PostFormValues) => {
-    const postData = {
-      ...data,
-      id: data.id || String(Date.now())
+    // Ensure we have all required fields for LinkedInPost
+    const postData: LinkedInPost = {
+      id: data.id || String(Date.now()),
+      text_snippet: data.text_snippet,
+      image_url: data.image_url,
+      post_url: data.post_url,
+      date: data.date,
+      likes: data.likes,
+      comments: data.comments,
     };
     
     cmsService.updateLinkedInPost(postData);
