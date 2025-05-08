@@ -1,12 +1,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, AlertCircle } from 'lucide-react';
 import LinkedInPostCard from '../linkedin/LinkedInPostCard';
 import LoadingState from '../linkedin/LoadingState';
 import EmptyState from '../linkedin/EmptyState';
 import { LinkedInPost } from '../linkedin/types';
 import { getLinkedInPosts } from '../linkedin/linkedInData';
+import { isSupabaseConfigured } from '@/lib/supabase';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const LinkedInFeed = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -17,6 +19,12 @@ const LinkedInFeed = () => {
     const fetchPosts = async () => {
       try {
         setIsLoading(true);
+        
+        // Check if Supabase is configured
+        if (!isSupabaseConfigured()) {
+          throw new Error('Supabase configuration is missing. Please make sure your project is connected to Supabase.');
+        }
+        
         const fetchedPosts = await getLinkedInPosts();
         setPosts(fetchedPosts);
         setError(null);
@@ -33,6 +41,26 @@ const LinkedInFeed = () => {
 
     fetchPosts();
   }, []);
+
+  if (error && error.includes('Supabase configuration is missing')) {
+    return (
+      <section id="linkedin-feed" className="py-20 bg-white">
+        <div className="container-wrapper">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">Atualizações da URBIS</h2>
+            <p className="text-gray-600 max-w-3xl mx-auto">
+              Acompanhe nossas últimas novidades, projetos e participações em eventos do setor de urbanismo e desenvolvimento territorial.
+            </p>
+          </div>
+          
+          <Alert variant="destructive" className="mb-6 max-w-3xl mx-auto">
+            <AlertCircle className="h-5 w-5 mr-2" />
+            <AlertDescription>Configuração do Supabase ausente. Conecte o projeto ao Supabase para carregar as atualizações.</AlertDescription>
+          </Alert>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="linkedin-feed" className="py-20 bg-white">

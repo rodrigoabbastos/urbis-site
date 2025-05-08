@@ -1,7 +1,9 @@
 
 import React, { useEffect, useState } from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, AlertCircle } from 'lucide-react';
 import { cmsService, HeroContent } from '@/services/cmsService';
+import { isSupabaseConfigured } from '@/lib/supabase';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const Hero = () => {
   const [heroContent, setHeroContent] = useState<HeroContent>({
@@ -12,14 +14,22 @@ const Hero = () => {
     backgroundImage: ''
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
     const loadContent = async () => {
       try {
+        // Check if Supabase is configured
+        if (!isSupabaseConfigured()) {
+          throw new Error('Supabase configuration is missing. Please make sure your project is connected to Supabase.');
+        }
+        
         const content = await cmsService.getContent();
         setHeroContent(content.hero);
+        setError(null);
       } catch (error) {
         console.error('Error loading hero content:', error);
+        setError('Não foi possível carregar o conteúdo. Verifique a conexão com o Supabase.');
       } finally {
         setIsLoading(false);
       }
@@ -33,6 +43,22 @@ const Hero = () => {
       <section id="hero" className="relative h-screen flex items-center justify-center bg-gray-100">
         <div className="text-center">
           <p className="text-xl text-gray-600">Carregando...</p>
+        </div>
+      </section>
+    );
+  }
+  
+  if (error) {
+    return (
+      <section id="hero" className="relative h-screen flex items-center justify-center bg-gray-100">
+        <div className="container-wrapper max-w-3xl">
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-5 w-5 mr-2" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+          <p className="text-center text-gray-600 mt-4">
+            Acesse as configurações do projeto e conecte-o ao Supabase para continuar.
+          </p>
         </div>
       </section>
     );
