@@ -11,7 +11,7 @@ const createTableExistsFunction = async () => {
     // Check if the function already exists
     const { data, error } = await supabase.rpc('check_function_exists', { 
       function_name: 'table_exists' 
-    } as any).single();
+    } as any);
     
     if (error) {
       // Create the function if it doesn't exist

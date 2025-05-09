@@ -1,17 +1,20 @@
-
 import { toast } from '@/components/ui/use-toast';
 import { supabase } from '@/lib/supabase';
 import { SiteContent } from './types';
 import { defaultContent } from './defaultContent';
 
 // Create a typed helper function to make Supabase calls more consistent
+// This uses 'any' type to bypass TypeScript's strict checking since our database schema
+// isn't properly reflected in the types
 const supabaseHelper = {
   // Generic from function that handles type casting for us
   from: (table: string) => {
+    // Using 'as any' to bypass TypeScript checking
     return supabase.from(table as any);
   },
   // Helper for RPC calls
   rpc: (fn: string, params: any) => {
+    // Using 'as any' to bypass TypeScript checking
     return supabase.rpc(fn as any, params as any);
   }
 };
@@ -242,7 +245,7 @@ export class DatabaseService {
         .upsert({ 
           id: 'main',
           ...content
-        });
+        } as any);
       
       if (error) throw error;
       return true;
@@ -261,7 +264,7 @@ export class DatabaseService {
         .upsert({ 
           id: 'projects',
           ...projectsInfo
-        });
+        } as any);
       
       if (error) throw error;
       return true;
@@ -277,7 +280,7 @@ export class DatabaseService {
       await this.createTablesIfNotExist();
       
       const { error } = await supabaseHelper.from('projects')
-        .upsert(project);
+        .upsert(project as any);
       
       if (error) throw error;
       return true;
@@ -310,7 +313,7 @@ export class DatabaseService {
       await this.createTablesIfNotExist();
       
       const { error } = await supabaseHelper.from('linkedin_posts')
-        .upsert(post);
+        .upsert(post as any);
       
       if (error) throw error;
       return true;
@@ -413,7 +416,8 @@ export class DatabaseService {
       
       // Reset projects - first delete all existing projects
       await supabaseHelper.from('projects')
-        .delete().neq('id', '0');
+        .delete()
+        .neq('id', '0');
       
       // Then insert default projects
       for (const project of defaultData.projects.items) {
@@ -422,7 +426,8 @@ export class DatabaseService {
       
       // Reset LinkedIn posts - first delete all existing posts
       await supabaseHelper.from('linkedin_posts')
-        .delete().neq('id', '0');
+        .delete()
+        .neq('id', '0');
       
       // Then insert default posts
       if (defaultData.linkedInPosts && defaultData.linkedInPosts.length > 0) {
