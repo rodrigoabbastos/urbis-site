@@ -27,4 +27,8 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // Ensure we handle .js and .tsx files properly for the build
+  optimizeDeps: {
+    include: ['react', 'react-dom'],
+  },
 }));
