@@ -48,6 +48,14 @@ RewriteRule ^ index.html [L]
   </FilesMatch>
 </IfModule>
 
+# Block direct access to any PHP files
+<FilesMatch "\.php$">
+  # Only allow PHP files that exist directly in the root
+  RewriteCond %{REQUEST_URI} !^/index\.php$
+  RewriteCond %{REQUEST_URI} \.php$
+  RewriteRule .* - [F]
+</FilesMatch>
+
 # Cache static assets
 <IfModule mod_expires.c>
   ExpiresActive On
