@@ -22,24 +22,31 @@ const LinkedInFeed = () => {
         setIsLoading(true);
         setError(null);
         
+        // Verifica ambiente
+        const isProduction = window.location.hostname === 'urbis.com.br';
+        console.log(`[LinkedInFeed] Ambiente: ${isProduction ? 'Produção' : 'Desenvolvimento'}`);
+        
         // Check if Supabase is configured
-        if (!isSupabaseConfigured()) {
-          console.error('Supabase não está configurado corretamente');
+        const supabaseConfigured = isSupabaseConfigured();
+        console.log('[LinkedInFeed] Supabase configurado:', supabaseConfigured);
+        
+        if (!supabaseConfigured) {
+          console.error('[LinkedInFeed] Supabase não está configurado corretamente');
           throw new Error('Supabase não está configurado corretamente. Por favor, verifique sua conexão com o banco de dados.');
         }
         
-        console.log('Buscando posts do LinkedIn...');
+        console.log('[LinkedInFeed] Buscando posts do LinkedIn...');
         const fetchedPosts = await getLinkedInPosts();
         
         if (fetchedPosts.length === 0) {
-          console.log('Nenhum post encontrado, mas não é um erro');
+          console.log('[LinkedInFeed] Nenhum post encontrado, mas não é um erro');
         } else {
-          console.log(`${fetchedPosts.length} posts encontrados`);
+          console.log(`[LinkedInFeed] ${fetchedPosts.length} posts encontrados`);
         }
         
         setPosts(fetchedPosts);
       } catch (err: any) {
-        console.error('Erro ao buscar posts do LinkedIn:', err);
+        console.error('[LinkedInFeed] Erro ao buscar posts do LinkedIn:', err);
         setError(err?.message || 'Não foi possível carregar as publicações.');
         
         toast({
@@ -91,7 +98,16 @@ const LinkedInFeed = () => {
         {isLoading ? (
           <LoadingState />
         ) : error ? (
-          <EmptyState />
+          <div className="max-w-3xl mx-auto">
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-5 w-5 mr-2" />
+              <AlertDescription>
+                {error}
+                <p className="text-sm mt-2 opacity-80">[Ambiente: {window.location.hostname}]</p>
+              </AlertDescription>
+            </Alert>
+            <EmptyState />
+          </div>
         ) : posts.length === 0 ? (
           <EmptyState />
         ) : (
