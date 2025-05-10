@@ -1,7 +1,7 @@
 
 import React from 'react'; // Import React for JSX support
 import { createRoot } from 'react-dom/client';
-import App from './App';
+import App from './App.jsx'; // Update path to .jsx extension
 import './index.css';
 
 // Ensure the root element exists

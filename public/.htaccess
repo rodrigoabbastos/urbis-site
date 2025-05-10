@@ -4,7 +4,7 @@ RewriteEngine On
 RewriteBase /
 
 # CRITICAL FIX: Set appropriate MIME types for JavaScript files
-<FilesMatch "\.(js)$">
+<FilesMatch "\.(js|jsx)$">
   ForceType application/javascript
   Header set Content-Type "application/javascript; charset=utf-8"
 </FilesMatch>
@@ -47,6 +47,7 @@ RewriteRule ^ index.html [L]
 # Proper MIME types (reinforced)
 <IfModule mod_mime.c>
   AddType application/javascript .js
+  AddType application/javascript .jsx
   AddType text/css .css
   AddType image/svg+xml .svg
 </IfModule>

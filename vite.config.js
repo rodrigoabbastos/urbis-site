@@ -37,9 +37,13 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    extensions: ['.js', '.jsx', '.mjs']
+    extensions: ['.js', '.jsx', '.mjs'] // Ensure .jsx is included in extensions
   },
   optimizeDeps: {
     include: ['react', 'react-dom'],
   },
+  esbuild: {
+    jsx: 'automatic', // Ensure JSX is transformed automatically
+    jsxInject: `import React from 'react'`, // Auto-inject React for JSX
+  }
 }));

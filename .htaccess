@@ -4,7 +4,7 @@ RewriteEngine On
 RewriteBase /
 
 # CRITICAL FIX: Set appropriate MIME types for JavaScript files
-<FilesMatch "\.(js)$">
+<FilesMatch "\.(js|jsx)$">
   ForceType application/javascript
   Header set Content-Type "application/javascript; charset=utf-8"
 </FilesMatch>
