@@ -16,7 +16,7 @@
       ]
     },
     {
-      "source": "/(.*)\\.(js|mjs)",
+      "source": "/(.*)\\.(js|mjs|jsx)",
       "headers": [
         { "key": "Content-Type", "value": "application/javascript; charset=utf-8" }
       ]

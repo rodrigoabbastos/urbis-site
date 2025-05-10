@@ -32,13 +32,18 @@ RewriteRule ^ index.html [L]
     Header set Cache-Control "max-age=600, must-revalidate"
   </FilesMatch>
   
-  # Definir MIME type explícito para arquivos JavaScript modulares
-  <FilesMatch "\.(mjs|ts|tsx|jsx?|js)$">
+  # Set correct MIME types for JavaScript files - CRITICAL FIX
+  <FilesMatch "\.m?jsx?$">
+    ForceType application/javascript
+    Header set Content-Type "application/javascript; charset=utf-8"
+  </FilesMatch>
+  
+  <FilesMatch "\.tsx?$">
     ForceType application/javascript
     Header set Content-Type "application/javascript; charset=utf-8"
   </FilesMatch>
 
-  <FilesMatch "\.(css)$">
+  <FilesMatch "\.css$">
     ForceType text/css
     Header set Content-Type "text/css; charset=utf-8"
   </FilesMatch>
