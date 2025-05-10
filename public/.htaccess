@@ -8,6 +8,9 @@ RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
 RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
 RewriteRule ^ - [L]
 
+# Serve assets from the correct locations
+RewriteRule ^assets/(.*)$ /assets/$1 [L]
+
 # If the requested resource doesn't exist, serve index.html
 RewriteRule ^ index.html [L]
 
@@ -38,15 +41,9 @@ RewriteRule ^ index.html [L]
   ExpiresDefault "access plus 2 days"
 </IfModule>
 
-# PHP settings (if PHP is installed)
-<IfModule mod_php7.c>
-  php_flag display_errors Off
-  php_value max_execution_time 300
-  php_value memory_limit 128M
-  php_value post_max_size 64M
-  php_value upload_max_filesize 64M
-</IfModule>
-
 # Handle errors
 ErrorDocument 404 /index.html
 ErrorDocument 500 /index.html
+
+# Allow index.html to be loaded directly
+DirectoryIndex index.html
