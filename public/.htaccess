@@ -3,9 +3,12 @@
 RewriteEngine On
 RewriteBase /
 
-# If the request is not for a real file or directory, serve index.html
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+# If an existing asset or directory is requested, serve it directly
+RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
+RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
+RewriteRule ^ - [L]
+
+# If the requested resource doesn't exist, serve index.html
 RewriteRule ^ index.html [L]
 
 # Security headers
@@ -13,8 +16,10 @@ RewriteRule ^ index.html [L]
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
   Header set X-XSS-Protection "1; mode=block"
-  Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
-  # Add CORS headers to allow all origins - important for API calls
+  # Only use HSTS if you have HTTPS configured
+  # Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  
+  # Add CORS headers to allow API calls
   Header set Access-Control-Allow-Origin "*"
   Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
   Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
@@ -42,5 +47,6 @@ RewriteRule ^ index.html [L]
   php_value upload_max_filesize 64M
 </IfModule>
 
-# Handle 500 errors
+# Handle errors
+ErrorDocument 404 /index.html
 ErrorDocument 500 /index.html

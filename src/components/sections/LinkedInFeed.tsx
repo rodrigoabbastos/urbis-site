@@ -22,9 +22,11 @@ const LinkedInFeed = () => {
         setIsLoading(true);
         setError(null);
         
-        // Verifica ambiente
-        const isProduction = window.location.hostname === 'urbis.com.br';
-        console.log(`[LinkedInFeed] Ambiente: ${isProduction ? 'Produção' : 'Desenvolvimento'}`);
+        // Improved environment detection
+        const hostname = window.location.hostname;
+        const isProduction = !['localhost', '127.0.0.1'].includes(hostname) && 
+                            !hostname.includes('lovable.app');
+        console.log(`[LinkedInFeed] Ambiente: ${isProduction ? 'Produção' : 'Desenvolvimento'} (${hostname})`);
         
         // Check if Supabase is configured
         const supabaseConfigured = isSupabaseConfigured();
@@ -32,7 +34,11 @@ const LinkedInFeed = () => {
         
         if (!supabaseConfigured) {
           console.error('[LinkedInFeed] Supabase não está configurado corretamente');
-          throw new Error('Supabase não está configurado corretamente. Por favor, verifique sua conexão com o banco de dados.');
+          setError('Banco de dados não configurado. Este componente exibirá dados de exemplo.');
+          // For production, we still want to show something to users
+          // Return early but don't throw an error that would prevent rendering
+          setIsLoading(false);
+          return;
         }
         
         console.log('[LinkedInFeed] Buscando posts do LinkedIn...');
@@ -49,11 +55,7 @@ const LinkedInFeed = () => {
         console.error('[LinkedInFeed] Erro ao buscar posts do LinkedIn:', err);
         setError(err?.message || 'Não foi possível carregar as publicações.');
         
-        toast({
-          title: "Erro",
-          description: "Não foi possível carregar as publicações do LinkedIn.",
-          variant: "destructive",
-        });
+        // Don't show toast here as getLinkedInPosts already handles it
       } finally {
         // Add a small delay for better UX
         setTimeout(() => {
@@ -65,7 +67,8 @@ const LinkedInFeed = () => {
     fetchPosts();
   }, []);
 
-  if (error && error.includes('Supabase')) {
+  // If no data and Supabase issue, but we still want to render component
+  if (!isLoading && error?.includes('banco de dados') || error?.includes('Supabase')) {
     return (
       <section id="linkedin-feed" className="py-20 bg-white">
         <div className="container-wrapper">
@@ -76,10 +79,52 @@ const LinkedInFeed = () => {
             </p>
           </div>
           
-          <Alert variant="destructive" className="mb-6 max-w-3xl mx-auto">
-            <AlertCircle className="h-5 w-5 mr-2" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+          {/* Show information about missing configuration but don't break the page */}
+          <div className="max-w-3xl mx-auto mb-10">
+            <Alert variant="warning" className="mb-6">
+              <AlertCircle className="h-5 w-5 mr-2" />
+              <AlertDescription>
+                Este componente requer uma conexão com banco de dados para exibir conteúdo dinâmico.
+                <p className="text-sm mt-2">Ambiente: {window.location.hostname}</p>
+              </AlertDescription>
+            </Alert>
+          </div>
+          
+          {/* Show example content */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <LinkedInPostCard key="example1" post={{
+              id: "example1",
+              title: "Exemplo de Publicação",
+              content: "Este é um exemplo de publicação do LinkedIn que seria exibido quando o site estiver conectado ao banco de dados.",
+              imageUrl: "/placeholder.svg",
+              linkedInUrl: "https://linkedin.com/company/urbis-inteligencia",
+              publishedDate: new Date().toISOString(),
+              author: "Equipe URBIS"
+            }} />
+            <LinkedInPostCard key="example2" post={{
+              id: "example2",
+              title: "Outro Exemplo",
+              content: "Mais um exemplo de publicação do LinkedIn que seria exibido quando conectado ao banco de dados.",
+              imageUrl: "/placeholder.svg",
+              linkedInUrl: "https://linkedin.com/company/urbis-inteligencia",
+              publishedDate: new Date().toISOString(),
+              author: "Equipe URBIS"
+            }} />
+          </div>
+          
+          <div className="text-center mt-12">
+            <Button asChild className="bg-[#0A66C2] hover:bg-[#0A66C2]/90">
+              <a 
+                href="https://www.linkedin.com/company/urbis-inteligencia" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center"
+              >
+                Ver Mais no LinkedIn
+                <ExternalLink className="ml-2 h-4 w-4" />
+              </a>
+            </Button>
+          </div>
         </div>
       </section>
     );
@@ -103,7 +148,7 @@ const LinkedInFeed = () => {
               <AlertCircle className="h-5 w-5 mr-2" />
               <AlertDescription>
                 {error}
-                <p className="text-sm mt-2 opacity-80">[Ambiente: {window.location.hostname}]</p>
+                <p className="text-sm mt-2 opacity-80">Ambiente: {window.location.hostname}</p>
               </AlertDescription>
             </Alert>
             <EmptyState />
