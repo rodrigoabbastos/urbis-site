@@ -20,8 +20,8 @@ const verifySupabaseConnection = async () => {
       return false;
     }
     
-    // Informações do cliente Supabase
-    console.log('URL Supabase:', supabase.supabaseUrl);
+    // Em vez de tentar acessar a propriedade diretamente, vamos apenas logar o cliente
+    console.log('Cliente Supabase inicializado corretamente');
     
     // Testa a API do Supabase para verificar conectividade básica
     console.log('Testando conectividade com API Supabase...');
