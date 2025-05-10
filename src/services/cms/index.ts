@@ -9,3 +9,7 @@ export * from './linkedInService';
 export * from './database/databaseService';
 export * from './CmsServiceCore';
 export * from './CacheService';
+export * from './content/HeroService';
+export * from './content/AboutService';
+export * from './content/MethodologyService';
+export * from './content/ContactService';
