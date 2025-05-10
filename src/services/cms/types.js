@@ -1,8 +1,9 @@
 
-import { LucideIcon } from 'lucide-react';
-import { LinkedInPost } from '@/components/linkedin/types';
-
 // Types for our CMS content
+// JavaScript version (without TypeScript types)
+
+// These were TypeScript interfaces - converted to comments for reference
+/*
 export interface HeroContent {
   title: string;
   subtitle: string;
@@ -68,3 +69,4 @@ export interface SiteContent {
   contact: ContactInfo;
   linkedInPosts: LinkedInPost[];
 }
+*/

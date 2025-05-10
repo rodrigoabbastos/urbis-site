@@ -1,4 +1,8 @@
 
+// JavaScript version (without TypeScript types)
+
+// This was a TypeScript interface - converted to a comment for reference
+/*
 export interface LinkedInPost {
   id: string;
   text_snippet: string;
@@ -8,3 +12,4 @@ export interface LinkedInPost {
   likes: number;
   comments: number;
 }
+*/
