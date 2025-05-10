@@ -45,7 +45,7 @@ const Navbar = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const scrollToSection = (sectionId: string) => {
+  const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
       // Smooth scroll with animation
@@ -54,7 +54,7 @@ const Navbar = () => {
     }
   };
 
-  const NavLink = ({ href, label }: { href: string; label: string }) => {
+  const NavLink = ({ href, label }) => {
     const sectionId = href.replace('#', '');
     const isActive = activeSection === sectionId;
     
