@@ -5,19 +5,32 @@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 
-// Create a table_exists function for Supabase
-const createTableExistsFunction = async () => {
+// Função melhorada para verificar a conexão com o Supabase
+const verifySupabaseConnection = async () => {
   try {
-    // Check if the database is accessible first
-    const { error: pingError } = await supabase.from('content').select('id').limit(1);
+    console.log('Verificando conexão com Supabase...');
     
-    if (pingError) {
-      console.error('Erro ao conectar ao Supabase:', pingError);
-      if (pingError.message.includes('JWT')) {
+    // Verifica se o cliente está inicializado
+    if (!supabase) {
+      console.error('Cliente Supabase não inicializado');
+      return false;
+    }
+    
+    // Tenta realizar uma consulta simples para verificar a conexão
+    const { data, error } = await supabase.from('content').select('id').limit(1);
+    
+    if (error) {
+      console.error('Erro ao conectar ao Supabase:', error);
+      
+      // Diagnóstico detalhado de erros comuns
+      if (error.message.includes('JWT')) {
         console.error('Erro de autenticação JWT. Verifique suas chaves do Supabase.');
-      } else if (pingError.message.includes('network')) {
+      } else if (error.message.includes('network')) {
         console.error('Erro de conexão de rede com o Supabase.');
+      } else if (error.message.includes('permission denied')) {
+        console.error('Erro de permissão. As políticas de RLS podem estar bloqueando o acesso.');
       }
+      
       return false;
     }
     
@@ -29,8 +42,8 @@ const createTableExistsFunction = async () => {
   }
 };
 
-// Inicializa função de verificação de conexão
-createTableExistsFunction().then((result) => {
+// Inicializa verificação de conexão
+verifySupabaseConnection().then((result) => {
   if (result) {
     console.log('Supabase está configurado e conectado corretamente');
   } else {
