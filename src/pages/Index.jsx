@@ -1,9 +1,8 @@
 
-import React from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Hero from '@/components/sections/Hero.jsx';
-import AboutUs from '@/components/sections/AboutUs';
+import AboutUs from '@/components/sections/AboutUs.jsx';
 import Services from '@/components/sections/Services';
 import Projects from '@/components/sections/Projects';
 import Methodology from '@/components/sections/Methodology';

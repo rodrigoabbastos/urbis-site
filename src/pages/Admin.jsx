@@ -1,11 +1,10 @@
 
-import React from 'react';
 import { useAdminAuth } from '@/context/AdminAuthContext';
 import LoginPage from '@/components/admin/LoginPage';
 import Dashboard from '@/components/admin/Dashboard';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import HeroEditor from '@/components/admin/editors/HeroEditor.jsx';
-import AboutEditor from '@/components/admin/editors/AboutEditor';
+import AboutEditor from '@/components/admin/editors/AboutEditor.jsx';
 import ServicesEditor from '@/components/admin/editors/ServicesEditor';
 import MethodologyEditor from '@/components/admin/editors/MethodologyEditor';
 import ProjectsEditor from '@/components/admin/editors/ProjectsEditor';
