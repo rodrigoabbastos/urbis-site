@@ -36,6 +36,11 @@ RewriteRule ^ index.html [L]
   AddType text/javascript .mjs
   AddType application/javascript .tsx
   AddType application/javascript .ts
+  
+  # Force JavaScript modules to have correct MIME type
+  <FilesMatch "\.(js|mjs|tsx|ts)$">
+    ForceType application/javascript
+  </FilesMatch>
 </IfModule>
 
 # Cache static assets
