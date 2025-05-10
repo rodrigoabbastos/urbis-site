@@ -3,6 +3,17 @@
 RewriteEngine On
 RewriteBase /
 
+# CRITICAL FIX: Set appropriate MIME types for JavaScript files
+<FilesMatch "\.(js|mjs|jsx|ts|tsx)$">
+  ForceType application/javascript
+  Header set Content-Type "application/javascript; charset=utf-8"
+</FilesMatch>
+
+<FilesMatch "\.css$">
+  ForceType text/css
+  Header set Content-Type "text/css; charset=utf-8"
+</FilesMatch>
+
 # If an existing asset or directory is requested, serve it directly
 RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
 RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
@@ -31,25 +42,9 @@ RewriteRule ^ index.html [L]
   <FilesMatch "\.(json|html)$">
     Header set Cache-Control "max-age=600, must-revalidate"
   </FilesMatch>
-  
-  # Set correct MIME types for JavaScript files - CRITICAL FIX
-  <FilesMatch "\.m?jsx?$">
-    ForceType application/javascript
-    Header set Content-Type "application/javascript; charset=utf-8"
-  </FilesMatch>
-  
-  <FilesMatch "\.tsx?$">
-    ForceType application/javascript
-    Header set Content-Type "application/javascript; charset=utf-8"
-  </FilesMatch>
-
-  <FilesMatch "\.css$">
-    ForceType text/css
-    Header set Content-Type "text/css; charset=utf-8"
-  </FilesMatch>
 </IfModule>
 
-# Proper MIME types
+# Proper MIME types (reinforced)
 <IfModule mod_mime.c>
   AddType application/javascript .js
   AddType application/javascript .mjs
