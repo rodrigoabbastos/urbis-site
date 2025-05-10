@@ -1,8 +1,19 @@
 
-# Configurações para site estático em hospedagem compartilhada
+# Configurações para site dinâmico em hospedagem compartilhada
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+  
+  # Redirecionar www para non-www (ou vice-versa, dependendo da preferência)
+  # Descomente a opção que preferir
+  
+  # Opção 1: Redirecionar non-www para www
+  # RewriteCond %{HTTP_HOST} ^urbis\.com\.br [NC]
+  # RewriteRule ^(.*)$ https://www.urbis.com.br/$1 [L,R=301]
+  
+  # Opção 2: Redirecionar www para non-www
+  # RewriteCond %{HTTP_HOST} ^www\.urbis\.com\.br [NC]
+  # RewriteRule ^(.*)$ https://urbis.com.br/$1 [L,R=301]
   
   # Servir arquivos e diretórios existentes diretamente
   RewriteCond %{REQUEST_FILENAME} !-f
@@ -25,9 +36,9 @@
   ExpiresByType text/css "access plus 1 month"
   ExpiresByType application/javascript "access plus 1 month"
   
-  # HTML e dados
-  ExpiresByType text/html "access plus 0 seconds"
-  ExpiresByType application/json "access plus 0 seconds"
+  # HTML e dados dinâmicos com cache reduzido
+  ExpiresByType text/html "access plus 10 minutes"
+  ExpiresByType application/json "access plus 5 minutes"
 </IfModule>
 
 # Definir tipos MIME para arquivos estáticos
@@ -51,4 +62,13 @@
   AddOutputFilterByType DEFLATE application/javascript
   AddOutputFilterByType DEFLATE application/x-javascript
   AddOutputFilterByType DEFLATE application/json
+</IfModule>
+
+# CORS Headers para permitir solicitações de API
+<IfModule mod_headers.c>
+  <FilesMatch "\.(json)$">
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type"
+  </FilesMatch>
 </IfModule>

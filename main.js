@@ -1,11 +1,36 @@
 
-// Código de inicialização para o site estático
+// Código de inicialização para o site dinâmico (sem Node.js)
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('Urbis site estático iniciado com sucesso');
+  console.log('Urbis site dinâmico iniciado com sucesso');
   
-  // Carregar o conteúdo principal quando o DOM estiver pronto
-  const scriptElement = document.createElement('script');
-  scriptElement.src = './dist/assets/index.js';
-  scriptElement.type = 'text/javascript';
-  document.body.appendChild(scriptElement);
+  // Verificar se o site está sendo executado no domínio principal
+  const isMainDomain = window.location.hostname === 'www.urbis.com.br' || 
+                       window.location.hostname === 'urbis.com.br';
+  
+  console.log(`Site rodando em: ${window.location.hostname}`);
+  
+  // Carregar dados dinâmicos se necessário
+  if (typeof window.fetchDynamicContent === 'function') {
+    window.fetchDynamicContent();
+  }
+  
+  // Mostrar mensagem específica dependendo do ambiente
+  if (isMainDomain) {
+    console.log('Site em produção: www.urbis.com.br');
+  } else if (window.location.hostname.includes('lovable.app')) {
+    console.log('Ambiente de desenvolvimento Lovable');
+  } else {
+    console.log('Ambiente local ou de teste');
+  }
 });
+
+// Adicionar hook para atualizações dinâmicas
+window.updateContent = function(section, content) {
+  console.log(`Atualizando conteúdo da seção: ${section}`);
+  const sectionElement = document.getElementById(section);
+  if (sectionElement && content) {
+    sectionElement.innerHTML = content;
+    return true;
+  }
+  return false;
+};
