@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { ExternalLink, AlertCircle } from 'lucide-react';
@@ -27,8 +28,9 @@ const LinkedInFeed = () => {
         
         // First ensure tables exist
         try {
-          // Use type assertion to bypass TypeScript checking for RPC calls
-          await (supabase.rpc('table_exists', { table_name: 'linkedin_posts' }) as any);
+          // Use explicit type casting to bypass TypeScript checking
+          const tableCheck = supabase.rpc('table_exists', { table_name: 'linkedin_posts' } as any);
+          await tableCheck;
         } catch (err) {
           console.error('Error checking table existence:', err);
         }

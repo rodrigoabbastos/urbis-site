@@ -3,19 +3,18 @@ import { supabase } from '@/lib/supabase';
 import { SiteContent } from './types';
 import { defaultContent } from './defaultContent';
 
-// Create a typed helper function to make Supabase calls more consistent
-// This uses 'any' type to bypass TypeScript's strict checking since our database schema
-// isn't properly reflected in the types
+// Create a strongly typed helper function to make Supabase calls more consistent
+// Using type assertions to bypass TypeScript's strict type checking
 const supabaseHelper = {
-  // Generic from function that handles type casting for us
+  // Generic from function with type casting
   from: (table: string) => {
-    // Using 'as any' to bypass TypeScript checking
-    return supabase.from(table as any);
+    // Cast to any to bypass TypeScript errors
+    return (supabase.from as any)(table);
   },
-  // Helper for RPC calls
+  // Helper for RPC calls with type casting
   rpc: (fn: string, params: any) => {
-    // Using 'as any' to bypass TypeScript checking
-    return supabase.rpc(fn as any, params as any);
+    // Cast to any to bypass TypeScript errors
+    return (supabase.rpc as any)(fn, params);
   }
 };
 
