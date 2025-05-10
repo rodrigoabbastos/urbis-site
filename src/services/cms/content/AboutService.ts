@@ -3,12 +3,11 @@ import { toast } from '@/components/ui/use-toast';
 import { AboutContent } from '../types';
 import { BaseService } from '../BaseService';
 import { databaseService } from '../database/databaseService';
-import cmsServiceCore from '../CmsServiceCore';
 
 export class AboutService extends BaseService {
   async updateAbout(about: AboutContent): Promise<void> {
     try {
-      // Buscar conteúdo principal
+      // Buscar conteúdo principal diretamente do banco de dados
       const content = await databaseService.fetchMainContent();
       
       if (content && !('error' in content)) {
@@ -19,9 +18,6 @@ export class AboutService extends BaseService {
         if (!success) {
           throw new Error('Falha ao salvar conteúdo no banco de dados');
         }
-        
-        // Atualiza o cache imediatamente para refletir as mudanças
-        await cmsServiceCore.loadContentToCache();
         
         this.showSuccessToast("Conteúdo da seção Sobre atualizado com sucesso!");
       } else {

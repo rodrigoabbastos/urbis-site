@@ -17,26 +17,25 @@ export class CmsServiceCore extends BaseService {
   async getContent(): Promise<SiteContent> {
     try {
       // Always reload content from database to ensure fresh data
-      await this.loadContentToCache();
-      return this.cacheService.getCache() || defaultContent;
+      console.log('Getting fresh content from database');
+      return await this.loadContentFromDatabase();
     } catch (error) {
-      console.error('Error getting content:', error);
-      return this.cacheService.getCache() || defaultContent;
+      console.error('Error getting content from database:', error);
+      return defaultContent;
     }
   }
   
-  // Método síncrono que retorna o conteúdo em cache ou o conteúdo padrão
+  // Method that returns default content immediately
   getContentSync(): SiteContent {
-    console.log('getContentSync called, cache status:', this.cacheService.hasCache() ? 'has cache' : 'no cache');
-    return this.cacheService.getCache() || defaultContent;
+    console.log('getContentSync called, immediately fetching from database');
+    // Since we can't do async calls in sync method, return default content
+    // The component should use getContent() instead for fresh data
+    return defaultContent;
   }
   
   async saveContent(content: SiteContent): Promise<void> {
     try {
-      // Update cache
-      this.cacheService.setCache(content);
-      
-      // Store main content
+      // Store main content directly to database
       const { hero, about, services, methodology, contact } = content;
       await databaseService.saveMainContent({ hero, about, services, methodology, contact });
       
@@ -48,8 +47,7 @@ export class CmsServiceCore extends BaseService {
       
       await databaseService.saveProjectsInfo(projectsContent);
       
-      // Reload cache after saving to ensure consistency
-      await this.loadContentToCache();
+      this.showSuccessToast("Conteúdo salvo com sucesso!");
     } catch (error) {
       console.error('Error saving content:', error);
       toast({
@@ -60,9 +58,10 @@ export class CmsServiceCore extends BaseService {
     }
   }
   
-  async loadContentToCache(): Promise<void> {
+  // New method that directly loads from database
+  private async loadContentFromDatabase(): Promise<SiteContent> {
     try {
-      console.log('Loading fresh content from database to cache...');
+      console.log('Loading fresh content directly from database...');
       const content: SiteContent = { ...defaultContent };
       
       // Get main content
@@ -108,13 +107,22 @@ export class CmsServiceCore extends BaseService {
         console.log('No LinkedIn posts found in database, using default content');
       }
       
-      // Set the updated content to cache
-      this.cacheService.setCache(content);
-      console.log('Content cache updated successfully with fresh data');
+      console.log('Content loaded successfully from database');
+      return content;
     } catch (error) {
-      console.error('Error loading content from Supabase:', error);
-      // Even if we have an error, set the cache to the default content
-      this.cacheService.setCache(defaultContent);
+      console.error('Error loading content from database:', error);
+      return defaultContent;
+    }
+  }
+  
+  // Legacy method kept for compatibility, but now just forwards to loadContentFromDatabase
+  async loadContentToCache(): Promise<void> {
+    try {
+      // Load content directly, but don't actually cache it
+      await this.loadContentFromDatabase();
+      console.log('Content loaded to cache (disabled)');
+    } catch (error) {
+      console.error('Error in loadContentToCache:', error);
     }
   }
   
@@ -123,9 +131,6 @@ export class CmsServiceCore extends BaseService {
       const success = await databaseService.resetToDefault(defaultContent);
       
       if (success) {
-        // Update cache
-        this.cacheService.setCache(defaultContent);
-        
         toast({
           title: "Conteúdo Resetado",
           description: "Todo o conteúdo foi restaurado para os valores padrão.",

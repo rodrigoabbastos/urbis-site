@@ -5,15 +5,19 @@ export class CacheService {
   private contentCache: SiteContent | null = null;
   
   hasCache(): boolean {
-    return this.contentCache !== null;
+    // Always return false to force reading from Supabase
+    return false;
   }
   
   getCache(): SiteContent | null {
-    return this.contentCache;
+    // Always return null to force reading from Supabase
+    return null;
   }
   
   setCache(content: SiteContent): void {
-    this.contentCache = content;
+    // Don't actually cache anything
+    // This effectively disables caching
+    this.contentCache = null;
   }
   
   clearCache(): void {
