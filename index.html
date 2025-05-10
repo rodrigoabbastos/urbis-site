@@ -18,7 +18,7 @@
     <meta name="twitter:image" content="https://urbis.com.br/logo.png" />
     
     <!-- CSP meta tag para segurança -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.gpteng.co 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;">
     
     <!-- Configuração simples para carregamento de assets -->
     <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
@@ -26,6 +26,7 @@
 
   <body>
     <div id="root"></div>
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>
