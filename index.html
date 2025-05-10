@@ -22,11 +22,14 @@
     
     <!-- CSP meta tag for additional security -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.gpteng.co 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;">
+    
+    <!-- Ajuste para garantir que os assets sejam carregados corretamente em produção -->
+    <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
   </head>
 
   <body>
     <div id="root"></div>
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="./main.js"></script>
+    <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>
