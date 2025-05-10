@@ -8,7 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
-import { AdminAuthProvider } from "./context/AdminAuthContext";
+import { AdminAuthProvider } from "./context/AdminAuthContext.jsx";
 import Admin from "./pages/Admin.jsx";
 
 const queryClient = new QueryClient();
