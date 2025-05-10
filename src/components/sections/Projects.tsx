@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { cmsService } from '@/services/cmsService';
+import { supabase } from '@/lib/supabase';
 
 interface Project {
   id: string;
@@ -24,12 +24,34 @@ const Projects = () => {
     async function loadContent() {
       try {
         setIsLoading(true);
-        const content = await cmsService.getContent();
-        setProjectsData(content.projects.items);
-        setProjectsTitle(content.projects.title);
-        setProjectsDescription(content.projects.description);
+        
+        // Fetch projects info
+        const { data: infoData, error: infoError } = await supabase
+          .from('content')
+          .select('*')
+          .eq('id', 'projects')
+          .single();
+          
+        if (infoError) {
+          console.error('Error fetching projects info:', infoError);
+        } else if (infoData) {
+          setProjectsTitle(infoData.title || 'Nossos Projetos');
+          setProjectsDescription(infoData.description || 'Confira alguns dos nossos projetos recentes');
+        }
+        
+        // Fetch projects
+        const { data: projectsData, error: projectsError } = await supabase
+          .from('projects')
+          .select('*');
+          
+        if (projectsError) {
+          console.error('Error fetching projects:', projectsError);
+        } else {
+          console.log('Projects loaded from Supabase:', projectsData?.length || 0);
+          setProjectsData(projectsData || []);
+        }
       } catch (error) {
-        console.error('Error loading projects:', error);
+        console.error('Exception loading projects:', error);
       } finally {
         setIsLoading(false);
       }

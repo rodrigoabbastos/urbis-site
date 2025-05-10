@@ -1,10 +1,12 @@
 
 import { LinkedInPost } from './types';
-import { cmsService } from '@/services/cms';
+import { linkedInService } from '@/services/cms/linkedInService';
 
 export const getLinkedInPosts = async (): Promise<LinkedInPost[]> => {
   try {
-    const posts = await cmsService.getLinkedInPosts();
+    // Use the linkedInService directly
+    const posts = await linkedInService.getLinkedInPosts();
+    console.log('LinkedIn posts fetched:', posts);
     return posts;
   } catch (error) {
     console.error('Erro ao buscar posts do LinkedIn:', error);

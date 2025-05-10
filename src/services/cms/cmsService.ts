@@ -75,18 +75,25 @@ class CMSService {
       // Get projects
       const projects = await databaseService.fetchProjects();
       
-      if (projects) {
-        content.projects.items = projects || content.projects.items;
+      if (projects && projects.length > 0) {
+        content.projects.items = projects;
+        console.log('Projects loaded:', projects.length);
+      } else {
+        console.log('No projects found in database, using default content');
       }
       
       // Get LinkedIn posts
       const linkedInPosts = await databaseService.fetchLinkedInPosts();
       
-      if (linkedInPosts) {
-        content.linkedInPosts = linkedInPosts || content.linkedInPosts;
+      if (linkedInPosts && linkedInPosts.length > 0) {
+        content.linkedInPosts = linkedInPosts;
+        console.log('LinkedIn posts loaded:', linkedInPosts.length);
+      } else {
+        console.log('No LinkedIn posts found in database, using default content');
       }
       
       this.contentCache = content;
+      console.log('Content cache updated successfully');
     } catch (error) {
       console.error('Error loading content from Supabase:', error);
       // Even if we have an error, set the cache to the default content
@@ -96,13 +103,17 @@ class CMSService {
   
   async getContent(): Promise<SiteContent> {
     if (!this.contentCache) {
+      console.log('Content cache not initialized, loading from database');
       await this.loadContentToCache();
+    } else {
+      console.log('Using existing content cache');
     }
     return this.contentCache || defaultContent;
   }
   
   // Método síncrono que retorna o conteúdo em cache ou o conteúdo padrão
   getContentSync(): SiteContent {
+    console.log('getContentSync called, cache status:', this.contentCache ? 'has cache' : 'no cache');
     return this.contentCache || defaultContent;
   }
   
@@ -358,7 +369,13 @@ class CMSService {
   }
   
   async getLinkedInPosts(): Promise<LinkedInPost[]> {
-    return linkedInService.getLinkedInPosts();
+    try {
+      console.log('Getting LinkedIn posts using linkedInService');
+      return await linkedInService.getLinkedInPosts();
+    } catch (error) {
+      console.error('Error getting LinkedIn posts:', error);
+      return [];
+    }
   }
 }
 

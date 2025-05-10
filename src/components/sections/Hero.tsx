@@ -1,9 +1,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, AlertCircle } from 'lucide-react';
-import { cmsService, HeroContent } from '@/services/cmsService';
+import { supabase } from '@/lib/supabase';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { HeroContent } from '@/services/cms/types';
 
 const Hero = () => {
   const [heroContent, setHeroContent] = useState<HeroContent>({
@@ -19,13 +20,31 @@ const Hero = () => {
   useEffect(() => {
     const loadContent = async () => {
       try {
+        setIsLoading(true);
         // Check if Supabase is configured
         if (!isSupabaseConfigured()) {
           throw new Error('Supabase configuration is missing. Please make sure your project is connected to Supabase.');
         }
         
-        const content = await cmsService.getContent();
-        setHeroContent(content.hero);
+        // Fetch hero content directly from Supabase
+        const { data, error } = await supabase
+          .from('content')
+          .select('hero')
+          .eq('id', 'main')
+          .single();
+          
+        if (error) {
+          console.error('Error fetching hero content:', error);
+          throw new Error('Erro ao buscar conteúdo do Hero: ' + error.message);
+        }
+        
+        if (data && data.hero) {
+          console.log('Hero content loaded:', data.hero);
+          setHeroContent(data.hero);
+        } else {
+          console.warn('No hero content found');
+        }
+        
         setError(null);
       } catch (error) {
         console.error('Error loading hero content:', error);

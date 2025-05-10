@@ -1,42 +1,47 @@
 
-import { LinkedInPost } from '@/components/linkedin/types';
 import { toast } from '@/components/ui/use-toast';
+import { supabase } from '@/lib/supabase';
+import { LinkedInPost } from '@/components/linkedin/types';
 import { databaseService } from './databaseService';
 
-export class LinkedInService {
+class LinkedInService {
   async getLinkedInPosts(): Promise<LinkedInPost[]> {
     try {
-      // Ensure tables exist before fetching
-      await databaseService.createTablesIfNotExist();
+      // Directly query the linkedin_posts table
+      const { data, error } = await supabase
+        .from('linkedin_posts')
+        .select('*')
+        .order('date', { ascending: false });
       
-      const posts = await databaseService.fetchLinkedInPosts();
-      return posts || [];
+      if (error) {
+        console.error('Error fetching LinkedIn posts:', error);
+        return [];
+      }
+      
+      return data || [];
     } catch (error) {
-      console.error('Error getting LinkedIn posts:', error);
+      console.error('Exception fetching LinkedIn posts:', error);
       return [];
     }
   }
 
   async updateLinkedInPost(post: LinkedInPost): Promise<void> {
     try {
-      // Ensure tables exist before saving
-      await databaseService.createTablesIfNotExist();
-      
       const success = await databaseService.saveLinkedInPost(post);
       
       if (success) {
         toast({
           title: "Sucesso",
-          description: "Publicação do LinkedIn atualizada com sucesso!",
+          description: "Post do LinkedIn atualizado com sucesso!",
         });
       } else {
-        throw new Error('Falha ao salvar publicação');
+        throw new Error('Failed to update LinkedIn post');
       }
     } catch (error) {
       console.error('Error updating LinkedIn post:', error);
       toast({
         title: "Erro",
-        description: "Não foi possível atualizar a publicação do LinkedIn.",
+        description: "Não foi possível atualizar o post do LinkedIn.",
         variant: "destructive",
       });
     }
@@ -44,24 +49,21 @@ export class LinkedInService {
 
   async deleteLinkedInPost(id: string): Promise<void> {
     try {
-      // Ensure tables exist before deleting
-      await databaseService.createTablesIfNotExist();
-      
       const success = await databaseService.deleteLinkedInPost(id);
       
       if (success) {
         toast({
           title: "Sucesso",
-          description: "Publicação do LinkedIn excluída com sucesso!",
+          description: "Post do LinkedIn excluído com sucesso!",
         });
       } else {
-        throw new Error('Falha ao excluir publicação');
+        throw new Error('Failed to delete LinkedIn post');
       }
     } catch (error) {
       console.error('Error deleting LinkedIn post:', error);
       toast({
         title: "Erro",
-        description: "Não foi possível excluir a publicação do LinkedIn.",
+        description: "Não foi possível excluir o post do LinkedIn.",
         variant: "destructive",
       });
     }
