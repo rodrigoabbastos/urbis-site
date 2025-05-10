@@ -2,7 +2,7 @@
 import { toast } from '@/components/ui/use-toast';
 import { SiteContent, HeroContent, AboutContent, Service, MethodologyStep, ContactInfo, Project } from './types';
 import { defaultContent } from './defaultContent';
-import { databaseService } from './databaseService';
+import { databaseService } from './database/databaseService';
 import { linkedInService } from './linkedInService';
 import { projectService } from './projectService';
 import { contentService } from './ContentService';

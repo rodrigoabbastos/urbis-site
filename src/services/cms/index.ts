@@ -6,4 +6,5 @@ export * from './BaseService';
 export * from './types';
 export * from './projectService';
 export * from './linkedInService';
-export * from './databaseService';
+export * from './database/databaseService';
+

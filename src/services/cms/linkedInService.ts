@@ -2,7 +2,7 @@
 import { toast } from '@/components/ui/use-toast';
 import { supabase } from '@/lib/supabase';
 import { LinkedInPost } from '@/components/linkedin/types';
-import { databaseService } from './databaseService';
+import { databaseService } from './database/databaseService';
 import { BaseService } from './BaseService';
 
 class LinkedInService extends BaseService {

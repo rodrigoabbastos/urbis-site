@@ -2,7 +2,7 @@
 import { toast } from '@/components/ui/use-toast';
 import { HeroContent, AboutContent, ContactInfo, MethodologyStep } from './types';
 import { BaseService } from './BaseService';
-import { databaseService } from './databaseService';
+import { databaseService } from './database/databaseService';
 
 export class ContentService extends BaseService {
   async updateHero(hero: HeroContent): Promise<void> {

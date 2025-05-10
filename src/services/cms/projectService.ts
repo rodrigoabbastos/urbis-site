@@ -1,7 +1,7 @@
 
 import { Project } from './types';
 import { toast } from '@/components/ui/use-toast';
-import { databaseService } from './databaseService';
+import { databaseService } from './database/databaseService';
 
 export class ProjectService {
   async updateProjects(projects: { title: string; description: string }): Promise<void> {

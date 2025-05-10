@@ -2,7 +2,7 @@
 import { toast } from '@/components/ui/use-toast';
 import { Service } from './types';
 import { BaseService } from './BaseService';
-import { databaseService } from './databaseService';
+import { databaseService } from './database/databaseService';
 
 export class ServiceManagementService extends BaseService {
   async updateService(service: Service): Promise<void> {
