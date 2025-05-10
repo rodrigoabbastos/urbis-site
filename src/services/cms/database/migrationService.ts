@@ -1,26 +1,14 @@
 
 import { SiteContent } from '../types';
 import { toast } from '@/components/ui/use-toast';
-import { ContentDatabaseService } from './contentService';
-import { ProjectsDatabaseService } from './projectsService';
-import { LinkedInDatabaseService } from './linkedInService';
 import { supabaseHelper } from './supabaseHelper';
+import { databaseService } from './index';
 
 export class MigrationService {
-  private contentService: ContentDatabaseService;
-  private projectsService: ProjectsDatabaseService;
-  private linkedInService: LinkedInDatabaseService;
-  
-  constructor() {
-    this.contentService = new ContentDatabaseService();
-    this.projectsService = new ProjectsDatabaseService();
-    this.linkedInService = new LinkedInDatabaseService();
-  }
-  
   async migrateFromLocalStorage(localContent: SiteContent, storageKey: string) {
     try {
       // Check if we have content in Supabase
-      const existingContent = await this.contentService.fetchMainContent();
+      const existingContent = await databaseService.fetchMainContent();
         
       // If no content exists in Supabase, insert from localStorage
       if (!existingContent) {
@@ -28,10 +16,10 @@ export class MigrationService {
         
         // Store main content
         const { hero, about, services, methodology, contact } = localContent;
-        await this.contentService.saveMainContent({ hero, about, services, methodology, contact });
+        await databaseService.saveMainContent({ hero, about, services, methodology, contact });
         
         // Store projects info
-        await this.projectsService.saveProjectsInfo({
+        await databaseService.saveProjectsInfo({
           title: localContent.projects.title,
           description: localContent.projects.description
         });
@@ -40,7 +28,7 @@ export class MigrationService {
         if (localContent.projects.items.length > 0) {
           console.log(`Migrating ${localContent.projects.items.length} projects from localStorage`);
           for (const project of localContent.projects.items) {
-            await this.projectsService.saveProject(project);
+            await databaseService.saveProject(project);
           }
         }
         
@@ -48,7 +36,7 @@ export class MigrationService {
         if (localContent.linkedInPosts && localContent.linkedInPosts.length > 0) {
           console.log(`Migrating ${localContent.linkedInPosts.length} LinkedIn posts from localStorage`);
           for (const post of localContent.linkedInPosts) {
-            await this.linkedInService.saveLinkedInPost(post);
+            await databaseService.saveLinkedInPost(post);
           }
         }
         
@@ -80,10 +68,10 @@ export class MigrationService {
       
       // Reset main content
       const { hero, about, services, methodology, contact } = defaultData;
-      await this.contentService.saveMainContent({ hero, about, services, methodology, contact });
+      await databaseService.saveMainContent({ hero, about, services, methodology, contact });
       
       // Reset projects info
-      await this.projectsService.saveProjectsInfo({
+      await databaseService.saveProjectsInfo({
         title: defaultData.projects.title,
         description: defaultData.projects.description
       });
@@ -95,7 +83,7 @@ export class MigrationService {
       
       // Then insert default projects
       for (const project of defaultData.projects.items) {
-        await this.projectsService.saveProject(project);
+        await databaseService.saveProject(project);
       }
       
       // Reset LinkedIn posts - first delete all existing posts
@@ -106,7 +94,7 @@ export class MigrationService {
       // Then insert default posts
       if (defaultData.linkedInPosts && defaultData.linkedInPosts.length > 0) {
         for (const post of defaultData.linkedInPosts) {
-          await this.linkedInService.saveLinkedInPost(post);
+          await databaseService.saveLinkedInPost(post);
         }
       }
       
