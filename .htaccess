@@ -19,10 +19,6 @@ RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
 RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
 RewriteRule ^ - [L]
 
-# Serve assets from the correct locations
-RewriteRule ^assets/(.*)$ /dist/assets/$1 [L]
-RewriteRule ^dist/assets/(.*)$ /dist/assets/$1 [L]
-
 # If the requested resource doesn't exist, serve index.html
 RewriteRule ^ index.html [L]
 
@@ -33,21 +29,6 @@ RewriteRule ^ index.html [L]
   Header set X-Frame-Options "SAMEORIGIN"
   Header set X-XSS-Protection "1; mode=block"
   
-  # Add CORS headers to allow API calls
-  Header set Access-Control-Allow-Origin "*"
-  Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
-  Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  
-  # Reduced cache for dynamic content
-  <FilesMatch "\.(json|html)$">
-    Header set Cache-Control "max-age=600, must-revalidate"
-  </FilesMatch>
-</IfModule>
-
-# Proper MIME types (reinforced)
-<IfModule mod_mime.c>
-  AddType application/javascript .js
-  AddType application/javascript .jsx
-  AddType text/css .css
-  AddType image/svg+xml .svg
+  # Proper MIME types (reinforced)
+  Header set Content-Type "text/html; charset=UTF-8"
 </IfModule>

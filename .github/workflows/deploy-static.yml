@@ -1,3 +1,4 @@
+
 name: Build Static ZIP for Hostinger
 
 on:
@@ -10,20 +11,28 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Clean Node/Vite files
+      - name: Create placeholder package.json for Lovable
         run: |
-          rm -rf node_modules/ package.json package-lock.json yarn.lock
-          rm -f vite.config.* tsconfig.*
+          echo '{
+            "name": "urbis-static-site",
+            "version": "1.0.0",
+            "private": true,
+            "type": "module",
+            "dependencies": {
+              "react": "^18.2.0",
+              "react-dom": "^18.2.0",
+              "react-router-dom": "^6.11.2"
+            }
+          }' > package.json
 
-      - name: Copy static files
+      - name: Create placeholders for dist folder
         run: |
-          mkdir deploy
-          cp -R ./* deploy/
+          mkdir -p dist/assets
+          touch dist/assets/.gitkeep
 
-      - name: Zip deploy folder
+      - name: Zip for deployment
         run: |
-          cd deploy
-          zip -r ../urbis-site-deploy.zip .
+          zip -r urbis-site-deploy.zip index.html css/ js/ assets/ .htaccess main.js
 
       - name: Upload ZIP artifact
         uses: actions/upload-artifact@v3
