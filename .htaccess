@@ -1,74 +1,26 @@
 
-# Enable rewriting
-RewriteEngine On
-RewriteBase /
-
-# If an existing asset or directory is requested, serve it directly
-RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
-RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
-RewriteRule ^ - [L]
-
-# Serve assets from the correct locations
-RewriteRule ^assets/(.*)$ /assets/$1 [L]
-
-# If the requested resource doesn't exist, serve index.html
-RewriteRule ^ index.html [L]
-
-# Security headers
-<IfModule mod_headers.c>
-  # Enhanced security headers
-  Header set X-Content-Type-Options "nosniff"
-  Header set X-Frame-Options "SAMEORIGIN"
-  Header set X-XSS-Protection "1; mode=block"
-  Header set Content-Security-Policy "default-src 'self'; script-src 'self' https://cdn.gpteng.co 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;"
+# Configuração básica para Single Page Applications
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
   
-  # Add CORS headers to allow API calls
-  Header set Access-Control-Allow-Origin "*"
-  Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
-  Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  # Serve arquivos e diretórios existentes diretamente
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  
+  # Encaminhar todas as outras solicitações para index.html
+  RewriteRule ^ index.html [L]
 </IfModule>
 
-# Block access to sensitive files
-<FilesMatch "(^#.*#|\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|sw[op])|~)$">
-  Order allow,deny
-  Deny from all
-  Satisfy All
-</FilesMatch>
-
-# Set proper MIME types for JavaScript modules
+# Definir tipos MIME para arquivos JavaScript
 <IfModule mod_mime.c>
   AddType application/javascript .js
-  
-  # Force JavaScript modules to have correct MIME type
-  <FilesMatch "\.js$">
-    ForceType application/javascript
+  AddType text/css .css
+</IfModule>
+
+# Permitir acesso cross-origin a fontes
+<IfModule mod_headers.c>
+  <FilesMatch "\.(ttf|otf|eot|woff|woff2)$">
+    Header set Access-Control-Allow-Origin "*"
   </FilesMatch>
 </IfModule>
-
-# Block direct access to any PHP files
-<FilesMatch "\.php$">
-  # Only allow PHP files that exist directly in the root
-  RewriteCond %{REQUEST_URI} !^/index\.php$
-  RewriteCond %{REQUEST_URI} \.php$
-  RewriteRule .* - [F]
-</FilesMatch>
-
-# Cache static assets
-<IfModule mod_expires.c>
-  ExpiresActive On
-  ExpiresByType image/jpg "access plus 1 month"
-  ExpiresByType image/jpeg "access plus 1 month"
-  ExpiresByType image/gif "access plus 1 month"
-  ExpiresByType image/png "access plus 1 month"
-  ExpiresByType image/svg+xml "access plus 1 month"
-  ExpiresByType text/css "access plus 1 month"
-  ExpiresByType application/javascript "access plus 1 month"
-  ExpiresDefault "access plus 2 days"
-</IfModule>
-
-# Handle errors
-ErrorDocument 404 /index.html
-ErrorDocument 500 /index.html
-
-# Allow index.html to be loaded directly
-DirectoryIndex index.html
