@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { X, Plus, Loader2 } from 'lucide-react';
+import { X, Plus, Loader2, RefreshCw } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -25,27 +25,28 @@ const AboutEditor = () => {
   const [isSaving, setIsSaving] = useState(false);
   const navigate = useNavigate();
   
-  useEffect(() => {
-    const loadContent = async () => {
-      try {
-        setIsLoading(true);
-        const content = await cmsService.getContent();
-        if (content.about) {
-          console.log('Loaded about content:', content.about);
-          setFormData(content.about);
-        }
-      } catch (error) {
-        console.error('Error loading about content:', error);
-        toast({
-          title: "Erro",
-          description: "Não foi possível carregar o conteúdo da seção Sobre.",
-          variant: "destructive"
-        });
-      } finally {
-        setIsLoading(false);
+  const loadContent = async () => {
+    try {
+      setIsLoading(true);
+      // Force fresh content load from database
+      const content = await cmsService.getContent();
+      if (content.about) {
+        console.log('Loaded about content:', content.about);
+        setFormData(content.about);
       }
-    };
-    
+    } catch (error) {
+      console.error('Error loading about content:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar o conteúdo da seção Sobre.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadContent();
   }, []);
   
@@ -104,9 +105,9 @@ const AboutEditor = () => {
         description: "Conteúdo da seção Sobre atualizado com sucesso!",
       });
       
-      // Reload the page to see changes or navigate to preview
+      // Navigate to preview after a short delay
       setTimeout(() => {
-        navigate('/admin');
+        navigate('/');
       }, 1500);
     } catch (error) {
       console.error('Error saving about content:', error);
@@ -133,6 +134,19 @@ const AboutEditor = () => {
   
   return (
     <AdminLayout title="Sobre a URBIS">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Editar seção "Quem Somos"</h2>
+        <Button 
+          variant="outline" 
+          onClick={loadContent} 
+          className="flex items-center gap-2"
+          disabled={isLoading}
+        >
+          <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          Recarregar conteúdo
+        </Button>
+      </div>
+      
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="title">Título da seção</Label>

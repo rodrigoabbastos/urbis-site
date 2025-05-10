@@ -12,7 +12,9 @@ const AboutUs = () => {
     const loadContent = async () => {
       try {
         setIsLoading(true);
+        // Always fetch fresh content from the database
         const content = await cmsService.getContent();
+        console.log('AboutUs - Loaded content:', content.about);
         setAboutContent(content.about);
       } catch (error) {
         console.error('Error loading about content:', error);
@@ -24,7 +26,7 @@ const AboutUs = () => {
     loadContent();
   }, []);
   
-  // Use fallback content while loading
+  // Use fallback content while loading or if content is missing
   const features = aboutContent?.features || [
     "Inteligência técnica e visão estratégica",
     "Expertise em urbanismo e meio ambiente",

@@ -7,6 +7,7 @@ export async function fetchMainContent(): Promise<any | null> {
     // Ensure tables exist before fetching
     await createTablesIfNotExist();
     
+    console.log('Fetching main content from database...');
     const { data, error } = await supabaseHelper.from('content')
       .select('*')
       .eq('id', 'main')
@@ -17,6 +18,7 @@ export async function fetchMainContent(): Promise<any | null> {
       return null;
     }
     
+    console.log('Main content fetched successfully:', data);
     return data;
   } catch (error) {
     console.error('Error fetching main content:', error);
@@ -57,13 +59,19 @@ export async function saveMainContent(content: {
     // Ensure tables exist before saving
     await createTablesIfNotExist();
     
+    console.log('Saving main content to database:', content);
     const { error } = await supabaseHelper.from('content')
       .upsert({ 
         id: 'main',
-        ...content
+        ...content,
+        updated_at: new Date()
       } as any);
     
-    if (error) throw error;
+    if (error) {
+      console.error('Error in saveMainContent:', error);
+      throw error;
+    }
+    console.log('Main content saved successfully');
     return true;
   } catch (error) {
     console.error('Error saving main content:', error);
@@ -79,7 +87,8 @@ export async function saveProjectsInfo(projectsInfo: { title: string; descriptio
     const { error } = await supabaseHelper.from('content')
       .upsert({ 
         id: 'projects',
-        ...projectsInfo
+        ...projectsInfo,
+        updated_at: new Date()
       } as any);
     
     if (error) throw error;

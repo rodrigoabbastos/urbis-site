@@ -15,13 +15,14 @@ export class CmsServiceCore extends BaseService {
   }
 
   async getContent(): Promise<SiteContent> {
-    if (!this.cacheService.hasCache()) {
-      console.log('Content cache not initialized, loading from database');
+    try {
+      // Always reload content from database to ensure fresh data
       await this.loadContentToCache();
-    } else {
-      console.log('Using existing content cache');
+      return this.cacheService.getCache() || defaultContent;
+    } catch (error) {
+      console.error('Error getting content:', error);
+      return this.cacheService.getCache() || defaultContent;
     }
-    return this.cacheService.getCache() || defaultContent;
   }
   
   // Método síncrono que retorna o conteúdo em cache ou o conteúdo padrão
@@ -47,7 +48,7 @@ export class CmsServiceCore extends BaseService {
       
       await databaseService.saveProjectsInfo(projectsContent);
       
-      // Reload cache after saving
+      // Reload cache after saving to ensure consistency
       await this.loadContentToCache();
     } catch (error) {
       console.error('Error saving content:', error);
@@ -61,7 +62,7 @@ export class CmsServiceCore extends BaseService {
   
   async loadContentToCache(): Promise<void> {
     try {
-      console.log('Loading content from database to cache...');
+      console.log('Loading fresh content from database to cache...');
       const content: SiteContent = { ...defaultContent };
       
       // Get main content
@@ -75,6 +76,8 @@ export class CmsServiceCore extends BaseService {
         if (mainContent.services) content.services = mainContent.services as SiteContent['services'];
         if (mainContent.methodology) content.methodology = mainContent.methodology as SiteContent['methodology'];
         if (mainContent.contact) content.contact = mainContent.contact as SiteContent['contact'];
+      } else {
+        console.log('No main content found in database, using default');
       }
       
       // Get projects info
@@ -105,8 +108,9 @@ export class CmsServiceCore extends BaseService {
         console.log('No LinkedIn posts found in database, using default content');
       }
       
+      // Set the updated content to cache
       this.cacheService.setCache(content);
-      console.log('Content cache updated successfully');
+      console.log('Content cache updated successfully with fresh data');
     } catch (error) {
       console.error('Error loading content from Supabase:', error);
       // Even if we have an error, set the cache to the default content
