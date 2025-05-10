@@ -8,7 +8,7 @@ export class ContentService extends BaseService {
   async updateHero(hero: HeroContent): Promise<void> {
     try {
       const content = await databaseService.fetchMainContent();
-      if (content) {
+      if (content && !('error' in content)) {
         content.hero = hero;
         await databaseService.saveMainContent(content);
       }
@@ -22,7 +22,7 @@ export class ContentService extends BaseService {
   async updateAbout(about: AboutContent): Promise<void> {
     try {
       const content = await databaseService.fetchMainContent();
-      if (content) {
+      if (content && !('error' in content)) {
         content.about = about;
         await databaseService.saveMainContent(content);
       }
@@ -36,7 +36,7 @@ export class ContentService extends BaseService {
   async updateMethodology(methodology: { title: string; description: string; steps: MethodologyStep[] }): Promise<void> {
     try {
       const content = await databaseService.fetchMainContent();
-      if (content) {
+      if (content && !('error' in content)) {
         content.methodology = methodology;
         await databaseService.saveMainContent(content);
       }
@@ -50,7 +50,7 @@ export class ContentService extends BaseService {
   async updateMethodologyStep(step: MethodologyStep): Promise<void> {
     try {
       const content = await databaseService.fetchMainContent();
-      if (content && content.methodology) {
+      if (content && !('error' in content) && content.methodology) {
         const steps = content.methodology.steps || [];
         const index = steps.findIndex(s => s.id === step.id);
         
@@ -73,7 +73,7 @@ export class ContentService extends BaseService {
   async deleteMethodologyStep(id: string): Promise<void> {
     try {
       const content = await databaseService.fetchMainContent();
-      if (content && content.methodology && content.methodology.steps) {
+      if (content && !('error' in content) && content.methodology && content.methodology.steps) {
         content.methodology.steps = content.methodology.steps.filter(s => s.id !== id);
         await databaseService.saveMainContent(content);
       }
@@ -87,7 +87,7 @@ export class ContentService extends BaseService {
   async updateContactInfo(contact: ContactInfo): Promise<void> {
     try {
       const content = await databaseService.fetchMainContent();
-      if (content) {
+      if (content && !('error' in content)) {
         content.contact = contact;
         await databaseService.saveMainContent(content);
       }
