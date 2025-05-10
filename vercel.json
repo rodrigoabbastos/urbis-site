@@ -16,25 +16,19 @@
       ]
     },
     {
-      "source": "/(.*)\\.js",
+      "source": "/(.*)\\.(js|mjs)",
       "headers": [
         { "key": "Content-Type", "value": "application/javascript; charset=utf-8" }
       ]
     },
     {
-      "source": "/(.*)\\.tsx",
+      "source": "/(.*)\\.(tsx|ts)",
       "headers": [
         { "key": "Content-Type", "value": "application/javascript; charset=utf-8" }
       ]
     },
     {
-      "source": "/(.*)\\.ts",
-      "headers": [
-        { "key": "Content-Type", "value": "application/javascript; charset=utf-8" }
-      ]
-    },
-    {
-      "source": "/(.*)\\.css",
+      "source": "/(.*)\\.(css)",
       "headers": [
         { "key": "Content-Type", "value": "text/css; charset=utf-8" }
       ]

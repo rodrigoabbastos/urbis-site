@@ -10,3 +10,6 @@ if (window.location.hostname !== 'localhost' &&
     window.location.protocol !== 'https:') {
   console.warn('Possible insecure access detected. The application should run via HTTPS in production.');
 }
+
+// Export empty object to make this a valid module
+export {};

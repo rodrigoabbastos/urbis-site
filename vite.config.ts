@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    extensions: ['.js', '.jsx', '.ts', '.tsx']
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs']
   },
   optimizeDeps: {
     include: ['react', 'react-dom'],

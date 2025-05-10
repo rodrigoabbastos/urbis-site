@@ -33,8 +33,14 @@ RewriteRule ^ index.html [L]
   </FilesMatch>
   
   # Definir MIME type explícito para arquivos JavaScript modulares
-  <FilesMatch "\.(mjs|ts|tsx)$">
+  <FilesMatch "\.(mjs|ts|tsx|jsx?|js)$">
     ForceType application/javascript
+    Header set Content-Type "application/javascript; charset=utf-8"
+  </FilesMatch>
+
+  <FilesMatch "\.(css)$">
+    ForceType text/css
+    Header set Content-Type "text/css; charset=utf-8"
   </FilesMatch>
 </IfModule>
 
@@ -42,6 +48,7 @@ RewriteRule ^ index.html [L]
 <IfModule mod_mime.c>
   AddType application/javascript .js
   AddType application/javascript .mjs
+  AddType application/javascript .jsx
   AddType application/javascript .ts
   AddType application/javascript .tsx
   AddType text/css .css

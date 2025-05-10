@@ -17,7 +17,7 @@
     <meta name="twitter:site" content="@urbis" />
     <meta name="twitter:image" content="https://urbis.com.br/logo.png" />
     
-    <!-- CSP meta tag atualizada para permitir Google Fonts e carregamento de scripts -->
+    <!-- Updated CSP to allow Google Fonts and proper script loading -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.gpteng.co 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https: wss:;">
     
     <!-- Configuração para carregamento de assets -->
@@ -31,9 +31,9 @@
     <div id="root"></div>
     <!-- Script para funcionalidades do Lovable -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <!-- Script principal da aplicação -->
+    <!-- Script principal da aplicação - modificado para usar path relativo -->
     <script type="module" src="/src/main.tsx"></script>
-    <!-- Script de inicialização para funcionalidades dinâmicas -->
-    <script type="module" src="./main.js"></script>
+    <!-- Script de inicialização para funcionalidades dinâmicas - adicionado type="module" -->
+    <script type="module" src="/main.js"></script>
   </body>
 </html>

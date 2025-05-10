@@ -39,4 +39,4 @@ window.updateContent = function(section, content) {
 };
 
 // Exportação para compatibilidade com módulos ES6
-export { };
+export {};

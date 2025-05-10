@@ -45,15 +45,14 @@
 # Definir tipos MIME para arquivos estáticos - MUITO IMPORTANTE para módulos JavaScript
 <IfModule mod_mime.c>
   AddType application/javascript .js
-  AddType text/css .css
-  AddType image/svg+xml .svg
-  AddType application/font-woff .woff
-  AddType application/font-woff2 .woff2
-  # Extremamente importante para módulos ES6
   AddType application/javascript .mjs
   AddType application/javascript .jsx
   AddType application/javascript .ts
   AddType application/javascript .tsx
+  AddType text/css .css
+  AddType image/svg+xml .svg
+  AddType application/font-woff .woff
+  AddType application/font-woff2 .woff2
 </IfModule>
 
 # Compressão de arquivos para melhor desempenho
@@ -79,10 +78,15 @@
     Header set Access-Control-Allow-Headers "Content-Type"
     # Garantir correto MIME type
     Header set X-Content-Type-Options "nosniff"
-  </FilesMatch>
-  
-  # Definir MIME type explícito para arquivos JavaScript modulares
-  <FilesMatch "\.(mjs|ts|tsx)$">
-    ForceType application/javascript
+    # Forçar MIME type correto para JavaScript
+    <FilesMatch "\.tsx?$">
+      Header set Content-Type "application/javascript; charset=utf-8"
+    </FilesMatch>
+    <FilesMatch "\.jsx?$">
+      Header set Content-Type "application/javascript; charset=utf-8"
+    </FilesMatch>
+    <FilesMatch "\.mjs$">
+      Header set Content-Type "application/javascript; charset=utf-8"
+    </FilesMatch>
   </FilesMatch>
 </IfModule>
