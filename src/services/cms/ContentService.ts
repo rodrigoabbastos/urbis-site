@@ -11,6 +11,8 @@ export class ContentService extends BaseService {
       if (content && !('error' in content)) {
         content.hero = hero;
         await databaseService.saveMainContent(content);
+      } else {
+        throw new Error(content?.error?.message || 'Failed to fetch content');
       }
       
       this.showSuccessToast("Conteúdo da seção Hero atualizado com sucesso!");
@@ -25,6 +27,8 @@ export class ContentService extends BaseService {
       if (content && !('error' in content)) {
         content.about = about;
         await databaseService.saveMainContent(content);
+      } else {
+        throw new Error(content?.error?.message || 'Failed to fetch content');
       }
       
       this.showSuccessToast("Conteúdo da seção Sobre atualizado com sucesso!");
@@ -39,6 +43,8 @@ export class ContentService extends BaseService {
       if (content && !('error' in content)) {
         content.methodology = methodology;
         await databaseService.saveMainContent(content);
+      } else {
+        throw new Error(content?.error?.message || 'Failed to fetch content');
       }
       
       this.showSuccessToast("Conteúdo da seção Metodologia atualizado com sucesso!");
@@ -62,6 +68,8 @@ export class ContentService extends BaseService {
         
         content.methodology.steps = steps;
         await databaseService.saveMainContent(content);
+      } else {
+        throw new Error(content?.error?.message || 'Failed to fetch content or methodology not found');
       }
       
       this.showSuccessToast("Etapa da metodologia atualizada com sucesso!");
@@ -76,6 +84,8 @@ export class ContentService extends BaseService {
       if (content && !('error' in content) && content.methodology && content.methodology.steps) {
         content.methodology.steps = content.methodology.steps.filter(s => s.id !== id);
         await databaseService.saveMainContent(content);
+      } else {
+        throw new Error(content?.error?.message || 'Failed to fetch content or methodology not found');
       }
       
       this.showSuccessToast("Etapa da metodologia excluída com sucesso!");
@@ -90,6 +100,8 @@ export class ContentService extends BaseService {
       if (content && !('error' in content)) {
         content.contact = contact;
         await databaseService.saveMainContent(content);
+      } else {
+        throw new Error(content?.error?.message || 'Failed to fetch content');
       }
       
       this.showSuccessToast("Informações de contato atualizadas com sucesso!");

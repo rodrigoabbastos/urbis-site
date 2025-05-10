@@ -41,7 +41,7 @@ const Hero = () => {
         if (data && data.hero) {
           console.log('Hero content loaded:', data.hero);
           // Fix type conversion with proper typecasting
-          const heroData = data.hero as unknown as HeroContent;
+          const heroData = data.hero as HeroContent;
           setHeroContent(heroData);
         } else {
           console.warn('No hero content found');

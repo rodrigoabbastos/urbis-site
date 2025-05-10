@@ -20,6 +20,8 @@ export class ServiceManagementService extends BaseService {
         
         content.services = services;
         await databaseService.saveMainContent(content);
+      } else {
+        throw new Error(content?.error?.message || 'Failed to fetch content');
       }
       
       this.showSuccessToast("Serviço atualizado com sucesso!");
@@ -36,6 +38,8 @@ export class ServiceManagementService extends BaseService {
           ? content.services.filter(s => s.id !== id)
           : [];
         await databaseService.saveMainContent(content);
+      } else {
+        throw new Error(content?.error?.message || 'Failed to fetch content');
       }
       
       this.showSuccessToast("Serviço excluído com sucesso!");
