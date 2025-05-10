@@ -8,16 +8,16 @@ import { toast } from '@/components/ui/use-toast';
 // Create a table_exists function for Supabase
 const createTableExistsFunction = async () => {
   try {
-    // Check if the function already exists - use type assertion to bypass TypeScript
-    const checkFunctionExists = supabase.rpc('check_function_exists', { 
+    // Check if the function already exists - use proper type casting
+    const checkFunctionExists = (supabase.rpc as any)('check_function_exists', { 
       function_name: 'table_exists' 
-    } as any);
+    });
     
     const { data, error } = await checkFunctionExists;
     
     if (error) {
-      // Create the function if it doesn't exist - use type assertion
-      const createFunction = supabase.rpc('run_sql', {
+      // Create the function if it doesn't exist - use proper type casting
+      const createFunction = (supabase.rpc as any)('run_sql', {
         sql: `
           CREATE OR REPLACE FUNCTION table_exists(table_name text)
           RETURNS boolean AS $$
@@ -40,7 +40,7 @@ const createTableExistsFunction = async () => {
           END;
           $$ LANGUAGE plpgsql;
         `
-      } as any);
+      });
       
       await createFunction;
     }

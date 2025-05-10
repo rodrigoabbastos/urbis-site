@@ -28,8 +28,8 @@ const LinkedInFeed = () => {
         
         // First ensure tables exist
         try {
-          // Use explicit type casting to bypass TypeScript checking
-          const tableCheck = supabase.rpc('table_exists', { table_name: 'linkedin_posts' } as any);
+          // Use proper type casting to bypass TypeScript checking
+          const tableCheck = (supabase.rpc as any)('table_exists', { table_name: 'linkedin_posts' });
           await tableCheck;
         } catch (err) {
           console.error('Error checking table existence:', err);

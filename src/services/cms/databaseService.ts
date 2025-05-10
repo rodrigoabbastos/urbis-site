@@ -8,12 +8,12 @@ import { defaultContent } from './defaultContent';
 const supabaseHelper = {
   // Generic from function with type casting
   from: (table: string) => {
-    // Cast to any to bypass TypeScript errors
+    // Cast directly to bypass TypeScript errors
     return (supabase.from as any)(table);
   },
   // Helper for RPC calls with type casting
   rpc: (fn: string, params: any) => {
-    // Cast to any to bypass TypeScript errors
+    // Cast directly to bypass TypeScript errors
     return (supabase.rpc as any)(fn, params);
   }
 };
@@ -244,7 +244,7 @@ export class DatabaseService {
         .upsert({ 
           id: 'main',
           ...content
-        } as any);
+        });
       
       if (error) throw error;
       return true;
@@ -263,7 +263,7 @@ export class DatabaseService {
         .upsert({ 
           id: 'projects',
           ...projectsInfo
-        } as any);
+        });
       
       if (error) throw error;
       return true;
@@ -279,7 +279,7 @@ export class DatabaseService {
       await this.createTablesIfNotExist();
       
       const { error } = await supabaseHelper.from('projects')
-        .upsert(project as any);
+        .upsert(project);
       
       if (error) throw error;
       return true;
@@ -312,7 +312,7 @@ export class DatabaseService {
       await this.createTablesIfNotExist();
       
       const { error } = await supabaseHelper.from('linkedin_posts')
-        .upsert(post as any);
+        .upsert(post);
       
       if (error) throw error;
       return true;
