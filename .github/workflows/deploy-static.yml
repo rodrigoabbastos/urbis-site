@@ -1,0 +1,32 @@
+name: Build Static ZIP for Hostinger
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-zip:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Clean Node/Vite files
+        run: |
+          rm -rf node_modules/ package.json package-lock.json yarn.lock
+          rm -f vite.config.* tsconfig.*
+
+      - name: Copy static files
+        run: |
+          mkdir deploy
+          cp -R ./* deploy/
+
+      - name: Zip deploy folder
+        run: |
+          cd deploy
+          zip -r ../urbis-site-deploy.zip .
+
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: urbis-site-deploy
+          path: urbis-site-deploy.zip
