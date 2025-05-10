@@ -10,10 +10,12 @@ Após a compilação com Vite, sua estrutura de implantação deve ser:
 ├── index.html
 ├── main.js
 ├── .htaccess
-├── assets/
-│   ├── index.[hash].css
-│   ├── index.[hash].js
-│   └── [outros arquivos de assets]
+├── dist/
+│   ├── assets/
+│   │   ├── index.[hash].css
+│   │   ├── index.[hash].js
+│   │   └── [outros arquivos de assets]
+│   └── [outros arquivos compilados]
 └── [outros arquivos e pastas]
 ```
 
@@ -22,13 +24,12 @@ Após a compilação com Vite, sua estrutura de implantação deve ser:
 1. Execute o comando de build: `npm run build`
 2. Faça upload de TODOS os seguintes arquivos para a raiz do servidor:
    - index.html
-   - main.js
+   - main.js (certifique-se que tem o atributo type="module")
    - .htaccess
    - favicon.ico (se existir)
-   - pasta `assets/` completa
-   - web.config (para servidores IIS, se aplicável)
+   - pasta `dist/` completa com todos os arquivos compilados
 
-3. NÃO crie uma pasta `dist/` no servidor. Os arquivos devem estar na raiz.
+3. IMPORTANTE: A pasta `dist/` deve ser colocada na raiz do servidor.
 
 ## Verificação de Implantação
 
@@ -38,7 +39,7 @@ Após a compilação com Vite, sua estrutura de implantação deve ser:
 
 ## Solução de Problemas Comuns
 
-- **Erro 404 para assets**: Verifique se os arquivos CSS/JS estão na pasta `assets/` na raiz do servidor
+- **Erro 404 para assets**: Verifique se os arquivos CSS/JS estão na pasta `dist/assets/` na raiz do servidor
 - **Página em branco**: Verifique o console do navegador para identificar arquivos não encontrados
 - **Redirecionamentos incorretos**: Confirme as configurações no arquivo .htaccess
 
@@ -46,3 +47,4 @@ Para qualquer problema, recomendamos verificar:
 1. A estrutura de arquivos no servidor
 2. As permissões dos arquivos e pastas (644 para arquivos, 755 para pastas)
 3. A configuração do servidor web (Apache/Nginx/IIS)
+```

@@ -4,24 +4,17 @@
   RewriteEngine On
   RewriteBase /
   
-  # Redirecionar www para non-www (ou vice-versa, dependendo da preferência)
-  # Descomente a opção que preferir
-  
-  # Opção 1: Redirecionar non-www para www
-  # RewriteCond %{HTTP_HOST} ^urbis\.com\.br [NC]
-  # RewriteRule ^(.*)$ https://www.urbis.com.br/$1 [L,R=301]
-  
-  # Opção 2: Redirecionar www para non-www
-  # RewriteCond %{HTTP_HOST} ^www\.urbis\.com\.br [NC]
-  # RewriteRule ^(.*)$ https://urbis.com.br/$1 [L,R=301]
-  
-  # Tratamento específico para as pastas dist e assets
-  RewriteCond %{REQUEST_URI} ^/dist/assets/(.*)$
-  RewriteRule ^dist/assets/(.*)$ /assets/$1 [L]
+  # Servir arquivos estáticos diretamente da pasta dist
+  RewriteCond %{REQUEST_URI} ^/assets/(.*)$
+  RewriteRule ^assets/(.*)$ /dist/assets/$1 [L]
   
   # Servir arquivos e diretórios existentes diretamente
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
+  
+  # Verificar se o arquivo existe na pasta dist
+  RewriteCond %{DOCUMENT_ROOT}/dist%{REQUEST_URI} -f
+  RewriteRule ^(.*)$ /dist/$1 [L]
   
   # Encaminhar todas as outras solicitações para index.html
   RewriteRule ^ index.html [L]

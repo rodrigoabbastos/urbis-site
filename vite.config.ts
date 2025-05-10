@@ -11,9 +11,9 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   build: {
-    outDir: "./",
+    outDir: "dist", // Changed from "./" to "dist"
     assetsDir: "assets",
-    emptyOutDir: false,
+    emptyOutDir: true, // Changed from false to true
     sourcemap: false,
     minify: "esbuild", // Using esbuild for minification
     rollupOptions: {
