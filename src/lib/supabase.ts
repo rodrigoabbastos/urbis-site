@@ -8,56 +8,36 @@ import { toast } from '@/components/ui/use-toast';
 // Create a table_exists function for Supabase
 const createTableExistsFunction = async () => {
   try {
-    // Check if the function already exists - use proper type casting
-    const checkFunctionExists = (supabase.rpc as any)('check_function_exists', { 
-      function_name: 'table_exists' 
-    });
+    // Check if the database is accessible first
+    const { error: pingError } = await supabase.from('content').select('id').limit(1);
     
-    const { data, error } = await checkFunctionExists;
-    
-    if (error) {
-      console.log('Error checking function existence or function does not exist, creating it...');
-      // Create the function if it doesn't exist - use proper type casting
-      const createFunction = (supabase.rpc as any)('run_sql', {
-        sql: `
-          CREATE OR REPLACE FUNCTION table_exists(table_name text)
-          RETURNS boolean AS $$
-          BEGIN
-            RETURN EXISTS (
-              SELECT FROM pg_catalog.pg_tables
-              WHERE schemaname = 'public'
-              AND tablename = table_name
-            );
-          END;
-          $$ LANGUAGE plpgsql;
-          
-          CREATE OR REPLACE FUNCTION check_function_exists(function_name text)
-          RETURNS boolean AS $$
-          BEGIN
-            RETURN EXISTS (
-              SELECT FROM pg_catalog.pg_proc
-              WHERE proname = function_name
-            );
-          END;
-          $$ LANGUAGE plpgsql;
-        `
-      });
-      
-      await createFunction;
-      console.log('Functions created successfully');
-    } else {
-      console.log('Functions already exist');
+    if (pingError) {
+      console.error('Erro ao conectar ao Supabase:', pingError);
+      if (pingError.message.includes('JWT')) {
+        console.error('Erro de autenticação JWT. Verifique suas chaves do Supabase.');
+      } else if (pingError.message.includes('network')) {
+        console.error('Erro de conexão de rede com o Supabase.');
+      }
+      return false;
     }
+    
+    console.log('Conexão com Supabase estabelecida com sucesso');
+    return true;
   } catch (error) {
-    console.error('Error creating table_exists function:', error);
+    console.error('Erro ao verificar conexão com Supabase:', error);
+    return false;
   }
 };
 
-// Initialize function creation
-createTableExistsFunction().then(() => {
-  console.log('Function initialization complete');
+// Inicializa função de verificação de conexão
+createTableExistsFunction().then((result) => {
+  if (result) {
+    console.log('Supabase está configurado e conectado corretamente');
+  } else {
+    console.error('Falha na configuração do Supabase - verifique suas credenciais e conexão');
+  }
 }).catch(err => {
-  console.error('Function initialization failed:', err);
+  console.error('Erro durante inicialização do Supabase:', err);
 });
 
 // Função para verificar se o Supabase está configurado corretamente

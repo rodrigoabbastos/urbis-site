@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { ExternalLink, AlertCircle } from 'lucide-react';
@@ -8,7 +9,7 @@ import { LinkedInPost } from '../linkedin/types';
 import { getLinkedInPosts } from '../linkedin/linkedInData';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { supabase } from '@/lib/supabase';
+import { toast } from '@/components/ui/use-toast';
 
 const LinkedInFeed = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -19,31 +20,33 @@ const LinkedInFeed = () => {
     const fetchPosts = async () => {
       try {
         setIsLoading(true);
+        setError(null);
         
         // Check if Supabase is configured
         if (!isSupabaseConfigured()) {
-          throw new Error('Supabase configuration is missing. Please make sure your project is connected to Supabase.');
+          console.error('Supabase não está configurado corretamente');
+          throw new Error('Supabase não está configurado corretamente. Por favor, verifique sua conexão com o banco de dados.');
         }
         
-        console.log('Checking if LinkedIn posts table exists...');
-        // First ensure tables exist
-        try {
-          // Use proper type casting to bypass TypeScript checking
-          const tableCheck = (supabase.rpc as any)('table_exists', { table_name: 'linkedin_posts' });
-          const result = await tableCheck;
-          console.log('Table check result:', result);
-        } catch (err) {
-          console.error('Error checking table existence:', err);
-        }
-        
-        console.log('Fetching LinkedIn posts...');
+        console.log('Buscando posts do LinkedIn...');
         const fetchedPosts = await getLinkedInPosts();
-        console.log('Setting posts:', fetchedPosts);
+        
+        if (fetchedPosts.length === 0) {
+          console.log('Nenhum post encontrado, mas não é um erro');
+        } else {
+          console.log(`${fetchedPosts.length} posts encontrados`);
+        }
+        
         setPosts(fetchedPosts);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching LinkedIn posts:', err);
-        setError('Não foi possível carregar as publicações.');
+      } catch (err: any) {
+        console.error('Erro ao buscar posts do LinkedIn:', err);
+        setError(err?.message || 'Não foi possível carregar as publicações.');
+        
+        toast({
+          title: "Erro",
+          description: "Não foi possível carregar as publicações do LinkedIn.",
+          variant: "destructive",
+        });
       } finally {
         // Add a small delay for better UX
         setTimeout(() => {
@@ -55,7 +58,7 @@ const LinkedInFeed = () => {
     fetchPosts();
   }, []);
 
-  if (error && error.includes('Supabase configuration is missing')) {
+  if (error && error.includes('Supabase')) {
     return (
       <section id="linkedin-feed" className="py-20 bg-white">
         <div className="container-wrapper">

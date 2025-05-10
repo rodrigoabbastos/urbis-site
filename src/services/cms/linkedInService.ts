@@ -6,22 +6,19 @@ import { databaseService } from './databaseService';
 export class LinkedInService {
   async getLinkedInPosts(): Promise<LinkedInPost[]> {
     try {
-      // Ensure tables exist before fetching
-      await databaseService.createTablesIfNotExist();
-      
+      console.log('LinkedInService: Buscando posts no banco de dados...');
       const posts = await databaseService.fetchLinkedInPosts();
+      console.log(`LinkedInService: ${posts?.length || 0} posts encontrados`);
       return posts || [];
     } catch (error) {
-      console.error('Error getting LinkedIn posts:', error);
+      console.error('LinkedInService: Erro ao buscar posts:', error);
       return [];
     }
   }
 
   async updateLinkedInPost(post: LinkedInPost): Promise<void> {
     try {
-      // Ensure tables exist before saving
-      await databaseService.createTablesIfNotExist();
-      
+      console.log('LinkedInService: Atualizando post:', post.id);
       const success = await databaseService.saveLinkedInPost(post);
       
       if (success) {
@@ -44,9 +41,7 @@ export class LinkedInService {
 
   async deleteLinkedInPost(id: string): Promise<void> {
     try {
-      // Ensure tables exist before deleting
-      await databaseService.createTablesIfNotExist();
-      
+      console.log('LinkedInService: Excluindo post:', id);
       const success = await databaseService.deleteLinkedInPost(id);
       
       if (success) {
