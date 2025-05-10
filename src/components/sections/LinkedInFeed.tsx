@@ -81,8 +81,8 @@ const LinkedInFeed = () => {
           
           {/* Show information about missing configuration but don't break the page */}
           <div className="max-w-3xl mx-auto mb-10">
-            <Alert variant="warning" className="mb-6">
-              <AlertCircle className="h-5 w-5 mr-2" />
+            <Alert className="mb-6 border-yellow-500 bg-yellow-50">
+              <AlertCircle className="h-5 w-5 mr-2 text-yellow-600" />
               <AlertDescription>
                 Este componente requer uma conexão com banco de dados para exibir conteúdo dinâmico.
                 <p className="text-sm mt-2">Ambiente: {window.location.hostname}</p>
@@ -94,21 +94,21 @@ const LinkedInFeed = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <LinkedInPostCard key="example1" post={{
               id: "example1",
-              title: "Exemplo de Publicação",
-              content: "Este é um exemplo de publicação do LinkedIn que seria exibido quando o site estiver conectado ao banco de dados.",
-              imageUrl: "/placeholder.svg",
-              linkedInUrl: "https://linkedin.com/company/urbis-inteligencia",
-              publishedDate: new Date().toISOString(),
-              author: "Equipe URBIS"
+              text_snippet: "Este é um exemplo de publicação do LinkedIn que seria exibido quando o site estiver conectado ao banco de dados.",
+              image_url: "/placeholder.svg",
+              post_url: "https://linkedin.com/company/urbis-inteligencia",
+              date: new Date().toISOString(),
+              likes: 15,
+              comments: 3
             }} />
             <LinkedInPostCard key="example2" post={{
               id: "example2",
-              title: "Outro Exemplo",
-              content: "Mais um exemplo de publicação do LinkedIn que seria exibido quando conectado ao banco de dados.",
-              imageUrl: "/placeholder.svg",
-              linkedInUrl: "https://linkedin.com/company/urbis-inteligencia",
-              publishedDate: new Date().toISOString(),
-              author: "Equipe URBIS"
+              text_snippet: "Mais um exemplo de publicação do LinkedIn que seria exibido quando conectado ao banco de dados.",
+              image_url: "/placeholder.svg",
+              post_url: "https://linkedin.com/company/urbis-inteligencia",
+              date: new Date().toISOString(),
+              likes: 8,
+              comments: 2
             }} />
           </div>
           
