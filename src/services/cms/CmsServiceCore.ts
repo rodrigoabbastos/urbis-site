@@ -61,12 +61,14 @@ export class CmsServiceCore extends BaseService {
   
   async loadContentToCache(): Promise<void> {
     try {
+      console.log('Loading content from database to cache...');
       const content: SiteContent = { ...defaultContent };
       
       // Get main content
       const mainContent = await databaseService.fetchMainContent();
       
       if (mainContent) {
+        console.log('Main content loaded from database:', mainContent);
         // Use safe property access with fallback to default content
         if (mainContent.hero) content.hero = mainContent.hero as SiteContent['hero'];
         if (mainContent.about) content.about = mainContent.about as SiteContent['about'];
@@ -132,3 +134,6 @@ export class CmsServiceCore extends BaseService {
     }
   }
 }
+
+const cmsServiceCore = new CmsServiceCore(new CacheService());
+export default cmsServiceCore;

@@ -1,14 +1,17 @@
+
 import { useState, useEffect } from 'react';
 import AdminLayout from '../AdminLayout';
-import { cmsService, AboutContent } from '@/services/cmsService';
+import { cmsService } from '@/services/cms/cmsService';
+import { AboutContent } from '@/services/cms/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { X, Plus } from 'lucide-react';
+import { X, Plus, Loader2 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const AboutEditor = () => {
   const [formData, setFormData] = useState<AboutContent>({
@@ -18,10 +21,29 @@ const AboutEditor = () => {
     image: ''
   });
   
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const navigate = useNavigate();
+  
   useEffect(() => {
     const loadContent = async () => {
-      const content = await cmsService.getContent();
-      setFormData(content.about);
+      try {
+        setIsLoading(true);
+        const content = await cmsService.getContent();
+        if (content.about) {
+          console.log('Loaded about content:', content.about);
+          setFormData(content.about);
+        }
+      } catch (error) {
+        console.error('Error loading about content:', error);
+        toast({
+          title: "Erro",
+          description: "Não foi possível carregar o conteúdo da seção Sobre.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
     };
     
     loadContent();
@@ -62,7 +84,7 @@ const AboutEditor = () => {
     setFormData(prev => ({ ...prev, features: updatedFeatures }));
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Filter out empty descriptions and features
@@ -73,7 +95,19 @@ const AboutEditor = () => {
     };
     
     try {
-      cmsService.updateAbout(filteredData);
+      setIsSaving(true);
+      console.log('Saving about content:', filteredData);
+      await cmsService.updateAbout(filteredData);
+      
+      toast({
+        title: "Sucesso",
+        description: "Conteúdo da seção Sobre atualizado com sucesso!",
+      });
+      
+      // Reload the page to see changes or navigate to preview
+      setTimeout(() => {
+        navigate('/admin');
+      }, 1500);
     } catch (error) {
       console.error('Error saving about content:', error);
       toast({
@@ -81,8 +115,21 @@ const AboutEditor = () => {
         description: "Ocorreu um erro ao salvar as alterações.",
         variant: "destructive",
       });
+    } finally {
+      setIsSaving(false);
     }
   };
+  
+  if (isLoading) {
+    return (
+      <AdminLayout title="Sobre a URBIS">
+        <div className="flex justify-center items-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-urbis-primary" />
+          <span className="ml-2 text-lg">Carregando conteúdo...</span>
+        </div>
+      </AdminLayout>
+    );
+  }
   
   return (
     <AdminLayout title="Sobre a URBIS">
@@ -129,6 +176,7 @@ const AboutEditor = () => {
                     size="sm" 
                     onClick={() => removeDescription(index)}
                     className="h-8 px-2"
+                    disabled={formData.description.length <= 1}
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -168,6 +216,7 @@ const AboutEditor = () => {
                     size="sm" 
                     onClick={() => removeFeature(index)}
                     className="h-10 px-2"
+                    disabled={formData.features.length <= 1}
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -206,12 +255,31 @@ const AboutEditor = () => {
           </Card>
         )}
         
-        <Button 
-          type="submit" 
-          className="bg-urbis-primary hover:bg-urbis-primary/90"
-        >
-          Salvar alterações
-        </Button>
+        <div className="flex items-center gap-4">
+          <Button 
+            type="submit" 
+            className="bg-urbis-primary hover:bg-urbis-primary/90"
+            disabled={isSaving}
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Salvando...
+              </>
+            ) : (
+              'Salvar alterações'
+            )}
+          </Button>
+          
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={() => navigate('/admin')}
+            disabled={isSaving}
+          >
+            Cancelar
+          </Button>
+        </div>
       </form>
     </AdminLayout>
   );
