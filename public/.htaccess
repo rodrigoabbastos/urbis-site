@@ -3,7 +3,7 @@
 RewriteEngine On
 RewriteBase /
 
-# If the request is not for a file or directory, serve index.html
+# If the request is not for a real file or directory, serve index.html
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.html [L]
@@ -14,6 +14,10 @@ RewriteRule ^ index.html [L]
   Header set X-Frame-Options "SAMEORIGIN"
   Header set X-XSS-Protection "1; mode=block"
   Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  # Add CORS headers to allow all origins - important for API calls
+  Header set Access-Control-Allow-Origin "*"
+  Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+  Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
 </IfModule>
 
 # Cache static assets
@@ -28,3 +32,15 @@ RewriteRule ^ index.html [L]
   ExpiresByType application/javascript "access plus 1 month"
   ExpiresDefault "access plus 2 days"
 </IfModule>
+
+# PHP settings (if PHP is installed)
+<IfModule mod_php7.c>
+  php_flag display_errors Off
+  php_value max_execution_time 300
+  php_value memory_limit 128M
+  php_value post_max_size 64M
+  php_value upload_max_filesize 64M
+</IfModule>
+
+# Handle 500 errors
+ErrorDocument 500 /index.html
