@@ -1,0 +1,64 @@
+
+# Enable rewriting
+RewriteEngine On
+RewriteBase /
+
+# If an existing asset or directory is requested, serve it directly
+RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
+RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
+RewriteRule ^ - [L]
+
+# Serve assets from the correct locations
+RewriteRule ^assets/(.*)$ /assets/$1 [L]
+
+# If the requested resource doesn't exist, serve index.html
+RewriteRule ^ index.html [L]
+
+# Security headers
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set X-XSS-Protection "1; mode=block"
+  # Only use HSTS if you have HTTPS configured
+  # Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  
+  # Add CORS headers to allow API calls
+  Header set Access-Control-Allow-Origin "*"
+  Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+  Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+</IfModule>
+
+# Set proper MIME types for JavaScript modules
+<IfModule mod_mime.c>
+  AddType application/javascript .js
+  AddType application/javascript .mjs
+  AddType text/javascript .js
+  AddType text/javascript .mjs
+  AddType application/javascript .tsx
+  AddType application/javascript .ts
+  
+  # Force JavaScript modules to have correct MIME type
+  <FilesMatch "\.(js|mjs|tsx|ts)$">
+    ForceType application/javascript
+  </FilesMatch>
+</IfModule>
+
+# Cache static assets
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpg "access plus 1 month"
+  ExpiresByType image/jpeg "access plus 1 month"
+  ExpiresByType image/gif "access plus 1 month"
+  ExpiresByType image/png "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 month"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresDefault "access plus 2 days"
+</IfModule>
+
+# Handle errors
+ErrorDocument 404 /index.html
+ErrorDocument 500 /index.html
+
+# Allow index.html to be loaded directly
+DirectoryIndex index.html
