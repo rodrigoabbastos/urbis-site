@@ -1,5 +1,5 @@
 
-// Código de inicialização para o site dinâmico (sem Node.js)
+// Código de inicialização para o site dinâmico (módulo ES6)
 document.addEventListener('DOMContentLoaded', function() {
   console.log('Urbis site dinâmico iniciado com sucesso');
   
@@ -22,6 +22,9 @@ document.addEventListener('DOMContentLoaded', function() {
   } else {
     console.log('Ambiente local ou de teste');
   }
+  
+  // Reportar versão
+  console.log("Versão da aplicação: " + (new Date()).toISOString());
 });
 
 // Adicionar hook para atualizações dinâmicas
@@ -34,3 +37,6 @@ window.updateContent = function(section, content) {
   }
   return false;
 };
+
+// Exportação para compatibilidade com módulos ES6
+export { };

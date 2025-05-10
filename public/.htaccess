@@ -9,8 +9,8 @@ RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
 RewriteRule ^ - [L]
 
 # Serve assets from the correct locations
-RewriteRule ^assets/(.*)$ /assets/$1 [L]
-RewriteRule ^dist/assets/(.*)$ /assets/$1 [L]
+RewriteRule ^assets/(.*)$ /dist/assets/$1 [L]
+RewriteRule ^dist/assets/(.*)$ /dist/assets/$1 [L]
 
 # If the requested resource doesn't exist, serve index.html
 RewriteRule ^ index.html [L]
@@ -31,10 +31,19 @@ RewriteRule ^ index.html [L]
   <FilesMatch "\.(json|html)$">
     Header set Cache-Control "max-age=600, must-revalidate"
   </FilesMatch>
+  
+  # Definir MIME type explícito para arquivos JavaScript modulares
+  <FilesMatch "\.(mjs|ts|tsx)$">
+    ForceType application/javascript
+  </FilesMatch>
 </IfModule>
 
 # Proper MIME types
 <IfModule mod_mime.c>
   AddType application/javascript .js
+  AddType application/javascript .mjs
+  AddType application/javascript .ts
+  AddType application/javascript .tsx
   AddType text/css .css
+  AddType image/svg+xml .svg
 </IfModule>

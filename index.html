@@ -17,12 +17,14 @@
     <meta name="twitter:site" content="@urbis" />
     <meta name="twitter:image" content="https://urbis.com.br/logo.png" />
     
-    <!-- CSP meta tag para segurança com permissões para API externa -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.gpteng.co 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https: wss:;">
+    <!-- CSP meta tag atualizada para permitir Google Fonts e carregamento de scripts -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.gpteng.co 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https: wss:;">
     
     <!-- Configuração para carregamento de assets -->
-    <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
+    <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
     <link rel="stylesheet" href="/src/index.css" />
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" />
   </head>
 
   <body>

@@ -4,6 +4,10 @@
   RewriteEngine On
   RewriteBase /
   
+  # Redirecionar www para non-www ou vice-versa se necessário
+  # RewriteCond %{HTTP_HOST} ^urbis\.com\.br [NC]
+  # RewriteRule ^(.*)$ https://www.urbis.com.br/$1 [L,R=301]
+  
   # Servir arquivos estáticos diretamente da pasta dist
   RewriteCond %{REQUEST_URI} ^/assets/(.*)$
   RewriteRule ^assets/(.*)$ /dist/assets/$1 [L]
@@ -38,13 +42,18 @@
   ExpiresByType application/json "access plus 5 minutes"
 </IfModule>
 
-# Definir tipos MIME para arquivos estáticos
+# Definir tipos MIME para arquivos estáticos - MUITO IMPORTANTE para módulos JavaScript
 <IfModule mod_mime.c>
   AddType application/javascript .js
   AddType text/css .css
   AddType image/svg+xml .svg
   AddType application/font-woff .woff
   AddType application/font-woff2 .woff2
+  # Extremamente importante para módulos ES6
+  AddType application/javascript .mjs
+  AddType application/javascript .jsx
+  AddType application/javascript .ts
+  AddType application/javascript .tsx
 </IfModule>
 
 # Compressão de arquivos para melhor desempenho
@@ -63,9 +72,17 @@
 
 # CORS Headers para permitir solicitações de API
 <IfModule mod_headers.c>
-  <FilesMatch "\.(json)$">
+  # Configuração geral para CORS
+  <FilesMatch "\.(js|ts|tsx|mjs|json|css|html)$">
     Header set Access-Control-Allow-Origin "*"
     Header set Access-Control-Allow-Methods "GET, OPTIONS"
     Header set Access-Control-Allow-Headers "Content-Type"
+    # Garantir correto MIME type
+    Header set X-Content-Type-Options "nosniff"
+  </FilesMatch>
+  
+  # Definir MIME type explícito para arquivos JavaScript modulares
+  <FilesMatch "\.(mjs|ts|tsx)$">
+    ForceType application/javascript
   </FilesMatch>
 </IfModule>

@@ -1,7 +1,28 @@
 
 # INSTRUÇÕES DE IMPLANTAÇÃO PARA O SITE URBIS
 
-## Estrutura de Arquivos Correta
+## Método 1: Implantação Automatizada (Recomendado)
+
+Este projeto está configurado para implantação automática no Lovable. Ao pressionar "Update", 
+o site será automaticamente atualizado em produção sem necessidade de upload manual de arquivos.
+
+### Configuração Inicial (única vez):
+
+1. Configure uma conexão com GitHub no painel do Lovable
+2. Conecte o repositório com sua hospedagem usando webhooks 
+3. Configure as variáveis de ambiente necessárias no painel do provedor
+
+### Para atualizar o site:
+
+1. Faça as alterações desejadas no Lovable
+2. Pressione "Update" 
+3. O site será automaticamente atualizado em produção
+
+## Método 2: Implantação Manual (Alternativa)
+
+Se preferir fazer upload manual dos arquivos:
+
+### Estrutura de Arquivos Correta
 
 Após a compilação com Vite, sua estrutura de implantação deve ser:
 
@@ -10,6 +31,7 @@ Após a compilação com Vite, sua estrutura de implantação deve ser:
 ├── index.html
 ├── main.js
 ├── .htaccess
+├── vercel.json (se usando Vercel)
 ├── dist/
 │   ├── assets/
 │   │   ├── index.[hash].css
@@ -19,12 +41,12 @@ Após a compilação com Vite, sua estrutura de implantação deve ser:
 └── [outros arquivos e pastas]
 ```
 
-## Passo a Passo para Upload
+### Passo a Passo para Upload Manual
 
 1. Execute o comando de build: `npm run build`
 2. Faça upload de TODOS os seguintes arquivos para a raiz do servidor:
    - index.html
-   - main.js (certifique-se que tem o atributo type="module")
+   - main.js (deve ter o atributo type="module")
    - .htaccess
    - favicon.ico (se existir)
    - pasta `dist/` completa com todos os arquivos compilados
@@ -41,10 +63,10 @@ Após a compilação com Vite, sua estrutura de implantação deve ser:
 
 - **Erro 404 para assets**: Verifique se os arquivos CSS/JS estão na pasta `dist/assets/` na raiz do servidor
 - **Página em branco**: Verifique o console do navegador para identificar arquivos não encontrados
+- **Erros de MIME Type**: Verifique se o servidor está configurado para servir arquivos .ts/.tsx como "application/javascript"
 - **Redirecionamentos incorretos**: Confirme as configurações no arquivo .htaccess
 
 Para qualquer problema, recomendamos verificar:
 1. A estrutura de arquivos no servidor
 2. As permissões dos arquivos e pastas (644 para arquivos, 755 para pastas)
 3. A configuração do servidor web (Apache/Nginx/IIS)
-```

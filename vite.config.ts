@@ -11,14 +11,14 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   build: {
-    outDir: "dist", // Changed from "./" to "dist"
+    outDir: "dist",
     assetsDir: "assets",
-    emptyOutDir: true, // Changed from false to true
-    sourcemap: false,
-    minify: "esbuild", // Using esbuild for minification
+    emptyOutDir: true,
+    sourcemap: mode === 'development',
+    minify: mode === 'development' ? false : "esbuild",
     rollupOptions: {
       output: {
-        // Ensure all chunks have .js extension
+        // Ensure all chunks have consistent naming
         entryFileNames: 'assets/[name].[hash].js',
         chunkFileNames: 'assets/[name].[hash].js',
         assetFileNames: 'assets/[name].[hash][extname]',
@@ -34,9 +34,8 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    extensions: ['.js', '.jsx', '.ts', '.tsx'] // Explicitly define extensions to resolve
+    extensions: ['.js', '.jsx', '.ts', '.tsx']
   },
-  // Ensure we handle .js and .tsx files properly for the build
   optimizeDeps: {
     include: ['react', 'react-dom'],
   },
