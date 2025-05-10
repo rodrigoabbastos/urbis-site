@@ -44,16 +44,28 @@ export class ContentDatabaseService {
       // Ensure tables exist before saving
       await this.dbInitService.createTablesIfNotExist();
       
+      console.log('Saving main content to Supabase:', content);
+      
       const { error } = await supabaseHelper.from('content')
         .upsert({ 
           id: 'main',
-          ...content
+          hero: content.hero,
+          about: content.about,
+          services: content.services,
+          methodology: content.methodology,
+          contact: content.contact,
+          updated_at: new Date()
         });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error saving main content to Supabase:', error);
+        throw error;
+      }
+      
+      console.log('Main content successfully saved to Supabase');
       return true;
     } catch (error) {
-      console.error('Error saving main content:', error);
+      console.error('Error in saveMainContent:', error);
       return false;
     }
   }

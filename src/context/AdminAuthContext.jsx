@@ -1,109 +1,103 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+// Removendo o import duplicado de React
+import { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from '@/hooks/use-toast.jsx';
 
-const AdminAuthContext = createContext(undefined);
+// Criação do contexto de autenticação
+const AdminAuthContext = createContext();
 
-// This is a simple in-memory auth for demo purposes
-// In a real application, you would use a more secure authentication method
-const DEMO_USER = {
-  id: '1',
-  email: 'rodrigo',
-  password: '!67943Ro' // In a real app, never store plaintext passwords
+// Hook personalizado para acessar o contexto
+export const useAdminAuth = () => {
+  return useContext(AdminAuthContext);
 };
 
+// Provedor do contexto de autenticação
 export const AdminAuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [adminUser, setAdminUser] = useState(null);
 
+  // Verificar autenticação ao carregar
   useEffect(() => {
-    // Check for existing session
-    const storedUser = localStorage.getItem('urbis_cms_user');
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        setUser({
-          id: parsedUser.id,
-          email: parsedUser.email
-        });
-      } catch (e) {
-        localStorage.removeItem('urbis_cms_user');
-      }
-    }
-    setLoading(false);
+    checkAuth();
   }, []);
 
-  const login = async (email, password) => {
-    setLoading(true);
+  // Função para verificar se o usuário está autenticado
+  const checkAuth = () => {
+    const token = localStorage.getItem('admin_token');
+    const user = localStorage.getItem('admin_user');
     
-    // Simple validation
-    if (!email || !password) {
-      toast({
-        title: "Erro",
-        description: "Por favor, preencha todos os campos.",
-        variant: "destructive",
-      });
-      setLoading(false);
-      return;
+    if (token) {
+      setIsAuthenticated(true);
+      if (user) {
+        setAdminUser(JSON.parse(user));
+      }
     }
     
-    try {
-      // Simple demo authentication
-      if (email === DEMO_USER.email && password === DEMO_USER.password) {
-        const loggedInUser = {
-          id: DEMO_USER.id,
-          email: DEMO_USER.email
-        };
-        
-        setUser(loggedInUser);
-        localStorage.setItem('urbis_cms_user', JSON.stringify(loggedInUser));
-        
-        toast({
-          title: "Sucesso",
-          description: "Login realizado com sucesso!",
-        });
-      } else {
-        toast({
-          title: "Erro",
-          description: "Email ou senha incorretos.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
+    setLoading(false);
+  };
+
+  // Função de login
+  const login = (email, password) => {
+    // Credenciais simplificadas para demonstração
+    // Em produção, isso seria validado contra um backend seguro
+    if (email === 'admin@urbis.com.br' && password === 'admin123') {
+      const token = 'demo-token-' + Date.now();
+      const user = {
+        email,
+        name: 'Administrador',
+        role: 'admin'
+      };
+      
+      localStorage.setItem('admin_token', token);
+      localStorage.setItem('admin_user', JSON.stringify(user));
+      
+      setIsAuthenticated(true);
+      setAdminUser(user);
+      
       toast({
-        title: "Erro",
-        description: "Ocorreu um erro ao fazer login. Tente novamente.",
-        variant: "destructive",
+        title: "Login bem-sucedido",
+        description: "Bem-vindo ao painel administrativo."
       });
-    } finally {
-      setLoading(false);
+      
+      return true;
+    } else {
+      toast({
+        title: "Erro de autenticação",
+        description: "E-mail ou senha inválidos.",
+        variant: "destructive"
+      });
+      
+      return false;
     }
   };
 
+  // Função de logout
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem('urbis_cms_user');
+    localStorage.removeItem('admin_token');
+    localStorage.removeItem('admin_user');
+    
+    setIsAuthenticated(false);
+    setAdminUser(null);
+    
     toast({
-      title: "Logout",
-      description: "Você saiu do sistema.",
+      title: "Logout realizado",
+      description: "Você saiu do painel administrativo."
     });
   };
 
+  // Valor do contexto
   const value = {
-    user,
+    isAuthenticated,
     loading,
+    adminUser,
     login,
-    logout,
-    isAuthenticated: !!user
+    logout
   };
 
-  return <AdminAuthContext.Provider value={value}>{children}</AdminAuthContext.Provider>;
-};
-
-export const useAdminAuth = () => {
-  const context = useContext(AdminAuthContext);
-  if (context === undefined) {
-    throw new Error('useAdminAuth must be used within an AdminAuthProvider');
-  }
-  return context;
+  return (
+    <AdminAuthContext.Provider value={value}>
+      {children}
+    </AdminAuthContext.Provider>
+  );
 };

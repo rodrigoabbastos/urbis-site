@@ -43,12 +43,14 @@ export class BaseCMSService {
   
   protected async loadContentToCache() {
     try {
+      console.log('Loading content to cache from Supabase');
       const content: SiteContent = { ...defaultContent };
       
       // Get main content
       const mainContent = await databaseService.fetchMainContent();
       
       if (mainContent) {
+        console.log('Main content retrieved from Supabase:', mainContent);
         // Use type assertion to avoid TypeScript errors
         const typedMainContent = mainContent as any;
         // Use safe property access with fallback to default content
@@ -57,6 +59,8 @@ export class BaseCMSService {
         content.services = typedMainContent.services || content.services;
         content.methodology = typedMainContent.methodology || content.methodology;
         content.contact = typedMainContent.contact || content.contact;
+      } else {
+        console.warn('No main content found in Supabase, using default content');
       }
       
       // Get projects info
@@ -84,6 +88,7 @@ export class BaseCMSService {
         content.linkedInPosts = linkedInPosts || content.linkedInPosts;
       }
       
+      console.log('Content loaded to cache:', content);
       this.contentCache = content;
     } catch (error) {
       console.error('Error loading content from Supabase:', error);
@@ -94,6 +99,7 @@ export class BaseCMSService {
   
   async getContent(): Promise<SiteContent> {
     if (!this.contentCache) {
+      console.log('Content cache is empty, loading from Supabase');
       await this.loadContentToCache();
     }
     return this.contentCache || defaultContent;
@@ -106,12 +112,18 @@ export class BaseCMSService {
   
   async saveContent(content: SiteContent): Promise<void> {
     try {
+      console.log('Saving content to Supabase:', content);
+      
       // Update cache
       this.contentCache = content;
       
       // Store main content
       const { hero, about, services, methodology, contact } = content;
-      await databaseService.saveMainContent({ hero, about, services, methodology, contact });
+      const result = await databaseService.saveMainContent({ hero, about, services, methodology, contact });
+      
+      if (!result) {
+        throw new Error('Falha ao salvar conteúdo principal');
+      }
       
       // Store projects info
       const projectsContent = {
@@ -121,8 +133,13 @@ export class BaseCMSService {
       
       await databaseService.saveProjectsInfo(projectsContent);
       
-      // Reload cache after saving
+      // Reload cache after saving to ensure we have the latest data
       await this.loadContentToCache();
+      
+      toast({
+        title: "Sucesso",
+        description: "Conteúdo salvo com sucesso no banco de dados.",
+      });
     } catch (error) {
       console.error('Error saving content:', error);
       toast({
