@@ -15,17 +15,10 @@ export default defineConfig(({ mode }) => ({
     assetsDir: "assets",
     emptyOutDir: true,
     sourcemap: false,
-    minify: true,
-    // Ensure JavaScript is minified for security
-    terserOptions: {
-      compress: {
-        drop_console: mode === 'production',
-        drop_debugger: true,
-      },
-    },
+    minify: "esbuild", // Using esbuild for minification
     rollupOptions: {
       output: {
-        // Ensure all chunks have .js extension, no .tsx/.ts files
+        // Ensure all chunks have .js extension
         entryFileNames: 'assets/[name].[hash].js',
         chunkFileNames: 'assets/[name].[hash].js',
         assetFileNames: 'assets/[name].[hash][extname]',
@@ -41,6 +34,7 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+    extensions: ['.js', '.jsx', '.ts', '.tsx'] // Explicitly define extensions to resolve
   },
   // Ensure we handle .js and .tsx files properly for the build
   optimizeDeps: {
