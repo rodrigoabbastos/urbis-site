@@ -26,7 +26,10 @@ export default defineConfig(({ mode }) => ({
     }
   },
   plugins: [
-    react(),
+    react({
+      // Configure to process .js files as JSX
+      include: "**/*.{jsx,js}",
+    }),
     mode === 'development' &&
     componentTagger(),
   ].filter(Boolean),

@@ -47,6 +47,7 @@ RewriteRule ^ index.html [L]
 # Proper MIME types (reinforced)
 <IfModule mod_mime.c>
   AddType application/javascript .js
+  AddType application/javascript .jsx
   AddType text/css .css
   AddType image/svg+xml .svg
 </IfModule>
