@@ -1,0 +1,134 @@
+
+import { SiteContent } from './types';
+import { defaultContent } from './defaultContent';
+import { databaseService } from './database/databaseService';
+import { toast } from '@/components/ui/use-toast';
+import { CacheService } from './CacheService';
+import { BaseService } from './BaseService';
+
+export class CmsServiceCore extends BaseService {
+  private readonly cacheService: CacheService;
+  
+  constructor(cacheService: CacheService) {
+    super();
+    this.cacheService = cacheService;
+  }
+
+  async getContent(): Promise<SiteContent> {
+    if (!this.cacheService.hasCache()) {
+      console.log('Content cache not initialized, loading from database');
+      await this.loadContentToCache();
+    } else {
+      console.log('Using existing content cache');
+    }
+    return this.cacheService.getCache() || defaultContent;
+  }
+  
+  // Método síncrono que retorna o conteúdo em cache ou o conteúdo padrão
+  getContentSync(): SiteContent {
+    console.log('getContentSync called, cache status:', this.cacheService.hasCache() ? 'has cache' : 'no cache');
+    return this.cacheService.getCache() || defaultContent;
+  }
+  
+  async saveContent(content: SiteContent): Promise<void> {
+    try {
+      // Update cache
+      this.cacheService.setCache(content);
+      
+      // Store main content
+      const { hero, about, services, methodology, contact } = content;
+      await databaseService.saveMainContent({ hero, about, services, methodology, contact });
+      
+      // Store projects info
+      const projectsContent = {
+        title: content.projects.title,
+        description: content.projects.description
+      };
+      
+      await databaseService.saveProjectsInfo(projectsContent);
+      
+      // Reload cache after saving
+      await this.loadContentToCache();
+    } catch (error) {
+      console.error('Error saving content:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível salvar o conteúdo. Verifique o console para mais detalhes.",
+        variant: "destructive",
+      });
+    }
+  }
+  
+  async loadContentToCache(): Promise<void> {
+    try {
+      const content: SiteContent = { ...defaultContent };
+      
+      // Get main content
+      const mainContent = await databaseService.fetchMainContent();
+      
+      if (mainContent) {
+        // Use safe property access with fallback to default content
+        if (mainContent.hero) content.hero = mainContent.hero as SiteContent['hero'];
+        if (mainContent.about) content.about = mainContent.about as SiteContent['about'];
+        if (mainContent.services) content.services = mainContent.services as SiteContent['services'];
+        if (mainContent.methodology) content.methodology = mainContent.methodology as SiteContent['methodology'];
+        if (mainContent.contact) content.contact = mainContent.contact as SiteContent['contact'];
+      }
+      
+      // Get projects info
+      const projectsInfo = await databaseService.fetchProjectsInfo();
+      
+      if (projectsInfo) {
+        if (projectsInfo.title) content.projects.title = projectsInfo.title as string;
+        if (projectsInfo.description) content.projects.description = projectsInfo.description as string;
+      }
+      
+      // Get projects
+      const projects = await databaseService.fetchProjects();
+      
+      if (projects && projects.length > 0) {
+        content.projects.items = projects as SiteContent['projects']['items'];
+        console.log('Projects loaded:', projects.length);
+      } else {
+        console.log('No projects found in database, using default content');
+      }
+      
+      // Get LinkedIn posts
+      const linkedInPosts = await databaseService.fetchLinkedInPosts();
+      
+      if (linkedInPosts && linkedInPosts.length > 0) {
+        content.linkedInPosts = linkedInPosts as SiteContent['linkedInPosts'];
+        console.log('LinkedIn posts loaded:', linkedInPosts.length);
+      } else {
+        console.log('No LinkedIn posts found in database, using default content');
+      }
+      
+      this.cacheService.setCache(content);
+      console.log('Content cache updated successfully');
+    } catch (error) {
+      console.error('Error loading content from Supabase:', error);
+      // Even if we have an error, set the cache to the default content
+      this.cacheService.setCache(defaultContent);
+    }
+  }
+  
+  async resetToDefault(): Promise<void> {
+    try {
+      const success = await databaseService.resetToDefault(defaultContent);
+      
+      if (success) {
+        // Update cache
+        this.cacheService.setCache(defaultContent);
+        
+        toast({
+          title: "Conteúdo Resetado",
+          description: "Todo o conteúdo foi restaurado para os valores padrão.",
+        });
+      } else {
+        throw new Error('Falha ao resetar o conteúdo');
+      }
+    } catch (error) {
+      this.handleError(error, "Não foi possível resetar o conteúdo.");
+    }
+  }
+}
