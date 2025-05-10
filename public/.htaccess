@@ -21,8 +21,6 @@ RewriteRule ^ index.html [L]
   Header set X-Frame-Options "SAMEORIGIN"
   Header set X-XSS-Protection "1; mode=block"
   Header set Content-Security-Policy "default-src 'self'; script-src 'self' https://cdn.gpteng.co 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;"
-  # Only use HSTS if you have HTTPS configured
-  # Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
   
   # Add CORS headers to allow API calls
   Header set Access-Control-Allow-Origin "*"

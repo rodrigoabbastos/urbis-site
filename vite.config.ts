@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => ({
     emptyOutDir: true,
     sourcemap: false,
     minify: true,
-    // Certifique-se de que o JavaScript é minificado para segurança
+    // Ensure JavaScript is minified for security
     terserOptions: {
       compress: {
         drop_console: mode === 'production',

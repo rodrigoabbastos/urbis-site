@@ -1,12 +1,12 @@
 
-// Este arquivo serve como um redirecionamento para src/main.tsx
-// Importante para a compatibilidade da aplicação
+// This file serves as a redirector to src/main.tsx
+// Important for application compatibility
 import './src/main.tsx';
 
-// Verificação adicional de segurança
+// Additional security check
 if (window.location.hostname !== 'localhost' && 
     window.location.hostname !== '127.0.0.1' && 
     !window.location.hostname.includes('lovable.app') &&
     window.location.protocol !== 'https:') {
-  console.warn('Possível acesso inseguro detectado. A aplicação deve ser executada via HTTPS em produção.');
+  console.warn('Possible insecure access detected. The application should run via HTTPS in production.');
 }
