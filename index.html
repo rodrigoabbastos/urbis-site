@@ -17,18 +17,15 @@
     <meta name="twitter:site" content="@urbis" />
     <meta name="twitter:image" content="https://urbis.com.br/logo.png" />
     
-    <!-- Removendo a base path para evitar problemas de carregamento -->
+    <!-- CSP meta tag para segurança -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;">
     
-    <!-- CSP meta tag for additional security -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.gpteng.co 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;">
-    
-    <!-- Ajuste para garantir que os assets sejam carregados corretamente em produção -->
+    <!-- Configuração simples para carregamento de assets -->
     <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
   </head>
 
   <body>
     <div id="root"></div>
-    <!-- Removendo o script do gptengineer que não é necessário em produção -->
     <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>
