@@ -1,7 +1,6 @@
 
-// This file serves as a redirector to src/main.tsx
-// Important for application compatibility
-import './src/main.tsx';
+// Importação para o aplicativo transpilado
+import './src/main.js';
 
 // Additional security check
 if (window.location.hostname !== 'localhost' && 

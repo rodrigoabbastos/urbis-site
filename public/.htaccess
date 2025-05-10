@@ -38,21 +38,9 @@ RewriteRule ^ index.html [L]
 # Set proper MIME types for JavaScript modules
 <IfModule mod_mime.c>
   AddType application/javascript .js
-  AddType application/javascript .mjs
-  AddType application/javascript .tsx
-  AddType application/javascript .ts
   
   # Force JavaScript modules to have correct MIME type
   <FilesMatch "\.js$">
-    ForceType application/javascript
-  </FilesMatch>
-  <FilesMatch "\.mjs$">
-    ForceType application/javascript
-  </FilesMatch>
-  <FilesMatch "\.tsx$">
-    ForceType application/javascript
-  </FilesMatch>
-  <FilesMatch "\.ts$">
     ForceType application/javascript
   </FilesMatch>
 </IfModule>
