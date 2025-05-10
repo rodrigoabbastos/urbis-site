@@ -1,39 +1,65 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Urbis - Inteligencia e Desenvolvimento</title>
+    <title>Urbis - Inteligência e Desenvolvimento</title>
     <meta name="description" content="Urbis - Inteligência Territorial" />
     <meta name="author" content="Urbis" />
 
-    <meta property="og:title" content="Urbis - Inteligencia e Desenvolvimento" />
-    <meta property="og:description" content="Urbis - Inteligência Territorial" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://urbis.com.br/logo.png" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@urbis" />
-    <meta name="twitter:image" content="https://urbis.com.br/logo.png" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/ico" href="./assets/favicon.ico" />
     
-    <!-- Updated CSP to explicitly allow Google Fonts and all script types -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.gpteng.co 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https: wss:;">
-    
-    <!-- Configuração para carregamento de assets -->
-    <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
-    <link rel="stylesheet" href="/src/index.css" />
     <!-- Google Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" />
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configure Tailwind with custom colors -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'urbis-primary': '#BF3B6C',
+              'urbis-secondary': '#D94848',
+              'urbis-tertiary': '#0C4A6E',
+              'urbis-navy': '#0C4A6E',
+              'urbis-blue': '#1978A0',
+              'urbis-red': '#D94848',
+              'urbis-darkGray': '#4B5563',
+              'urbis-neutral': '#6B7280'
+            },
+          }
+        }
+      }
+    </script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./css/styles.css" />
+    
+    <!-- React & React DOM via CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    
+    <!-- Babel for JSX support -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- React Router -->
+    <script src="https://unpkg.com/react-router-dom@6/umd/react-router-dom.production.min.js"></script>
+    
+    <!-- GPT Engineer script for project modifications -->
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
   </head>
-
   <body>
     <div id="root"></div>
-    <!-- Script GPT Engineer primeiro para garantir compatibilidade -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <!-- Script principal da aplicação com type="module" explícito -->
-    <script type="module" src="/src/main.js"></script>
-    <!-- Script de inicialização para funcionalidades dinâmicas -->
-    <script type="module" src="/main.js"></script>
+
+    <!-- Main application script -->
+    <script type="text/babel" src="./js/app.js"></script>
   </body>
 </html>
