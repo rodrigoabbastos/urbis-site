@@ -10,6 +10,7 @@ RewriteRule ^ - [L]
 
 # Serve assets from the correct locations
 RewriteRule ^assets/(.*)$ /assets/$1 [L]
+RewriteRule ^dist/assets/(.*)$ /assets/$1 [L]
 
 # If the requested resource doesn't exist, serve index.html
 RewriteRule ^ index.html [L]

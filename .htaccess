@@ -15,6 +15,10 @@
   # RewriteCond %{HTTP_HOST} ^www\.urbis\.com\.br [NC]
   # RewriteRule ^(.*)$ https://urbis.com.br/$1 [L,R=301]
   
+  # Tratamento específico para as pastas dist e assets
+  RewriteCond %{REQUEST_URI} ^/dist/assets/(.*)$
+  RewriteRule ^dist/assets/(.*)$ /assets/$1 [L]
+  
   # Servir arquivos e diretórios existentes diretamente
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
