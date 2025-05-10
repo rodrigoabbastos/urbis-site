@@ -1,7 +1,5 @@
-
 This folder will contain all the images for the website.
 
 Required images:
 - hero-bg.jpg (background for hero section)
 - about-image.jpg (image for about section)
-- service-icons (folder for service icons)
