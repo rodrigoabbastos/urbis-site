@@ -16,6 +16,7 @@ const createTableExistsFunction = async () => {
     const { data, error } = await checkFunctionExists;
     
     if (error) {
+      console.log('Error checking function existence or function does not exist, creating it...');
       // Create the function if it doesn't exist - use proper type casting
       const createFunction = (supabase.rpc as any)('run_sql', {
         sql: `
@@ -43,6 +44,9 @@ const createTableExistsFunction = async () => {
       });
       
       await createFunction;
+      console.log('Functions created successfully');
+    } else {
+      console.log('Functions already exist');
     }
   } catch (error) {
     console.error('Error creating table_exists function:', error);
@@ -50,7 +54,11 @@ const createTableExistsFunction = async () => {
 };
 
 // Initialize function creation
-createTableExistsFunction();
+createTableExistsFunction().then(() => {
+  console.log('Function initialization complete');
+}).catch(err => {
+  console.error('Function initialization failed:', err);
+});
 
 // Função para verificar se o Supabase está configurado corretamente
 export const isSupabaseConfigured = () => {
@@ -59,6 +67,7 @@ export const isSupabaseConfigured = () => {
     if (!supabase) {
       return false;
     }
+    console.log('Supabase connection configured correctly');
     return true;
   } catch (error) {
     console.error('Erro ao verificar a conexão com o Supabase:', error);

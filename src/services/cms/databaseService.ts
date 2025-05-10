@@ -21,10 +21,12 @@ const supabaseHelper = {
 export class DatabaseService {
   async createTablesIfNotExist() {
     try {
+      console.log('Checking if tables exist...');
       // First, check if tables exist directly using SQL queries
       const { data: contentTableExists } = await supabaseHelper.rpc('table_exists', { table_name: 'content' });
       
       if (!contentTableExists) {
+        console.log('Content table does not exist, creating it...');
         const { error: contentError } = await supabaseHelper.rpc('run_sql', {
           sql: `
             CREATE TABLE IF NOT EXISTS public.content (
@@ -42,12 +44,17 @@ export class DatabaseService {
         
         if (contentError) {
           console.error('Error creating content table:', contentError);
+        } else {
+          console.log('Content table created successfully');
         }
+      } else {
+        console.log('Content table already exists');
       }
       
       const { data: linkedinPostsTableExists } = await supabaseHelper.rpc('table_exists', { table_name: 'linkedin_posts' });
       
       if (!linkedinPostsTableExists) {
+        console.log('LinkedIn posts table does not exist, creating it...');
         const { error: postsError } = await supabaseHelper.rpc('run_sql', {
           sql: `
             CREATE TABLE IF NOT EXISTS public.linkedin_posts (
@@ -66,12 +73,17 @@ export class DatabaseService {
         
         if (postsError) {
           console.error('Error creating linkedin_posts table:', postsError);
+        } else {
+          console.log('LinkedIn posts table created successfully');
         }
+      } else {
+        console.log('LinkedIn posts table already exists');
       }
       
       const { data: projectsTableExists } = await supabaseHelper.rpc('table_exists', { table_name: 'projects' });
       
       if (!projectsTableExists) {
+        console.log('Projects table does not exist, creating it...');
         const { error: projectsError } = await supabaseHelper.rpc('run_sql', {
           sql: `
             CREATE TABLE IF NOT EXISTS public.projects (
@@ -91,13 +103,18 @@ export class DatabaseService {
         
         if (projectsError) {
           console.error('Error creating projects table:', projectsError);
+        } else {
+          console.log('Projects table created successfully');
         }
+      } else {
+        console.log('Projects table already exists');
       }
     } catch (error) {
       console.error('Error checking tables:', error);
       
       // Fallback to direct SQL execution
       try {
+        console.log('Trying fallback method to create tables...');
         // Execute raw SQL to create tables
         await supabaseHelper.rpc('run_sql', {
           sql: `
@@ -134,10 +151,11 @@ export class DatabaseService {
               type TEXT NOT NULL,
               link TEXT,
               created_at TIMESTAMPTZ DEFAULT NOW(),
-              updated_at TIMESTAMPTZ DEFAULT NOW()
+              updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
             );
           `
         });
+        console.log('Tables created successfully using fallback method');
       } catch (fallbackError) {
         console.error('Failed to create tables with fallback method:', fallbackError);
       }
@@ -149,6 +167,7 @@ export class DatabaseService {
       // Ensure tables exist before fetching
       await this.createTablesIfNotExist();
       
+      console.log('Fetching main content...');
       const { data, error } = await supabaseHelper.from('content')
         .select('*')
         .eq('id', 'main')
@@ -159,6 +178,7 @@ export class DatabaseService {
         return null;
       }
       
+      console.log('Main content fetched:', data);
       return data;
     } catch (error) {
       console.error('Error fetching main content:', error);
@@ -171,6 +191,7 @@ export class DatabaseService {
       // Ensure tables exist before fetching
       await this.createTablesIfNotExist();
       
+      console.log('Fetching projects info...');
       const { data, error } = await supabaseHelper.from('content')
         .select('*')
         .eq('id', 'projects')
@@ -181,6 +202,7 @@ export class DatabaseService {
         return null;
       }
       
+      console.log('Projects info fetched:', data);
       return data;
     } catch (error) {
       console.error('Error fetching projects info:', error);
@@ -193,6 +215,7 @@ export class DatabaseService {
       // Ensure tables exist before fetching
       await this.createTablesIfNotExist();
       
+      console.log('Fetching projects...');
       const { data, error } = await supabaseHelper.from('projects')
         .select('*');
       
@@ -201,6 +224,7 @@ export class DatabaseService {
         return null;
       }
       
+      console.log(`Fetched ${data?.length || 0} projects`);
       return data;
     } catch (error) {
       console.error('Error fetching projects:', error);
@@ -213,6 +237,7 @@ export class DatabaseService {
       // Make sure tables are created before fetching
       await this.createTablesIfNotExist();
       
+      console.log('Fetching LinkedIn posts...');
       const { data, error } = await supabaseHelper.from('linkedin_posts')
         .select('*')
         .order('date', { ascending: false });
@@ -222,6 +247,7 @@ export class DatabaseService {
         return null;
       }
       
+      console.log(`Fetched ${data?.length || 0} LinkedIn posts`);
       return data;
     } catch (error) {
       console.error('Error fetching LinkedIn posts:', error);
@@ -352,6 +378,7 @@ export class DatabaseService {
         
       // If no content exists in Supabase, insert from localStorage
       if (!existingContent) {
+        console.log('No existing content in Supabase, migrating from localStorage');
         // Store main content
         const { hero, about, services, methodology, contact } = localContent;
         await this.saveMainContent({ hero, about, services, methodology, contact });
@@ -364,6 +391,7 @@ export class DatabaseService {
         
         // Store individual projects
         if (localContent.projects.items.length > 0) {
+          console.log(`Migrating ${localContent.projects.items.length} projects from localStorage`);
           for (const project of localContent.projects.items) {
             await this.saveProject(project);
           }
@@ -371,6 +399,7 @@ export class DatabaseService {
         
         // Store LinkedIn posts
         if (localContent.linkedInPosts && localContent.linkedInPosts.length > 0) {
+          console.log(`Migrating ${localContent.linkedInPosts.length} LinkedIn posts from localStorage`);
           for (const post of localContent.linkedInPosts) {
             await this.saveLinkedInPost(post);
           }
@@ -403,6 +432,7 @@ export class DatabaseService {
       // Ensure tables exist before resetting
       await this.createTablesIfNotExist();
       
+      console.log('Resetting database to default values...');
       // Reset main content
       const { hero, about, services, methodology, contact } = defaultData;
       await this.saveMainContent({ hero, about, services, methodology, contact });
@@ -435,6 +465,7 @@ export class DatabaseService {
         }
       }
       
+      console.log('Database reset to default values completed');
       return true;
     } catch (error) {
       console.error('Error resetting to default:', error);

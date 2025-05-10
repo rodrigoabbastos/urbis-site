@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { ExternalLink, AlertCircle } from 'lucide-react';
@@ -26,16 +25,20 @@ const LinkedInFeed = () => {
           throw new Error('Supabase configuration is missing. Please make sure your project is connected to Supabase.');
         }
         
+        console.log('Checking if LinkedIn posts table exists...');
         // First ensure tables exist
         try {
           // Use proper type casting to bypass TypeScript checking
           const tableCheck = (supabase.rpc as any)('table_exists', { table_name: 'linkedin_posts' });
-          await tableCheck;
+          const result = await tableCheck;
+          console.log('Table check result:', result);
         } catch (err) {
           console.error('Error checking table existence:', err);
         }
         
+        console.log('Fetching LinkedIn posts...');
         const fetchedPosts = await getLinkedInPosts();
+        console.log('Setting posts:', fetchedPosts);
         setPosts(fetchedPosts);
         setError(null);
       } catch (err) {
@@ -65,7 +68,7 @@ const LinkedInFeed = () => {
           
           <Alert variant="destructive" className="mb-6 max-w-3xl mx-auto">
             <AlertCircle className="h-5 w-5 mr-2" />
-            <AlertDescription>Configuração do Supabase ausente. Conecte o projeto ao Supabase para carregar as atualizações.</AlertDescription>
+            <AlertDescription>{error}</AlertDescription>
           </Alert>
         </div>
       </section>

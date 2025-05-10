@@ -9,13 +9,131 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      content: {
+        Row: {
+          about: Json | null
+          contact: Json | null
+          created_at: string | null
+          hero: Json | null
+          id: string
+          methodology: Json | null
+          services: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          about?: Json | null
+          contact?: Json | null
+          created_at?: string | null
+          hero?: Json | null
+          id: string
+          methodology?: Json | null
+          services?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          about?: Json | null
+          contact?: Json | null
+          created_at?: string | null
+          hero?: Json | null
+          id?: string
+          methodology?: Json | null
+          services?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      linkedin_posts: {
+        Row: {
+          comments: number | null
+          created_at: string | null
+          date: string | null
+          id: string
+          image_url: string | null
+          likes: number | null
+          post_url: string
+          text_snippet: string
+          updated_at: string | null
+        }
+        Insert: {
+          comments?: number | null
+          created_at?: string | null
+          date?: string | null
+          id: string
+          image_url?: string | null
+          likes?: number | null
+          post_url: string
+          text_snippet: string
+          updated_at?: string | null
+        }
+        Update: {
+          comments?: number | null
+          created_at?: string | null
+          date?: string | null
+          id?: string
+          image_url?: string | null
+          likes?: number | null
+          post_url?: string
+          text_snippet?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          client: string
+          created_at: string | null
+          description: string
+          id: string
+          image: string
+          link: string | null
+          title: string
+          type: string
+          updated_at: string | null
+          year: string
+        }
+        Insert: {
+          client: string
+          created_at?: string | null
+          description: string
+          id: string
+          image: string
+          link?: string | null
+          title: string
+          type: string
+          updated_at?: string | null
+          year: string
+        }
+        Update: {
+          client?: string
+          created_at?: string | null
+          description?: string
+          id?: string
+          image?: string
+          link?: string | null
+          title?: string
+          type?: string
+          updated_at?: string | null
+          year?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_function_exists: {
+        Args: { function_name: string }
+        Returns: boolean
+      }
+      run_sql: {
+        Args: { sql: string }
+        Returns: undefined
+      }
+      table_exists: {
+        Args: { table_name: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
