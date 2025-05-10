@@ -3,7 +3,7 @@
 import { toast } from '@/components/ui/use-toast';
 import { SiteContent, HeroContent, AboutContent, Service, MethodologyStep, ContactInfo } from './cms/types';
 import { defaultContent } from './cms/defaultContent';
-import { databaseService } from './cms/databaseService';
+import { databaseService } from './cms/database/databaseService';
 import { LinkedInPost } from '@/components/linkedin/types';
 import { cmsService } from './cms/cmsService';
 
