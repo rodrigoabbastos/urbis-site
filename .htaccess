@@ -43,7 +43,16 @@ RewriteRule ^ index.html [L]
   AddType application/javascript .ts
   
   # Force JavaScript modules to have correct MIME type
-  <FilesMatch "\.(js|mjs|tsx|ts)$">
+  <FilesMatch "\.js$">
+    ForceType application/javascript
+  </FilesMatch>
+  <FilesMatch "\.mjs$">
+    ForceType application/javascript
+  </FilesMatch>
+  <FilesMatch "\.tsx$">
+    ForceType application/javascript
+  </FilesMatch>
+  <FilesMatch "\.ts$">
     ForceType application/javascript
   </FilesMatch>
 </IfModule>
