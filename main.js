@@ -1,6 +1,6 @@
 
-// Import the main application entry point
-import './src/main.tsx';
+// Importação para o aplicativo transpilado
+import './src/main.js';
 
 // Additional security check
 if (window.location.hostname !== 'localhost' && 
