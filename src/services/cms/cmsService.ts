@@ -1,9 +1,12 @@
+
 import { toast } from '@/components/ui/use-toast';
-import { SiteContent, HeroContent, AboutContent, Service, MethodologyStep, ContactInfo } from './types';
+import { SiteContent, HeroContent, AboutContent, Service, MethodologyStep, ContactInfo, Project } from './types';
 import { defaultContent } from './defaultContent';
 import { databaseService } from './databaseService';
 import { linkedInService } from './linkedInService';
 import { projectService } from './projectService';
+import { contentService } from './ContentService';
+import { serviceManagementService } from './ServiceManagementService';
 import { LinkedInPost } from '@/components/linkedin/types';
 
 class CMSService {
@@ -51,32 +54,27 @@ class CMSService {
       const mainContent = await databaseService.fetchMainContent();
       
       if (mainContent) {
-        // Use type assertion to avoid TypeScript errors
-        const typedMainContent = mainContent as any;
         // Use safe property access with fallback to default content
-        content.hero = typedMainContent.hero || content.hero;
-        content.about = typedMainContent.about || content.about;
-        content.services = typedMainContent.services || content.services;
-        content.methodology = typedMainContent.methodology || content.methodology;
-        content.contact = typedMainContent.contact || content.contact;
+        if (mainContent.hero) content.hero = mainContent.hero as HeroContent;
+        if (mainContent.about) content.about = mainContent.about as AboutContent;
+        if (mainContent.services) content.services = mainContent.services as Service[];
+        if (mainContent.methodology) content.methodology = mainContent.methodology as typeof defaultContent.methodology;
+        if (mainContent.contact) content.contact = mainContent.contact as ContactInfo;
       }
       
       // Get projects info
       const projectsInfo = await databaseService.fetchProjectsInfo();
       
       if (projectsInfo) {
-        // Use type assertion to avoid TypeScript errors
-        const typedProjectsInfo = projectsInfo as any;
-        // Use safe property access with fallback to default content
-        content.projects.title = typedProjectsInfo.title || content.projects.title;
-        content.projects.description = typedProjectsInfo.description || content.projects.description;
+        if (projectsInfo.title) content.projects.title = projectsInfo.title as string;
+        if (projectsInfo.description) content.projects.description = projectsInfo.description as string;
       }
       
       // Get projects
       const projects = await databaseService.fetchProjects();
       
       if (projects && projects.length > 0) {
-        content.projects.items = projects;
+        content.projects.items = projects as Project[];
         console.log('Projects loaded:', projects.length);
       } else {
         console.log('No projects found in database, using default content');
@@ -86,7 +84,7 @@ class CMSService {
       const linkedInPosts = await databaseService.fetchLinkedInPosts();
       
       if (linkedInPosts && linkedInPosts.length > 0) {
-        content.linkedInPosts = linkedInPosts;
+        content.linkedInPosts = linkedInPosts as LinkedInPost[];
         console.log('LinkedIn posts loaded:', linkedInPosts.length);
       } else {
         console.log('No LinkedIn posts found in database, using default content');
@@ -146,193 +144,52 @@ class CMSService {
     }
   }
   
-  async updateHero(hero: HeroContent): Promise<void> {
-    try {
-      const content = await this.getContent();
-      content.hero = hero;
-      await this.saveContent(content);
-      
-      toast({
-        title: "Sucesso",
-        description: "Conteúdo da seção Hero atualizado com sucesso!",
-      });
-    } catch (error) {
-      console.error('Error updating hero:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível atualizar o conteúdo do Hero.",
-        variant: "destructive",
-      });
-    }
+  // Delegate methods to specialized services
+  updateHero(hero: HeroContent): Promise<void> {
+    return contentService.updateHero(hero);
   }
   
-  async updateAbout(about: AboutContent): Promise<void> {
-    try {
-      const content = await this.getContent();
-      content.about = about;
-      await this.saveContent(content);
-      
-      toast({
-        title: "Sucesso",
-        description: "Conteúdo da seção Sobre atualizado com sucesso!",
-      });
-    } catch (error) {
-      console.error('Error updating about:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível atualizar o conteúdo da seção Sobre.",
-        variant: "destructive",
-      });
-    }
+  updateAbout(about: AboutContent): Promise<void> {
+    return contentService.updateAbout(about);
   }
   
-  async updateService(service: Service): Promise<void> {
-    try {
-      const content = await this.getContent();
-      const index = content.services.findIndex(s => s.id === service.id);
-      
-      if (index !== -1) {
-        content.services[index] = service;
-      } else {
-        content.services.push(service);
-      }
-      
-      await this.saveContent(content);
-      
-      toast({
-        title: "Sucesso",
-        description: "Serviço atualizado com sucesso!",
-      });
-    } catch (error) {
-      console.error('Error updating service:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível atualizar o serviço.",
-        variant: "destructive",
-      });
-    }
+  updateService(service: Service): Promise<void> {
+    return serviceManagementService.updateService(service);
   }
   
-  async deleteService(id: string): Promise<void> {
-    try {
-      const content = await this.getContent();
-      content.services = content.services.filter(s => s.id !== id);
-      await this.saveContent(content);
-      
-      toast({
-        title: "Sucesso",
-        description: "Serviço excluído com sucesso!",
-      });
-    } catch (error) {
-      console.error('Error deleting service:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível excluir o serviço.",
-        variant: "destructive",
-      });
-    }
+  deleteService(id: string): Promise<void> {
+    return serviceManagementService.deleteService(id);
   }
   
-  async updateMethodology(methodology: typeof defaultContent.methodology): Promise<void> {
-    try {
-      const content = await this.getContent();
-      content.methodology = methodology;
-      await this.saveContent(content);
-      
-      toast({
-        title: "Sucesso",
-        description: "Conteúdo da seção Metodologia atualizado com sucesso!",
-      });
-    } catch (error) {
-      console.error('Error updating methodology:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível atualizar o conteúdo da seção Metodologia.",
-        variant: "destructive",
-      });
-    }
+  updateMethodology(methodology: typeof defaultContent.methodology): Promise<void> {
+    return contentService.updateMethodology(methodology);
   }
   
-  async updateMethodologyStep(step: MethodologyStep): Promise<void> {
-    try {
-      const content = await this.getContent();
-      const index = content.methodology.steps.findIndex(s => s.id === step.id);
-      
-      if (index !== -1) {
-        content.methodology.steps[index] = step;
-      } else {
-        content.methodology.steps.push(step);
-      }
-      
-      await this.saveContent(content);
-      
-      toast({
-        title: "Sucesso",
-        description: "Etapa da metodologia atualizada com sucesso!",
-      });
-    } catch (error) {
-      console.error('Error updating methodology step:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível atualizar a etapa da metodologia.",
-        variant: "destructive",
-      });
-    }
+  updateMethodologyStep(step: MethodologyStep): Promise<void> {
+    return contentService.updateMethodologyStep(step);
   }
   
-  async deleteMethodologyStep(id: string): Promise<void> {
-    try {
-      const content = await this.getContent();
-      content.methodology.steps = content.methodology.steps.filter(s => s.id !== id);
-      await this.saveContent(content);
-      
-      toast({
-        title: "Sucesso",
-        description: "Etapa da metodologia excluída com sucesso!",
-      });
-    } catch (error) {
-      console.error('Error deleting methodology step:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível excluir a etapa da metodologia.",
-        variant: "destructive",
-      });
-    }
+  deleteMethodologyStep(id: string): Promise<void> {
+    return contentService.deleteMethodologyStep(id);
   }
   
-  async updateProjects(projects: typeof defaultContent.projects): Promise<void> {
+  updateProjects(projects: typeof defaultContent.projects): Promise<void> {
     return projectService.updateProjects({
       title: projects.title,
       description: projects.description
     });
   }
   
-  async updateProject(project: any): Promise<void> {
+  updateProject(project: Project): Promise<void> {
     return projectService.updateProject(project);
   }
   
-  async deleteProject(id: string): Promise<void> {
+  deleteProject(id: string): Promise<void> {
     return projectService.deleteProject(id);
   }
   
-  async updateContactInfo(contact: ContactInfo): Promise<void> {
-    try {
-      const content = await this.getContent();
-      content.contact = contact;
-      await this.saveContent(content);
-      
-      toast({
-        title: "Sucesso",
-        description: "Informações de contato atualizadas com sucesso!",
-      });
-    } catch (error) {
-      console.error('Error updating contact info:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível atualizar as informações de contato.",
-        variant: "destructive",
-      });
-    }
+  updateContactInfo(contact: ContactInfo): Promise<void> {
+    return contentService.updateContactInfo(contact);
   }
   
   async resetToDefault(): Promise<void> {
@@ -360,22 +217,16 @@ class CMSService {
     }
   }
   
-  async updateLinkedInPost(post: LinkedInPost): Promise<void> {
+  updateLinkedInPost(post: LinkedInPost): Promise<void> {
     return linkedInService.updateLinkedInPost(post);
   }
   
-  async deleteLinkedInPost(id: string): Promise<void> {
+  deleteLinkedInPost(id: string): Promise<void> {
     return linkedInService.deleteLinkedInPost(id);
   }
   
-  async getLinkedInPosts(): Promise<LinkedInPost[]> {
-    try {
-      console.log('Getting LinkedIn posts using linkedInService');
-      return await linkedInService.getLinkedInPosts();
-    } catch (error) {
-      console.error('Error getting LinkedIn posts:', error);
-      return [];
-    }
+  getLinkedInPosts(): Promise<LinkedInPost[]> {
+    return linkedInService.getLinkedInPosts();
   }
 }
 

@@ -40,7 +40,9 @@ const Hero = () => {
         
         if (data && data.hero) {
           console.log('Hero content loaded:', data.hero);
-          setHeroContent(data.hero);
+          // Fix type error by explicitly typing the data
+          const heroData = data.hero as HeroContent;
+          setHeroContent(heroData);
         } else {
           console.warn('No hero content found');
         }

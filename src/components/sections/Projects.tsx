@@ -14,10 +14,15 @@ interface Project {
   link?: string;
 }
 
+interface ProjectInfo {
+  title?: string;
+  description?: string;
+}
+
 const Projects = () => {
   const [projectsData, setProjectsData] = useState<Project[]>([]);
-  const [projectsTitle, setProjectsTitle] = useState('');
-  const [projectsDescription, setProjectsDescription] = useState('');
+  const [projectsTitle, setProjectsTitle] = useState('Nossos Projetos');
+  const [projectsDescription, setProjectsDescription] = useState('Confira alguns dos nossos projetos recentes');
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
@@ -35,8 +40,10 @@ const Projects = () => {
         if (infoError) {
           console.error('Error fetching projects info:', infoError);
         } else if (infoData) {
-          setProjectsTitle(infoData.title || 'Nossos Projetos');
-          setProjectsDescription(infoData.description || 'Confira alguns dos nossos projetos recentes');
+          // Fix type errors by safely accessing properties
+          const projectInfo = infoData as ProjectInfo;
+          if (projectInfo.title) setProjectsTitle(projectInfo.title);
+          if (projectInfo.description) setProjectsDescription(projectInfo.description);
         }
         
         // Fetch projects

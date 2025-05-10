@@ -5,6 +5,10 @@ import { SiteContent, HeroContent, AboutContent, Service, MethodologyStep, Conta
 import { defaultContent } from './cms/defaultContent';
 import { databaseService } from './cms/databaseService';
 import { LinkedInPost } from '@/components/linkedin/types';
+import { cmsService } from './cms/cmsService';
 
-// Re-export services from CMS folder
+// Re-export everything from cms folder
 export * from './cms';
+
+// Re-export the default cmsService instance
+export default cmsService;

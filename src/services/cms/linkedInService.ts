@@ -3,8 +3,9 @@ import { toast } from '@/components/ui/use-toast';
 import { supabase } from '@/lib/supabase';
 import { LinkedInPost } from '@/components/linkedin/types';
 import { databaseService } from './databaseService';
+import { BaseService } from './BaseService';
 
-class LinkedInService {
+class LinkedInService extends BaseService {
   async getLinkedInPosts(): Promise<LinkedInPost[]> {
     try {
       // Directly query the linkedin_posts table
@@ -18,7 +19,8 @@ class LinkedInService {
         return [];
       }
       
-      return data || [];
+      // Ensure we return an array of properly typed LinkedIn posts
+      return data as LinkedInPost[] || [];
     } catch (error) {
       console.error('Exception fetching LinkedIn posts:', error);
       return [];
@@ -30,20 +32,12 @@ class LinkedInService {
       const success = await databaseService.saveLinkedInPost(post);
       
       if (success) {
-        toast({
-          title: "Sucesso",
-          description: "Post do LinkedIn atualizado com sucesso!",
-        });
+        this.showSuccessToast("Post do LinkedIn atualizado com sucesso!");
       } else {
         throw new Error('Failed to update LinkedIn post');
       }
     } catch (error) {
-      console.error('Error updating LinkedIn post:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível atualizar o post do LinkedIn.",
-        variant: "destructive",
-      });
+      this.handleError(error, "Não foi possível atualizar o post do LinkedIn.");
     }
   }
 
@@ -52,20 +46,12 @@ class LinkedInService {
       const success = await databaseService.deleteLinkedInPost(id);
       
       if (success) {
-        toast({
-          title: "Sucesso",
-          description: "Post do LinkedIn excluído com sucesso!",
-        });
+        this.showSuccessToast("Post do LinkedIn excluído com sucesso!");
       } else {
         throw new Error('Failed to delete LinkedIn post');
       }
     } catch (error) {
-      console.error('Error deleting LinkedIn post:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível excluir o post do LinkedIn.",
-        variant: "destructive",
-      });
+      this.handleError(error, "Não foi possível excluir o post do LinkedIn.");
     }
   }
 }
