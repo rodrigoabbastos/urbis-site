@@ -1,6 +1,6 @@
 
-// src/hooks/use-toast.js
-import { useToast as useToastInternal } from "@/components/ui/toast";
+// src/hooks/use-toast.jsx
+import { useToast as useToastInternal } from "@/components/ui/toast.jsx";
 
 export const useToast = useToastInternal;
 
