@@ -16,6 +16,13 @@ export default defineConfig(({ mode }) => ({
     emptyOutDir: true,
     sourcemap: false,
     minify: true,
+    // Certifique-se de que o JavaScript é minificado para segurança
+    terserOptions: {
+      compress: {
+        drop_console: mode === 'production',
+        drop_debugger: true,
+      },
+    },
   },
   plugins: [
     react(),

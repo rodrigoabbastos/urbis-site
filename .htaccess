@@ -16,9 +16,11 @@ RewriteRule ^ index.html [L]
 
 # Security headers
 <IfModule mod_headers.c>
+  # Enhanced security headers
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
   Header set X-XSS-Protection "1; mode=block"
+  Header set Content-Security-Policy "default-src 'self'; script-src 'self' https://cdn.gpteng.co 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;"
   # Only use HSTS if you have HTTPS configured
   # Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
   
@@ -27,6 +29,13 @@ RewriteRule ^ index.html [L]
   Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
   Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
 </IfModule>
+
+# Block access to sensitive files
+<FilesMatch "(^#.*#|\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|sw[op])|~)$">
+  Order allow,deny
+  Deny from all
+  Satisfy All
+</FilesMatch>
 
 # Set proper MIME types for JavaScript modules
 <IfModule mod_mime.c>
@@ -40,6 +49,14 @@ RewriteRule ^ index.html [L]
     ForceType application/javascript
   </FilesMatch>
 </IfModule>
+
+# Block direct access to any PHP files
+<FilesMatch "\.php$">
+  # Only allow PHP files that exist directly in the root
+  RewriteCond %{REQUEST_URI} !^/index\.php$
+  RewriteCond %{REQUEST_URI} \.php$
+  RewriteRule .* - [F]
+</FilesMatch>
 
 # Cache static assets
 <IfModule mod_expires.c>
