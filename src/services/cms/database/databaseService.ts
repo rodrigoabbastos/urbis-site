@@ -3,8 +3,9 @@ import { SiteContent } from '../types';
 import { DatabaseServiceInterface } from './DatabaseServiceInterface';
 import { createTablesIfNotExist } from './tableInitializer';
 import { 
-  fetchMainContent, fetchProjectsInfo, saveContent, saveProjectsInfo 
+  fetchMainContent, saveContent, loadContent 
 } from './contentRepository';
+import { fetchProjectsInfo, saveProjectsInfo } from './projectsContentRepository';
 import { fetchProjects, saveProject, deleteProject } from './projectsRepository';
 import { fetchLinkedInPosts, saveLinkedInPost, deleteLinkedInPost } from './linkedInRepository';
 import { migrateFromLocalStorage, resetToDefault } from './migrationHelper';
