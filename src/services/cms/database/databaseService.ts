@@ -3,7 +3,7 @@ import { SiteContent } from '../types';
 import { DatabaseServiceInterface } from './DatabaseServiceInterface';
 import { createTablesIfNotExist } from './tableInitializer';
 import { 
-  fetchMainContent, fetchProjectsInfo, saveMainContent, saveProjectsInfo 
+  fetchMainContent, fetchProjectsInfo, saveContent, saveProjectsInfo 
 } from './contentRepository';
 import { fetchProjects, saveProject, deleteProject } from './projectsRepository';
 import { fetchLinkedInPosts, saveLinkedInPost, deleteLinkedInPost } from './linkedInRepository';
@@ -39,7 +39,7 @@ export class DatabaseService implements DatabaseServiceInterface {
       ebooks: content.ebooks ? 'presente' : 'ausente'
     });
     
-    return saveMainContent(content);
+    return saveContent(content);
   }
   
   async saveProjectsInfo(projectsInfo: { title: string; description: string }) {

@@ -3,7 +3,7 @@ import { toast } from '@/components/ui/use-toast';
 import { SiteContent } from '../types';
 import { supabaseHelper } from './databaseUtils';
 import { createTablesIfNotExist } from './tableInitializer';
-import { saveMainContent, saveProjectsInfo } from './contentRepository';
+import { saveContent } from './contentRepository';
 import { saveProject } from './projectsRepository';
 import { saveLinkedInPost } from './linkedInRepository';
 
@@ -21,17 +21,20 @@ export async function migrateFromLocalStorage(localContent: SiteContent, storage
     // If no content exists in Supabase, insert from localStorage
     if (!existingContent) {
       // Store main content
-      const { hero, about, services, methodology, contact } = localContent;
-      await saveMainContent({ hero, about, services, methodology, contact });
-      
-      // Store projects info
-      await saveProjectsInfo({
-        title: localContent.projects.title,
-        description: localContent.projects.description
+      const { hero, about, services, methodology, contact, clients, sectionVisibility, ebooks } = localContent;
+      await saveContent({ 
+        hero, 
+        about, 
+        services, 
+        methodology, 
+        contact,
+        clients,
+        sectionVisibility,
+        ebooks
       });
       
       // Store individual projects
-      if (localContent.projects.items.length > 0) {
+      if (localContent.projects && localContent.projects.items && localContent.projects.items.length > 0) {
         for (const project of localContent.projects.items) {
           await saveProject(project);
         }
@@ -72,13 +75,16 @@ export async function resetToDefault(defaultData: SiteContent): Promise<boolean>
     await createTablesIfNotExist();
     
     // Reset main content
-    const { hero, about, services, methodology, contact } = defaultData;
-    await saveMainContent({ hero, about, services, methodology, contact });
-    
-    // Reset projects info
-    await saveProjectsInfo({
-      title: defaultData.projects.title,
-      description: defaultData.projects.description
+    const { hero, about, services, methodology, contact, clients, sectionVisibility, ebooks } = defaultData;
+    await saveContent({ 
+      hero, 
+      about, 
+      services, 
+      methodology, 
+      contact,
+      clients,
+      sectionVisibility, 
+      ebooks
     });
     
     // Reset projects - first delete all existing projects
@@ -87,8 +93,10 @@ export async function resetToDefault(defaultData: SiteContent): Promise<boolean>
       .neq('id', '0');
     
     // Then insert default projects
-    for (const project of defaultData.projects.items) {
-      await saveProject(project);
+    if (defaultData.projects && defaultData.projects.items) {
+      for (const project of defaultData.projects.items) {
+        await saveProject(project);
+      }
     }
     
     // Reset LinkedIn posts - first delete all existing posts

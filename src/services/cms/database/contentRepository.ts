@@ -1,3 +1,4 @@
+
 import { SiteContent } from '@/services/cms/types';
 import { supabase } from '@/lib/supabase';
 import { defaultContent } from '../defaultContent';
@@ -5,7 +6,8 @@ import { defaultContent } from '../defaultContent';
 const CONTENT_TABLE = 'content';
 const DEFAULT_CONTENT_ID = 'default';
 
-export const saveContent = async (content: SiteContent): Promise<boolean> => {
+// Unified function that replaces saveContent and saveMainContent
+export const saveContent = async (content: Partial<SiteContent>): Promise<boolean> => {
   try {
     console.log('Saving content to Supabase:', content);
     
@@ -22,7 +24,6 @@ export const saveContent = async (content: SiteContent): Promise<boolean> => {
         contact: content.contact,
         clients: content.clients,
         ebooks: content.ebooks,
-        // Fix for the error: use section_visibility instead of sectionVisibility
         section_visibility: content.sectionVisibility,
         updated_at: new Date().toISOString()
       })
@@ -36,6 +37,80 @@ export const saveContent = async (content: SiteContent): Promise<boolean> => {
     return true;
   } catch (error) {
     console.error('Exception saving content:', error);
+    return false;
+  }
+};
+
+// Alias for saveContent to match the expected function name in other files
+export const saveMainContent = saveContent;
+
+// Add the fetchMainContent function
+export const fetchMainContent = async () => {
+  try {
+    // Check if the content table exists
+    const { data: tableExists } = await supabase.rpc('table_exists', {
+      table_name: CONTENT_TABLE
+    });
+    
+    if (!tableExists) {
+      console.log('Content table does not exist yet');
+      return null;
+    }
+    
+    // Fetch the content
+    const { data, error } = await supabase
+      .from(CONTENT_TABLE)
+      .select('*')
+      .eq('id', DEFAULT_CONTENT_ID)
+      .single();
+      
+    if (error) {
+      console.error('Error loading content:', error);
+      return null;
+    }
+    
+    if (!data) {
+      console.log('No content found');
+      return null;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Exception loading content:', error);
+    return null;
+  }
+};
+
+// Add fetchProjectsInfo function
+export const fetchProjectsInfo = async () => {
+  const content = await fetchMainContent();
+  if (content && content.projects) {
+    return {
+      title: content.projects.title,
+      description: content.projects.description
+    };
+  }
+  return null;
+};
+
+// Add saveProjectsInfo function
+export const saveProjectsInfo = async (projectsInfo: { title: string; description: string }): Promise<boolean> => {
+  try {
+    const content = await fetchMainContent();
+    if (!content) return false;
+    
+    const updatedContent = {
+      ...content,
+      projects: {
+        ...content.projects,
+        title: projectsInfo.title,
+        description: projectsInfo.description
+      }
+    };
+    
+    return await saveContent(updatedContent);
+  } catch (error) {
+    console.error('Error saving projects info:', error);
     return false;
   }
 };
