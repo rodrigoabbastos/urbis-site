@@ -11,6 +11,23 @@ function typeCastFromJson<T>(data: Json | null, defaultValue: T): T {
   return data as unknown as T;
 }
 
+// Define the type for the database content to make TypeScript happy
+interface ContentRow {
+  id: string;
+  hero: Json | null;
+  about: Json | null;
+  services: Json | null;
+  methodology: Json | null;
+  contact: Json | null;
+  clients: Json | null;
+  ebooks: Json | null;
+  projects: Json | null;
+  section_visibility: Json | null;
+  sectionVisibility: Json | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
 // Unified function that replaces saveContent and saveMainContent
 export const saveContent = async (content: Partial<SiteContent>): Promise<boolean> => {
   try {
@@ -82,15 +99,18 @@ export const fetchMainContent = async () => {
       return null;
     }
     
+    // Cast data to our ContentRow type
+    const contentRow = data as ContentRow;
+    
     // Add a field to indicate it's from the database and contains Json types
     // Ensure projects field exists in the returned data
     return { 
-      ...data,
+      ...contentRow,
       // Make sectionVisibility available for compatibility
-      sectionVisibility: data.section_visibility,
+      sectionVisibility: contentRow.section_visibility,
       isDbContent: true,
       // Ensure projects exists and has the right structure
-      projects: data.projects || toJson({ title: '', description: '', items: [] })
+      projects: contentRow.projects || toJson({ title: '', description: '', items: [] })
     };
   } catch (error) {
     console.error('Exception loading content:', error);
@@ -216,20 +236,23 @@ export const loadContent = async (): Promise<SiteContent | null> => {
       return null;
     }
     
+    // Cast data to our ContentRow type for proper typing
+    const contentRow = data as ContentRow;
+    
     // Map section_visibility to sectionVisibility for consistency
     const content = {
       ...defaultContent,
-      hero: typeCastFromJson(data.hero, defaultContent.hero),
-      about: typeCastFromJson(data.about, defaultContent.about),
-      services: typeCastFromJson(data.services, defaultContent.services),
-      methodology: typeCastFromJson(data.methodology, defaultContent.methodology),
-      contact: typeCastFromJson(data.contact, defaultContent.contact),
-      clients: typeCastFromJson(data.clients, defaultContent.clients),
-      projects: typeCastFromJson(data.projects, defaultContent.projects),
-      ebooks: typeCastFromJson(data.ebooks, defaultContent.ebooks),
+      hero: typeCastFromJson(contentRow.hero, defaultContent.hero),
+      about: typeCastFromJson(contentRow.about, defaultContent.about),
+      services: typeCastFromJson(contentRow.services, defaultContent.services),
+      methodology: typeCastFromJson(contentRow.methodology, defaultContent.methodology),
+      contact: typeCastFromJson(contentRow.contact, defaultContent.contact),
+      clients: typeCastFromJson(contentRow.clients, defaultContent.clients),
+      projects: typeCastFromJson(contentRow.projects, defaultContent.projects),
+      ebooks: typeCastFromJson(contentRow.ebooks, defaultContent.ebooks),
       linkedInPosts: defaultContent.linkedInPosts, // Will be loaded separately
       // Ensure we handle both property names for backward compatibility
-      sectionVisibility: typeCastFromJson(data.section_visibility, defaultContent.sectionVisibility),
+      sectionVisibility: typeCastFromJson(contentRow.section_visibility, defaultContent.sectionVisibility),
     };
     
     return content;
