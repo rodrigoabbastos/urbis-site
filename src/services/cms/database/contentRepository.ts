@@ -1,3 +1,4 @@
+
 import { supabaseHelper } from './databaseUtils';
 import { createTablesIfNotExist } from './tableInitializer';
 
@@ -19,21 +20,24 @@ export async function fetchMainContent(): Promise<any | null> {
     
     console.log('Main content fetched successfully:', data);
     
-    // Verificar se data existe antes de acessar propriedades
+    // Safely handle data processing after confirming it exists
     if (data) {
-      // Verificar se data tem a propriedade clients antes de acessá-la
-      if ('clients' in data) {
+      // Check for clients data
+      if ('clients' in data && data.clients) {
         console.log('Dados de clientes carregados:', data.clients);
       } else {
         console.log('Nenhum dado de clientes encontrado');
       }
       
-      // Verificar se data tem a propriedade sectionVisibility ou section_visibility
-      if ('section_visibility' in data) {
+      // Handle both section_visibility naming formats
+      // First check if snake_case version exists
+      if ('section_visibility' in data && data.section_visibility) {
         console.log('Configurações de visibilidade carregadas (snake_case):', data.section_visibility);
-        // Normalizar para camelCase
+        // Normalize to camelCase for consistent usage in the app
         data.sectionVisibility = data.section_visibility;
-      } else if ('sectionVisibility' in data) {
+      }
+      // Then check if camelCase version exists
+      else if ('sectionVisibility' in data && data.sectionVisibility) {
         console.log('Configurações de visibilidade carregadas (camelCase):', data.sectionVisibility);
       } else {
         console.log('Nenhuma configuração de visibilidade encontrada');
@@ -85,7 +89,7 @@ export async function saveMainContent(content: {
     
     console.log('Saving main content to database:', content);
     
-    // Verificar explicitamente os campos
+    // Log specific fields we are saving
     if (content.clients) {
       console.log('Salvando dados de clientes:', content.clients);
     }
@@ -94,11 +98,11 @@ export async function saveMainContent(content: {
       console.log('Salvando configurações de visibilidade:', content.sectionVisibility);
     }
     
-    // Garantir que sectionVisibility seja salvo em camelCase e snake_case para compatibilidade
+    // Save sectionVisibility in both camelCase and snake_case for compatibility
     const dataToSave = {
       id: 'main',
       ...content,
-      section_visibility: content.sectionVisibility, // Versão snake_case para compatibilidade
+      section_visibility: content.sectionVisibility, // Snake case version for database compatibility
       updated_at: new Date()
     };
     
