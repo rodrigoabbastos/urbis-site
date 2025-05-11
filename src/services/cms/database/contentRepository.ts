@@ -131,7 +131,21 @@ export const saveProjectsInfo = async (projectsInfo: { title: string; descriptio
       projects: toJson(updatedProjects)
     };
     
-    return await saveContent(fromJson({}, updatedContent));
+    // We need to use fromJson here to convert back to the domain model
+    // before saving through saveContent which will handle the conversion to Json
+    const contentToSave: Partial<SiteContent> = {
+      hero: fromJson(updatedContent.hero, defaultContent.hero),
+      about: fromJson(updatedContent.about, defaultContent.about),
+      services: fromJson(updatedContent.services, defaultContent.services),
+      methodology: fromJson(updatedContent.methodology, defaultContent.methodology),
+      projects: fromJson(updatedContent.projects, defaultContent.projects),
+      contact: fromJson(updatedContent.contact, defaultContent.contact),
+      clients: fromJson(updatedContent.clients, defaultContent.clients),
+      ebooks: fromJson(updatedContent.ebooks, defaultContent.ebooks),
+      sectionVisibility: fromJson(updatedContent.sectionVisibility || updatedContent.section_visibility, defaultContent.sectionVisibility)
+    };
+    
+    return await saveContent(contentToSave);
   } catch (error) {
     console.error('Error saving projects info:', error);
     return false;
