@@ -29,6 +29,9 @@ export class DatabaseService implements DatabaseServiceInterface {
     services: any;
     methodology: any;
     contact: any;
+    clients?: any;
+    sectionVisibility?: any;
+    ebooks?: any;
   }) {
     return saveMainContent(content);
   }

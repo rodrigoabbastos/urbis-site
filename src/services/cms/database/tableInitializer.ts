@@ -17,6 +17,9 @@ export async function createTablesIfNotExist(): Promise<void> {
             services JSONB,
             methodology JSONB,
             contact JSONB,
+            clients JSONB,
+            section_visibility JSONB,
+            ebooks JSONB,
             created_at TIMESTAMPTZ DEFAULT NOW(),
             updated_at TIMESTAMPTZ DEFAULT NOW()
           );
@@ -76,6 +79,20 @@ export async function createTablesIfNotExist(): Promise<void> {
         console.error('Error creating projects table:', projectsError);
       }
     }
+
+    // Ensure all content columns exist
+    const { error: columnsError } = await supabaseHelper.rpc('run_sql', {
+      sql: `
+        ALTER TABLE IF EXISTS public.content 
+        ADD COLUMN IF NOT EXISTS clients JSONB,
+        ADD COLUMN IF NOT EXISTS section_visibility JSONB,
+        ADD COLUMN IF NOT EXISTS ebooks JSONB;
+      `
+    });
+    
+    if (columnsError) {
+      console.error('Error adding columns to content table:', columnsError);
+    }
   } catch (error) {
     console.error('Error checking tables:', error);
     
@@ -91,6 +108,9 @@ export async function createTablesIfNotExist(): Promise<void> {
             services JSONB,
             methodology JSONB,
             contact JSONB,
+            clients JSONB,
+            section_visibility JSONB,
+            ebooks JSONB,
             created_at TIMESTAMPTZ DEFAULT NOW(),
             updated_at TIMESTAMPTZ DEFAULT NOW()
           );

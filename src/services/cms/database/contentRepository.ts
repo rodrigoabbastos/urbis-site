@@ -54,6 +54,9 @@ export async function saveMainContent(content: {
   services: any;
   methodology: any;
   contact: any;
+  clients?: any;
+  sectionVisibility?: any;
+  ebooks?: any;
 }): Promise<boolean> {
   try {
     // Ensure tables exist before saving

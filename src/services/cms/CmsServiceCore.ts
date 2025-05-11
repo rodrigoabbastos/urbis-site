@@ -36,8 +36,17 @@ export class CmsServiceCore extends BaseService {
   async saveContent(content: SiteContent): Promise<void> {
     try {
       // Store main content directly to database
-      const { hero, about, services, methodology, contact } = content;
-      await databaseService.saveMainContent({ hero, about, services, methodology, contact });
+      const { hero, about, services, methodology, contact, clients, sectionVisibility, ebooks } = content;
+      await databaseService.saveMainContent({ 
+        hero, 
+        about, 
+        services, 
+        methodology, 
+        contact,
+        clients,
+        sectionVisibility,
+        ebooks
+      });
       
       // Store projects info
       const projectsContent = {
@@ -100,6 +109,11 @@ export class CmsServiceCore extends BaseService {
         if (mainContent.services) content.services = mainContent.services as SiteContent['services'];
         if (mainContent.methodology) content.methodology = mainContent.methodology as SiteContent['methodology'];
         if (mainContent.contact) content.contact = mainContent.contact as SiteContent['contact'];
+        
+        // Load new sections
+        if (mainContent.clients) content.clients = mainContent.clients as SiteContent['clients'];
+        if (mainContent.section_visibility) content.sectionVisibility = mainContent.section_visibility as SiteContent['sectionVisibility'];
+        if (mainContent.ebooks) content.ebooks = mainContent.ebooks as SiteContent['ebooks'];
       } else {
         console.log('No main content found in database, using default');
       }

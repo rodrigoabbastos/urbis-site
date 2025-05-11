@@ -14,6 +14,9 @@ export interface DatabaseServiceInterface {
     services: any;
     methodology: any;
     contact: any;
+    clients?: any;
+    sectionVisibility?: any;
+    ebooks?: any;
   }): Promise<boolean>;
   saveProjectsInfo(projectsInfo: { title: string; description: string }): Promise<boolean>;
   

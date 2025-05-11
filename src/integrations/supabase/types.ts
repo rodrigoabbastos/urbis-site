@@ -12,31 +12,40 @@ export type Database = {
       content: {
         Row: {
           about: Json | null
+          clients: Json | null
           contact: Json | null
           created_at: string | null
+          ebooks: Json | null
           hero: Json | null
           id: string
           methodology: Json | null
+          section_visibility: Json | null
           services: Json | null
           updated_at: string | null
         }
         Insert: {
           about?: Json | null
+          clients?: Json | null
           contact?: Json | null
           created_at?: string | null
+          ebooks?: Json | null
           hero?: Json | null
           id: string
           methodology?: Json | null
+          section_visibility?: Json | null
           services?: Json | null
           updated_at?: string | null
         }
         Update: {
           about?: Json | null
+          clients?: Json | null
           contact?: Json | null
           created_at?: string | null
+          ebooks?: Json | null
           hero?: Json | null
           id?: string
           methodology?: Json | null
+          section_visibility?: Json | null
           services?: Json | null
           updated_at?: string | null
         }
