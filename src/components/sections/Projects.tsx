@@ -13,7 +13,7 @@ interface Project {
   year: string;
   type: 'urban' | 'smart' | string; // Allow any string value for category
   link?: string;
-  keywords?: string[];
+  keywords?: string[]; // Make keywords optional
 }
 
 interface ProjectInfo {
@@ -60,19 +60,20 @@ const Projects = () => {
           
           // Add SEO keywords to each project if they don't already have them
           const enhancedProjects = projectsData?.map(project => {
-            if (!project.keywords) {
+            // Create a new project object with all existing properties
+            const enhancedProject: Project = {
+              ...project,
               // Add default keywords based on project type
-              let keywords = ["projeto urbanístico", "desenvolvimento urbano"];
-              
-              if (project.type === "urban") {
-                keywords.push("loteamento", "bairro planejado", "urbanismo");
-              } else if (project.type === "smart") {
-                keywords.push("smart city", "cidade inteligente", "tecnologia urbana");
-              }
-              
-              return {...project, keywords};
-            }
-            return project;
+              keywords: [
+                "projeto urbanístico", 
+                "desenvolvimento urbano",
+                ...(project.type === "urban" 
+                  ? ["loteamento", "bairro planejado", "urbanismo"] 
+                  : ["smart city", "cidade inteligente", "tecnologia urbana"])
+              ]
+            };
+            
+            return enhancedProject;
           }) || [];
           
           setProjectsData(enhancedProjects);
