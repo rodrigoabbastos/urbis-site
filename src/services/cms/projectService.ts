@@ -1,72 +1,88 @@
 
 import { Project } from './types';
-import { toast } from '@/components/ui/use-toast';
 import { databaseService } from './database/databaseService';
+import { cmsService } from './cmsService';
+import { toast } from '@/components/ui/use-toast';
+import { v4 as uuidv4 } from '@/lib/uuid';
 
-export class ProjectService {
-  async updateProjects(projects: { title: string; description: string }): Promise<void> {
+class ProjectService {
+  // Update projects info (title and description)
+  async updateProjects(projectsInfo: { title: string; description: string }): Promise<void> {
     try {
-      const success = await databaseService.saveProjectsInfo(projects);
+      const success = await databaseService.saveProjectsInfo(projectsInfo);
       
-      if (success) {
-        toast({
-          title: "Sucesso",
-          description: "Conteúdo da seção Projetos atualizado com sucesso!",
-        });
-      } else {
-        throw new Error('Falha ao salvar informações dos projetos');
+      if (!success) {
+        throw new Error("Não foi possível salvar as informações de projetos");
       }
+      
+      console.log('Informações de projetos atualizadas com sucesso');
+      
     } catch (error) {
-      console.error('Error updating projects:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível atualizar o conteúdo da seção Projetos.",
-        variant: "destructive",
-      });
+      console.error('Error updating projects info:', error);
+      throw error;
     }
   }
-
+  
+  // Update a single project
   async updateProject(project: Project): Promise<void> {
     try {
+      // Make sure project has an ID
+      if (!project.id) {
+        project.id = uuidv4();
+      }
+      
+      // Save the project
       const success = await databaseService.saveProject(project);
       
-      if (success) {
-        toast({
-          title: "Sucesso",
-          description: "Projeto atualizado com sucesso!",
-        });
-      } else {
-        throw new Error('Falha ao salvar projeto');
+      if (!success) {
+        throw new Error("Não foi possível salvar o projeto");
       }
+      
+      console.log('Projeto salvo com sucesso:', project.id);
+      
     } catch (error) {
       console.error('Error updating project:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível atualizar o projeto.",
-        variant: "destructive",
-      });
+      throw error;
+    }
+  }
+  
+  // Delete a project
+  async deleteProject(id: string): Promise<void> {
+    try {
+      // Delete the project
+      const success = await databaseService.deleteProject(id);
+      
+      if (!success) {
+        throw new Error("Não foi possível excluir o projeto");
+      }
+      
+      console.log('Projeto excluído com sucesso:', id);
+      
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      throw error;
     }
   }
 
-  async deleteProject(id: string): Promise<void> {
+  // Save section info using the Core ContentSaver
+  async updateSectionInfo(title: string, description: string): Promise<void> {
     try {
-      const success = await databaseService.deleteProject(id);
+      // Get current content
+      const content = await cmsService.getContent();
       
-      if (success) {
-        toast({
-          title: "Sucesso",
-          description: "Projeto excluído com sucesso!",
-        });
-      } else {
-        throw new Error('Falha ao excluir projeto');
-      }
+      // Create updated projects content
+      const updatedProjects = {
+        ...content.projects,
+        title,
+        description
+      };
+      
+      // Update through core service
+      await cmsService.core.updatePartialContent('projects', updatedProjects);
+      
     } catch (error) {
-      console.error('Error deleting project:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível excluir o projeto.",
-        variant: "destructive",
-      });
+      console.error('Error updating projects section info:', error);
+      throw error;
     }
   }
 }

@@ -29,6 +29,14 @@ export class CmsServiceCore {
     return this.contentManager.updatePartialContent(section, content);
   }
   
+  async updateSectionInfo(
+    section: keyof SiteContent,
+    title: string,
+    description: string | string[]
+  ): Promise<void> {
+    return this.contentManager.updateSectionInfo(section, title, description);
+  }
+  
   async loadContentToCache(): Promise<void> {
     return this.contentManager.loadContentToCache();
   }

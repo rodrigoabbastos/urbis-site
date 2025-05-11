@@ -52,6 +52,15 @@ export class ContentManager extends BaseService {
     return this.contentSaver.updatePartialContent(section, content);
   }
   
+  // Add method to update section title and description
+  async updateSectionInfo(
+    section: keyof SiteContent,
+    title: string,
+    description: string | string[]
+  ): Promise<void> {
+    return this.contentSaver.updateSectionInfo(section, title, description);
+  }
+  
   // Legacy method kept for compatibility, but now just forwards to loadContentFromDatabase
   async loadContentToCache(): Promise<void> {
     try {

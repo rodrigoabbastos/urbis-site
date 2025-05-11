@@ -88,4 +88,47 @@ export class ContentSaver extends BaseService {
       this.handleError(error, `Falha ao atualizar ${String(section)}`);
     }
   }
+
+  // Add a method specifically for updating section title and description
+  async updateSectionInfo(
+    section: keyof SiteContent, 
+    title: string, 
+    description: string | string[]
+  ): Promise<void> {
+    try {
+      // Get current content from the content loader
+      const contentLoader = new ContentLoader();
+      const currentContent = await contentLoader.loadContentFromDatabase();
+      
+      // Make a copy of the current content for the section
+      const sectionContent = { ...currentContent[section] };
+      
+      // Update the title and description
+      if (typeof sectionContent === 'object' && sectionContent !== null) {
+        // Handle different section structures
+        if (section === 'methodology' || section === 'clients' || section === 'ebooks') {
+          // These sections have simple title/description at the root level
+          sectionContent.title = title;
+          sectionContent.description = description;
+        } else if (section === 'hero') {
+          // Hero has title as title and subtitle as description
+          sectionContent.title = title;
+          sectionContent.subtitle = Array.isArray(description) ? description[0] : description;
+        } else if (section === 'about') {
+          // About has title and description array
+          sectionContent.title = title;
+          sectionContent.description = Array.isArray(description) ? description : [description];
+        }
+        
+        // Update the content with the modified section
+        await this.updatePartialContent(section, sectionContent);
+        
+        this.showSuccessToast(`Título e descrição de ${String(section)} atualizados com sucesso!`);
+      } else {
+        throw new Error(`A seção ${String(section)} não possui uma estrutura válida`);
+      }
+    } catch (error) {
+      this.handleError(error, `Falha ao atualizar título e descrição de ${String(section)}`);
+    }
+  }
 }

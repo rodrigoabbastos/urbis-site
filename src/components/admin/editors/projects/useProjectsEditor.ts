@@ -52,11 +52,7 @@ export const useProjectsEditor = () => {
   
   const handleSaveSection = async (newTitle: string, newDescription: string) => {
     try {
-      await cmsService.updateProjects({
-        title: newTitle,
-        description: newDescription,
-        items: projects
-      });
+      await cmsService.projectService.updateSectionInfo(newTitle, newDescription);
       
       setTitle(newTitle);
       setDescription(newDescription);

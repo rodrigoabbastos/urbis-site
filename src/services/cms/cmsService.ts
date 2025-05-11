@@ -27,6 +27,16 @@ class CMSService {
     }
   }
   
+  // Expose the core service for direct access
+  get core() {
+    return this.core;
+  }
+
+  // Expose project service for direct access
+  get projectService() {
+    return projectService;
+  }
+  
   async getContent(): Promise<SiteContent> {
     return this.core.getContent();
   }
@@ -115,6 +125,15 @@ class CMSService {
   
   updateEbooks(ebooks: SiteContent['ebooks']): Promise<void> {
     return this.core.updatePartialContent('ebooks', ebooks);
+  }
+
+  // New method to update any section's title and description
+  updateSectionInfo(
+    section: keyof SiteContent,
+    title: string, 
+    description: string | string[]
+  ): Promise<void> {
+    return this.core.updateSectionInfo(section, title, description);
   }
 }
 

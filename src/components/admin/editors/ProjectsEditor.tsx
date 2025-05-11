@@ -3,8 +3,8 @@ import { Dialog } from '@/components/ui/dialog';
 import AdminLayout from '../AdminLayout';
 import ProjectForm from './projects/ProjectForm';
 import ProjectsGrid from './projects/ProjectsGrid';
-import SectionInfoForm from './projects/SectionInfoForm';
 import { useProjectsEditor } from './projects/useProjectsEditor';
+import { SectionInfoEditor } from './common';
 
 const ProjectsEditor = () => {
   const {
@@ -36,10 +36,11 @@ const ProjectsEditor = () => {
   return (
     <AdminLayout title="Projetos">
       <div className="space-y-6">
-        <SectionInfoForm 
-          title={title} 
-          description={description} 
-          onSave={handleSaveSection} 
+        <SectionInfoEditor
+          sectionKey="Projetos"
+          title={title}
+          description={description}
+          onSave={handleSaveSection}
         />
         
         <ProjectsGrid 
