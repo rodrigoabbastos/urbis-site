@@ -94,6 +94,11 @@ export class CmsServiceCore extends BaseService {
       console.log(`Conteúdo atualizado com ${String(section)}:`, 
         section === 'clients' ? 'dados de clientes presentes' : 'outra seção');
       
+      // Log section visibility specifically when that's what we're updating
+      if (section === 'sectionVisibility') {
+        console.log('Atualizando configurações de visibilidade:', content);
+      }
+      
       // For now, simply save the entire content
       // This could be optimized later to only save the updated section
       await this.saveContent(updatedContent);
@@ -130,12 +135,13 @@ export class CmsServiceCore extends BaseService {
           console.log('Nenhum dado de clientes encontrado no banco');
         }
         
-        if (mainContent.section_visibility) {
-          console.log('section_visibility encontrado:', mainContent.section_visibility);
-          content.sectionVisibility = mainContent.section_visibility as SiteContent['sectionVisibility'];
-        } else if (mainContent.sectionVisibility) {
-          console.log('sectionVisibility encontrado:', mainContent.sectionVisibility);
+        // Verificar ambos os campos de visibilidade (camelCase e snake_case)
+        if (mainContent.sectionVisibility) {
+          console.log('sectionVisibility (camelCase) encontrado:', mainContent.sectionVisibility);
           content.sectionVisibility = mainContent.sectionVisibility as SiteContent['sectionVisibility'];
+        } else if (mainContent.section_visibility) {
+          console.log('section_visibility (snake_case) encontrado:', mainContent.section_visibility);
+          content.sectionVisibility = mainContent.section_visibility as SiteContent['sectionVisibility'];
         } else {
           console.log('Nenhuma configuração de visibilidade encontrada no banco');
         }

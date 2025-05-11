@@ -27,6 +27,18 @@ export async function fetchMainContent(): Promise<any | null> {
       console.log('Nenhum dado de clientes encontrado');
     }
     
+    // Verificar se data existe e se tem a propriedade sectionVisibility
+    if (data && 'sectionVisibility' in data) {
+      console.log('Configurações de visibilidade carregadas:', data.sectionVisibility);
+    } else if (data && 'section_visibility' in data) {
+      // Compatibilidade com o campo section_visibility (snake_case)
+      console.log('Configurações de visibilidade carregadas (snake_case):', data.section_visibility);
+      // Normalizar para camelCase
+      data.sectionVisibility = data.section_visibility;
+    } else {
+      console.log('Nenhuma configuração de visibilidade encontrada');
+    }
+    
     return data;
   } catch (error) {
     console.error('Error fetching main content:', error);
@@ -71,17 +83,28 @@ export async function saveMainContent(content: {
     await createTablesIfNotExist();
     
     console.log('Saving main content to database:', content);
-    // Verificar explicitamente o campo clients
+    
+    // Verificar explicitamente os campos
     if (content.clients) {
       console.log('Salvando dados de clientes:', content.clients);
     }
     
+    if (content.sectionVisibility) {
+      console.log('Salvando configurações de visibilidade:', content.sectionVisibility);
+    }
+    
+    // Garantir que sectionVisibility seja salvo em camelCase e snake_case para compatibilidade
+    const dataToSave = {
+      id: 'main',
+      ...content,
+      section_visibility: content.sectionVisibility, // Versão snake_case para compatibilidade
+      updated_at: new Date()
+    };
+    
+    console.log('Dados sendo gravados no banco:', dataToSave);
+    
     const { error } = await supabaseHelper.from('content')
-      .upsert({ 
-        id: 'main',
-        ...content,
-        updated_at: new Date()
-      } as any);
+      .upsert(dataToSave as any);
     
     if (error) {
       console.error('Error in saveMainContent:', error);
