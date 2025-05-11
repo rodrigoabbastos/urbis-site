@@ -120,15 +120,23 @@ export const fetchMainContent = async () => {
 
 // Add fetchProjectsInfo function
 export const fetchProjectsInfo = async () => {
-  const content = await fetchMainContent();
-  if (content && content.projects) {
-    const projectsData = fromJson({}, content.projects);
-    return {
-      title: projectsData.title || '',
-      description: projectsData.description || ''
-    };
+  try {
+    const content = await fetchMainContent();
+    if (content && content.projects) {
+      // Use type assertion to access properties safely
+      const projectsData = fromJson({}, content.projects);
+      
+      // Now projectsData is safely typed
+      return {
+        title: projectsData.title || '',
+        description: projectsData.description || ''
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching projects info:', error);
+    return null;
   }
-  return null;
 };
 
 // Add saveProjectsInfo function
@@ -137,16 +145,22 @@ export const saveProjectsInfo = async (projectsInfo: { title: string; descriptio
     const content = await fetchMainContent();
     if (!content) return false;
     
-    const projects = content.projects 
-      ? fromJson({}, content.projects) 
-      : { items: [] };
+    // Use proper type conversion when working with JSON data
+    const projectsJson = content.projects 
+      ? content.projects 
+      : toJson({ items: [] });
       
+    // Convert JSON to a properly typed object
+    const projects = fromJson({items: []}, projectsJson);
+    
+    // Now we can safely update properties
     const updatedProjects = {
       ...projects,
       title: projectsInfo.title,
       description: projectsInfo.description
     };
     
+    // Convert our updated content back to the database format
     const updatedContent = {
       ...content,
       projects: toJson(updatedProjects)
