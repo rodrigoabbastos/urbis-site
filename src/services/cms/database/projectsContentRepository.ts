@@ -4,6 +4,7 @@ import { typeCastFromJson } from './utils/typeConversion';
 import { fromJson, toJson } from '@/services/cms/utils/typeUtils';
 import { Json } from '@/integrations/supabase/types';
 import { mainContentRepository } from './mainContentRepository';
+import { defaultContent } from '../defaultContent';
 
 // Repository for project specific content management
 class ProjectsContentRepository {
@@ -15,10 +16,17 @@ class ProjectsContentRepository {
         // Get projects data with safe type handling
         const projectsJson = content.projects as Json;
         
-        // Define default structure for type safety
-        const defaultData = { title: '', description: '' };
+        // Define interface for proper type safety
+        interface ProjectsInfo {
+          title: string;
+          description: string;
+        }
+        
+        // Create a strongly typed default
+        const defaultData: ProjectsInfo = { title: '', description: '' };
+        
         // Convert JSON to typed object safely
-        const projectsData = fromJson(defaultData, projectsJson);
+        const projectsData = fromJson<ProjectsInfo>(projectsJson, defaultData);
         
         return {
           title: projectsData.title || '',
@@ -39,15 +47,21 @@ class ProjectsContentRepository {
       if (!content) return false;
       
       // Use proper type conversion when working with JSON data
-      const defaultProjectsData = { items: [] as any[] };
+      interface ProjectsData {
+        items: any[];
+        title?: string;
+        description?: string;
+      }
+      
+      const defaultProjectsData: ProjectsData = { items: [] };
       const projectsJson = content.projects || toJson(defaultProjectsData);
       
       // Convert JSON to a properly typed object
-      const projects = fromJson(defaultProjectsData, projectsJson);
+      const projects = fromJson<ProjectsData>(projectsJson, defaultProjectsData);
       
       // Now we can safely update properties
-      const updatedProjects = {
-        ...projects,
+      const updatedProjects: ProjectsData = {
+        items: projects.items || [],
         title: projectsInfo.title,
         description: projectsInfo.description
       };
@@ -81,9 +95,6 @@ class ProjectsContentRepository {
     }
   }
 }
-
-// Import the default content for proper type references
-import { defaultContent } from '../defaultContent';
 
 export const projectsContentRepository = new ProjectsContentRepository();
 // Export the functions bound to the repository instance
