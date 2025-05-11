@@ -49,7 +49,8 @@ const ContactInfo = () => {
           <div>
             <h4 className="text-white font-medium mb-1">Endereço</h4>
             <p className="text-gray-200">
-              {contactInfo.address}
+              Rua Dr. Orlando Feirabend Filho, 230 - sala 701 C<br />
+              Centro Empresarial Aquarius - São José dos Campos-SP
             </p>
           </div>
         </div>
