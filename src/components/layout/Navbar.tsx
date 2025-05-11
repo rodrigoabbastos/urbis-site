@@ -102,7 +102,7 @@ const Navbar = () => {
               <img 
                 src="/lovable-uploads/215a016e-9d44-4975-88d2-d64c862e9a66.png" 
                 alt="URBIS Logo" 
-                className="h-[100px] w-auto" 
+                className="h-[70px] w-auto" 
                 onError={(e) => {
                   console.error("Logo failed to load");
                   e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='40'%3E%3Crect width='100%25' height='100%25' fill='%23BF3B6C'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3EURBIS%3C/text%3E%3C/svg%3E";
