@@ -200,5 +200,62 @@ export const defaultContent: SiteContent = {
       likes: 92,
       comments: 17,
     },
-  ]
+  ],
+  // Add the missing properties
+  clients: {
+    title: "Quem Confia na URBIS",
+    description: "Empresas e organizações que confiam em nossa expertise",
+    logos: [
+      {
+        id: "1",
+        image: "https://placehold.co/200x100/e2e8f0/64748b?text=Cliente+1",
+        name: "Cliente 1",
+        order: 1
+      },
+      {
+        id: "2",
+        image: "https://placehold.co/200x100/e2e8f0/64748b?text=Cliente+2",
+        name: "Cliente 2",
+        order: 2
+      },
+      {
+        id: "3",
+        image: "https://placehold.co/200x100/e2e8f0/64748b?text=Cliente+3",
+        name: "Cliente 3",
+        order: 3
+      }
+    ]
+  },
+  sectionVisibility: {
+    hero: true,
+    about: true,
+    clients: true,
+    services: true,
+    methodology: true,
+    projects: true,
+    linkedin: true,
+    testimonials: true,
+    contact: true,
+    ebooks: false
+  },
+  ebooks: {
+    title: "E-books e Materiais",
+    description: "Confira nossos conteúdos gratuitos sobre empreendimentos urbanos",
+    items: [
+      {
+        id: "1",
+        title: "Guia de Licenciamento Urbanístico",
+        description: "Um guia completo para entender os processos de licenciamento e aprovação de projetos urbanos.",
+        image: "https://placehold.co/400x300/e2e8f0/64748b?text=E-book+1",
+        downloadUrl: "#"
+      },
+      {
+        id: "2",
+        title: "Checklist para Análise de Terrenos",
+        description: "Ferramenta prática para avaliação preliminar de áreas para empreendimentos.",
+        image: "https://placehold.co/400x300/e2e8f0/64748b?text=E-book+2",
+        downloadUrl: "#"
+      }
+    ]
+  }
 };

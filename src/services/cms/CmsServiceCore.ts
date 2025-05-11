@@ -58,6 +58,31 @@ export class CmsServiceCore extends BaseService {
     }
   }
   
+  // Add the updatePartialContent method
+  async updatePartialContent<K extends keyof SiteContent>(
+    section: K, 
+    content: SiteContent[K]
+  ): Promise<void> {
+    try {
+      // Get current content
+      const currentContent = await this.getContent();
+      
+      // Update only the specified section
+      const updatedContent = {
+        ...currentContent,
+        [section]: content
+      };
+      
+      // For now, simply save the entire content
+      // This could be optimized later to only save the updated section
+      await this.saveContent(updatedContent);
+      
+      this.showSuccessToast(`Conteúdo de ${section} atualizado com sucesso!`);
+    } catch (error) {
+      this.handleError(error, `Falha ao atualizar ${section}`);
+    }
+  }
+  
   // New method that directly loads from database
   private async loadContentFromDatabase(): Promise<SiteContent> {
     try {
