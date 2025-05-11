@@ -15,9 +15,10 @@ class ProjectsContentRepository {
         // Get projects data with safe type handling
         const projectsJson = content.projects as Json;
         
-        // Use explicit default shape to guide type inference
-        const defaultProjectsData = { title: '', description: '' };
-        const projectsData = fromJson(defaultProjectsData, projectsJson);
+        // Define default structure for type safety
+        const defaultData = { title: '', description: '' };
+        // Convert JSON to typed object safely
+        const projectsData = fromJson(defaultData, projectsJson);
         
         return {
           title: projectsData.title || '',
@@ -57,20 +58,19 @@ class ProjectsContentRepository {
         projects: toJson(updatedProjects)
       };
       
-      // We need to use fromJson here to convert back to the domain model
-      // before saving through saveContent which will handle the conversion to Json
+      // Convert data back to domain model before saving
       const contentToSave = {
-        hero: fromJson(updatedContent.hero, {}),
-        about: fromJson(updatedContent.about, {}),
-        services: fromJson(updatedContent.services, []),
-        methodology: fromJson(updatedContent.methodology, {}),
+        hero: fromJson(updatedContent.hero, defaultContent.hero),
+        about: fromJson(updatedContent.about, defaultContent.about),
+        services: fromJson(updatedContent.services, defaultContent.services),
+        methodology: fromJson(updatedContent.methodology, defaultContent.methodology),
         projects: updatedProjects,
-        contact: fromJson(updatedContent.contact, {}),
-        clients: fromJson(updatedContent.clients, {}),
-        ebooks: fromJson(updatedContent.ebooks, {}),
+        contact: fromJson(updatedContent.contact, defaultContent.contact),
+        clients: fromJson(updatedContent.clients, defaultContent.clients),
+        ebooks: fromJson(updatedContent.ebooks, defaultContent.ebooks),
         sectionVisibility: fromJson(
           updatedContent.section_visibility || updatedContent.sectionVisibility, 
-          {}
+          defaultContent.sectionVisibility
         )
       };
       
@@ -82,7 +82,10 @@ class ProjectsContentRepository {
   }
 }
 
+// Import the default content for proper type references
+import { defaultContent } from '../defaultContent';
+
 export const projectsContentRepository = new ProjectsContentRepository();
-// Exportar explicitamente as funções para corrigir o erro de importação
+// Export the functions bound to the repository instance
 export const fetchProjectsInfo = projectsContentRepository.fetchProjectsInfo.bind(projectsContentRepository);
 export const saveProjectsInfo = projectsContentRepository.saveProjectsInfo.bind(projectsContentRepository);
