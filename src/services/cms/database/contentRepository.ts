@@ -20,23 +20,26 @@ export async function fetchMainContent(): Promise<any | null> {
     
     console.log('Main content fetched successfully:', data);
     
-    // Verificar se data existe e se tem a propriedade clients antes de acessá-la
-    if (data && 'clients' in data) {
-      console.log('Dados de clientes carregados:', data.clients);
-    } else {
-      console.log('Nenhum dado de clientes encontrado');
-    }
-    
-    // Verificar se data existe e se tem a propriedade sectionVisibility
-    if (data && 'sectionVisibility' in data) {
-      console.log('Configurações de visibilidade carregadas:', data.sectionVisibility);
-    } else if (data && 'section_visibility' in data) {
-      // Compatibilidade com o campo section_visibility (snake_case)
-      console.log('Configurações de visibilidade carregadas (snake_case):', data.section_visibility);
-      // Normalizar para camelCase
-      data.sectionVisibility = data.section_visibility;
-    } else {
-      console.log('Nenhuma configuração de visibilidade encontrada');
+    // Verificar se data existe antes de acessar propriedades
+    if (data) {
+      // Verificar se data tem a propriedade clients antes de acessá-la
+      if ('clients' in data) {
+        console.log('Dados de clientes carregados:', data.clients);
+      } else {
+        console.log('Nenhum dado de clientes encontrado');
+      }
+      
+      // Verificar se data tem a propriedade sectionVisibility ou section_visibility
+      if ('sectionVisibility' in data) {
+        console.log('Configurações de visibilidade carregadas (camelCase):', data.sectionVisibility);
+      } else if ('section_visibility' in data) {
+        // Compatibilidade com o campo section_visibility (snake_case)
+        console.log('Configurações de visibilidade carregadas (snake_case):', data.section_visibility);
+        // Normalizar para camelCase
+        data.sectionVisibility = data.section_visibility;
+      } else {
+        console.log('Nenhuma configuração de visibilidade encontrada');
+      }
     }
     
     return data;
