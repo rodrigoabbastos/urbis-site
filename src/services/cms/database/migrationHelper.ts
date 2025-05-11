@@ -1,119 +1,145 @@
 
-import { toast } from '@/components/ui/use-toast';
-import { SiteContent } from '../types';
+import { SiteContent, Service, Project } from '../types';
+import { defaultContent } from '../defaultContent';
 import { supabaseHelper } from './databaseUtils';
 import { createTablesIfNotExist } from './tableInitializer';
 import { saveContent } from './contentRepository';
 import { saveProject } from './projectsRepository';
 import { saveLinkedInPost } from './linkedInRepository';
+import { LinkedInPost } from '@/components/linkedin/types';
 
-export async function migrateFromLocalStorage(localContent: SiteContent, storageKey: string): Promise<boolean> {
+export const migrateFromLocalStorage = async (localContent: SiteContent, storageKey: string): Promise<boolean> => {
   try {
-    // Ensure tables exist before migrating
+    // First make sure tables are created
     await createTablesIfNotExist();
     
-    // Check if we have content in Supabase
-    const { data: existingContent, error } = await supabaseHelper.from('content')
-      .select('*')
-      .eq('id', 'main')
-      .single();
-      
-    // If no content exists in Supabase, insert from localStorage
-    if (!existingContent) {
-      // Store main content
-      const { hero, about, services, methodology, contact, clients, sectionVisibility, ebooks } = localContent;
-      await saveContent({ 
-        hero, 
-        about, 
-        services, 
-        methodology, 
-        contact,
-        clients,
-        sectionVisibility,
-        ebooks
-      });
-      
-      // Store individual projects
-      if (localContent.projects && localContent.projects.items && localContent.projects.items.length > 0) {
-        for (const project of localContent.projects.items) {
-          await saveProject(project);
+    // Save main content sections
+    const mainContentResult = await saveContent({
+      hero: localContent.hero,
+      about: localContent.about,
+      services: localContent.services,
+      methodology: localContent.methodology,
+      contact: localContent.contact,
+      clients: localContent.clients,
+      sectionVisibility: localContent.sectionVisibility,
+      ebooks: localContent.ebooks
+    });
+    
+    if (!mainContentResult) {
+      console.error('Failed to migrate main content from localStorage');
+      return false;
+    }
+    
+    // Save projects one by one
+    const projects = localContent.projects.items;
+    let projectsSuccess = true;
+    
+    if (Array.isArray(projects) && projects.length > 0) {
+      for (const project of projects) {
+        const projectResult = await saveProject(project);
+        if (!projectResult) {
+          console.error(`Failed to migrate project ${project.id} from localStorage`);
+          projectsSuccess = false;
         }
       }
-      
-      // Store LinkedIn posts
-      if (localContent.linkedInPosts && localContent.linkedInPosts.length > 0) {
-        for (const post of localContent.linkedInPosts) {
-          await saveLinkedInPost(post);
+    }
+    
+    // Save LinkedIn posts one by one
+    const posts = localContent.linkedInPosts;
+    let postsSuccess = true;
+    
+    if (Array.isArray(posts) && posts.length > 0) {
+      for (const post of posts) {
+        const postResult = await saveLinkedInPost(post);
+        if (!postResult) {
+          console.error(`Failed to migrate LinkedIn post ${post.id} from localStorage`);
+          postsSuccess = false;
         }
       }
-      
-      // Clear localStorage after successful migration
+    }
+    
+    // If all migrations were successful, remove localStorage item
+    if (mainContentResult && projectsSuccess && postsSuccess) {
       localStorage.removeItem(storageKey);
-      
-      toast({
-        title: "Migração concluída",
-        description: "Os dados foram migrados com sucesso para o Supabase.",
-      });
-
       return true;
     }
+    
     return false;
   } catch (error) {
-    console.error('Error migrating data from localStorage:', error);
-    toast({
-      title: "Erro na migração",
-      description: "Não foi possível migrar os dados. Tente novamente mais tarde.",
-      variant: "destructive",
-    });
+    console.error('Error during migration from localStorage:', error);
     return false;
   }
-}
+};
 
-export async function resetToDefault(defaultData: SiteContent): Promise<boolean> {
+export const resetToDefault = async (defaultData: SiteContent): Promise<boolean> => {
   try {
-    // Ensure tables exist before resetting
+    // First make sure tables are created
     await createTablesIfNotExist();
     
-    // Reset main content
-    const { hero, about, services, methodology, contact, clients, sectionVisibility, ebooks } = defaultData;
-    await saveContent({ 
-      hero, 
-      about, 
-      services, 
-      methodology, 
-      contact,
-      clients,
-      sectionVisibility, 
-      ebooks
+    // Reset main content to defaults
+    const mainContentResult = await saveContent({
+      hero: defaultData.hero,
+      about: defaultData.about,
+      services: defaultData.services,
+      methodology: defaultData.methodology,
+      contact: defaultData.contact,
+      clients: defaultData.clients,
+      sectionVisibility: defaultData.sectionVisibility,
+      ebooks: defaultData.ebooks
     });
     
-    // Reset projects - first delete all existing projects
-    await supabaseHelper.from('projects')
-      .delete()
-      .neq('id', '0');
+    if (!mainContentResult) {
+      console.error('Failed to reset main content to defaults');
+      return false;
+    }
     
-    // Then insert default projects
-    if (defaultData.projects && defaultData.projects.items) {
-      for (const project of defaultData.projects.items) {
-        await saveProject(project);
+    // Delete all existing projects and re-save default projects
+    const truncateProjectsResult = await supabaseHelper.truncateTable('projects');
+    
+    if (!truncateProjectsResult) {
+      console.error('Failed to truncate projects table');
+      return false;
+    }
+    
+    // Save default projects one by one
+    const projects = defaultData.projects.items;
+    let projectsSuccess = true;
+    
+    if (Array.isArray(projects) && projects.length > 0) {
+      for (const project of projects) {
+        const projectResult = await saveProject(project);
+        if (!projectResult) {
+          console.error(`Failed to save default project ${project.id}`);
+          projectsSuccess = false;
+        }
       }
     }
     
-    // Reset LinkedIn posts - first delete all existing posts
-    await supabaseHelper.from('linkedin_posts')
-      .delete()
-      .neq('id', '0');
+    // Delete all existing LinkedIn posts and re-save default posts
+    const truncatePostsResult = await supabaseHelper.truncateTable('linkedin_posts');
     
-    // Then insert default posts
-    if (defaultData.linkedInPosts && defaultData.linkedInPosts.length > 0) {
-      for (const post of defaultData.linkedInPosts) {
-        await saveLinkedInPost(post);
+    if (!truncatePostsResult) {
+      console.error('Failed to truncate linkedin_posts table');
+      return false;
+    }
+    
+    // Save default LinkedIn posts one by one
+    const posts = defaultData.linkedInPosts;
+    let postsSuccess = true;
+    
+    if (Array.isArray(posts) && posts.length > 0) {
+      for (const post of posts) {
+        const postResult = await saveLinkedInPost(post);
+        if (!postResult) {
+          console.error(`Failed to save default LinkedIn post ${post.id}`);
+          postsSuccess = false;
+        }
       }
     }
     
-    return true;
+    return mainContentResult && projectsSuccess && postsSuccess;
   } catch (error) {
-    console.error('Error resetting to default:', error);
+    console.error('Error during reset to default:', error);
     return false;
   }
-}
+};

@@ -3,6 +3,7 @@ import { toast } from '@/components/ui/use-toast';
 import { Service } from './types';
 import { BaseService } from './BaseService';
 import { databaseService } from './database/databaseService';
+import { fromJson, toJson } from './utils/typeUtils';
 
 export class ServiceManagementService extends BaseService {
   async updateService(service: Service): Promise<void> {
@@ -11,13 +12,13 @@ export class ServiceManagementService extends BaseService {
       if (content && !('error' in content)) {
         // Handle services as an array, with safe type checking
         const services = Array.isArray(content.services) ? 
-          content.services as Service[] : 
+          fromJson<Service[]>(content.services, []) : 
           [];
         
         // Find the service by ID
         const index = services.findIndex(s => 
           typeof s === 'object' && 
-          's' !== null && 
+          s !== null && 
           'id' in s && 
           s.id === service.id
         );
@@ -31,7 +32,7 @@ export class ServiceManagementService extends BaseService {
         // Update the content with the new services array
         await databaseService.saveMainContent({
           ...content,
-          services
+          services: toJson(services)
         });
       } else {
         throw new Error(content && typeof content === 'object' && 'error' in content 
@@ -52,17 +53,17 @@ export class ServiceManagementService extends BaseService {
       if (content && !('error' in content) && content.services) {
         // Filter out the service with the given ID
         const services = Array.isArray(content.services) ?
-          content.services.filter(s => 
+          fromJson<Service[]>(content.services, []).filter(s => 
             typeof s === 'object' && 
             s !== null && 
             'id' in s && 
             s.id !== id
-          ) as Service[] :
+          ) :
           [];
           
         await databaseService.saveMainContent({
           ...content,
-          services
+          services: toJson(services)
         });
       } else {
         throw new Error(content && typeof content === 'object' && 'error' in content 

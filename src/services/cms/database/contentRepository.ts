@@ -3,9 +3,7 @@ import { SiteContent } from '@/services/cms/types';
 import { supabase } from '@/lib/supabase';
 import { defaultContent } from '../defaultContent';
 import { Json } from '@/integrations/supabase/types';
-
-const CONTENT_TABLE = 'content';
-const DEFAULT_CONTENT_ID = 'default';
+import { fromJson, toJson } from '../utils/typeUtils';
 
 // Helper function to safely type cast
 function typeCastFromJson<T>(data: Json | null, defaultValue: T): T {
@@ -23,15 +21,15 @@ export const saveContent = async (content: Partial<SiteContent>): Promise<boolea
       .from('content')
       .upsert({
         id: DEFAULT_CONTENT_ID,
-        hero: content.hero as Json,
-        about: content.about as Json,
-        services: content.services as Json,
-        methodology: content.methodology as Json,
-        projects: content.projects as Json,
-        contact: content.contact as Json,
-        clients: content.clients as Json,
-        ebooks: content.ebooks as Json,
-        section_visibility: content.sectionVisibility as Json,
+        hero: toJson(content.hero),
+        about: toJson(content.about),
+        services: toJson(content.services),
+        methodology: toJson(content.methodology),
+        projects: toJson(content.projects),
+        contact: toJson(content.contact),
+        clients: toJson(content.clients),
+        ebooks: toJson(content.ebooks),
+        section_visibility: toJson(content.sectionVisibility),
         updated_at: new Date().toISOString()
       })
       .select();
@@ -47,6 +45,9 @@ export const saveContent = async (content: Partial<SiteContent>): Promise<boolea
     return false;
   }
 };
+
+const CONTENT_TABLE = 'content';
+const DEFAULT_CONTENT_ID = 'default';
 
 // Alias for saveContent to match the expected function name in other files
 export const saveMainContent = saveContent;
@@ -86,7 +87,9 @@ export const fetchMainContent = async () => {
       ...data,
       // Make sectionVisibility available for compatibility
       sectionVisibility: data.section_visibility,
-      isDbContent: true
+      isDbContent: true,
+      // Ensure projects exists and has the right structure
+      projects: data.projects || { title: '', description: '', items: [] }
     };
   } catch (error) {
     console.error('Exception loading content:', error);
@@ -98,9 +101,10 @@ export const fetchMainContent = async () => {
 export const fetchProjectsInfo = async () => {
   const content = await fetchMainContent();
   if (content && content.projects) {
+    const projectsData = fromJson({}, content.projects);
     return {
-      title: typeCastFromJson(content.projects, {}).title || '',
-      description: typeCastFromJson(content.projects, {}).description || ''
+      title: projectsData.title || '',
+      description: projectsData.description || ''
     };
   }
   return null;
@@ -112,16 +116,22 @@ export const saveProjectsInfo = async (projectsInfo: { title: string; descriptio
     const content = await fetchMainContent();
     if (!content) return false;
     
-    const updatedContent = {
-      ...content,
-      projects: {
-        ...(typeof content.projects === 'object' ? content.projects : {}),
-        title: projectsInfo.title,
-        description: projectsInfo.description
-      }
+    const projects = content.projects 
+      ? fromJson({}, content.projects) 
+      : { items: [] };
+      
+    const updatedProjects = {
+      ...projects,
+      title: projectsInfo.title,
+      description: projectsInfo.description
     };
     
-    return await saveContent(updatedContent);
+    const updatedContent = {
+      ...content,
+      projects: toJson(updatedProjects)
+    };
+    
+    return await saveContent(fromJson({}, updatedContent));
   } catch (error) {
     console.error('Error saving projects info:', error);
     return false;
@@ -137,15 +147,15 @@ export const resetContentToDefault = async (): Promise<boolean> => {
       .from('content')
       .upsert({
         id: DEFAULT_CONTENT_ID,
-        hero: defaultContent.hero as Json,
-        about: defaultContent.about as Json,
-        services: defaultContent.services as Json,
-        methodology: defaultContent.methodology as Json,
-        projects: defaultContent.projects as Json,
-        contact: defaultContent.contact as Json,
-        clients: defaultContent.clients as Json,
-        ebooks: defaultContent.ebooks as Json,
-        section_visibility: defaultContent.sectionVisibility as Json,
+        hero: toJson(defaultContent.hero),
+        about: toJson(defaultContent.about),
+        services: toJson(defaultContent.services),
+        methodology: toJson(defaultContent.methodology),
+        projects: toJson(defaultContent.projects),
+        contact: toJson(defaultContent.contact),
+        clients: toJson(defaultContent.clients),
+        ebooks: toJson(defaultContent.ebooks),
+        section_visibility: toJson(defaultContent.sectionVisibility),
         updated_at: new Date().toISOString()
       })
       .select();

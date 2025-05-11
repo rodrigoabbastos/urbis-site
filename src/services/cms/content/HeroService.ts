@@ -3,7 +3,7 @@ import { toast } from '@/components/ui/use-toast';
 import { HeroContent } from '../types';
 import { BaseService } from '../BaseService';
 import { databaseService } from '../database/databaseService';
-import { Json } from '@/integrations/supabase/types';
+import { toJson } from '../utils/typeUtils';
 
 export class HeroService extends BaseService {
   async updateHero(hero: HeroContent): Promise<void> {
@@ -12,7 +12,7 @@ export class HeroService extends BaseService {
       if (content && !(typeof content === 'object' && 'error' in content)) {
         const updatedContent = {
           ...content,
-          hero: hero as unknown as Json
+          hero: toJson(hero)
         };
         await databaseService.saveMainContent(updatedContent);
       } else {

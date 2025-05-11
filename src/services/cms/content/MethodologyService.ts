@@ -3,7 +3,7 @@ import { toast } from '@/components/ui/use-toast';
 import { MethodologyStep } from '../types';
 import { BaseService } from '../BaseService';
 import { databaseService } from '../database/databaseService';
-import { Json } from '@/integrations/supabase/types';
+import { fromJson, toJson } from '../utils/typeUtils';
 
 export class MethodologyService extends BaseService {
   async updateMethodology(methodology: { title: string; description: string; steps: MethodologyStep[] }): Promise<void> {
@@ -12,7 +12,7 @@ export class MethodologyService extends BaseService {
       if (content && !(typeof content === 'object' && 'error' in content)) {
         const updatedContent = {
           ...content,
-          methodology: methodology as unknown as Json
+          methodology: toJson(methodology)
         };
         await databaseService.saveMainContent(updatedContent);
       } else {
@@ -34,11 +34,11 @@ export class MethodologyService extends BaseService {
       const content = await databaseService.fetchMainContent();
       if (content && !(typeof content === 'object' && 'error' in content) && content.methodology) {
         // Safely cast to the expected structure
-        const methodologyContent = content.methodology as unknown as { 
+        const methodologyContent = fromJson<{ 
           title: string; 
           description: string; 
           steps: MethodologyStep[] 
-        };
+        }>(content.methodology, { title: '', description: '', steps: [] });
         
         const steps = Array.isArray(methodologyContent.steps) ? 
           [...methodologyContent.steps] : [];
@@ -60,7 +60,7 @@ export class MethodologyService extends BaseService {
         // Update content
         const updatedContent = {
           ...content,
-          methodology: updatedMethodology as unknown as Json
+          methodology: toJson(updatedMethodology)
         };
         
         await databaseService.saveMainContent(updatedContent);
@@ -83,11 +83,11 @@ export class MethodologyService extends BaseService {
       const content = await databaseService.fetchMainContent();
       if (content && !(typeof content === 'object' && 'error' in content) && content.methodology) {
         // Safely cast to the expected structure
-        const methodologyContent = content.methodology as unknown as { 
+        const methodologyContent = fromJson<{ 
           title: string; 
           description: string; 
           steps: MethodologyStep[] 
-        };
+        }>(content.methodology, { title: '', description: '', steps: [] });
         
         if (Array.isArray(methodologyContent.steps)) {
           // Filter out the step with the given ID
@@ -102,7 +102,7 @@ export class MethodologyService extends BaseService {
           // Update content
           const updatedContent = {
             ...content,
-            methodology: updatedMethodology as unknown as Json
+            methodology: toJson(updatedMethodology)
           };
           
           await databaseService.saveMainContent(updatedContent);

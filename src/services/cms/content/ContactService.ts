@@ -3,7 +3,7 @@ import { toast } from '@/components/ui/use-toast';
 import { ContactInfo } from '../types';
 import { BaseService } from '../BaseService';
 import { databaseService } from '../database/databaseService';
-import { Json } from '@/integrations/supabase/types';
+import { toJson } from '../utils/typeUtils';
 
 export class ContactService extends BaseService {
   async updateContactInfo(contact: ContactInfo): Promise<void> {
@@ -12,7 +12,7 @@ export class ContactService extends BaseService {
       if (content && !(typeof content === 'object' && 'error' in content)) {
         const updatedContent = {
           ...content,
-          contact: contact as unknown as Json
+          contact: toJson(contact)
         };
         await databaseService.saveMainContent(updatedContent);
       } else {

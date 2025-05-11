@@ -4,7 +4,7 @@ import { AboutContent } from '../types';
 import { BaseService } from '../BaseService';
 import { databaseService } from '../database/databaseService';
 import { cacheService } from '../CacheService';
-import { Json } from '@/integrations/supabase/types';
+import { fromJson, toJson } from '../utils/typeUtils';
 
 export class AboutService extends BaseService {
   /**
@@ -23,7 +23,7 @@ export class AboutService extends BaseService {
         console.warn('AboutService: No content found in database, creating new record');
         // Create new content object with only about section
         const newContent = {
-          about: about as unknown as Json,
+          about: toJson(about),
           hero: null,
           services: null,
           methodology: null,
@@ -41,13 +41,13 @@ export class AboutService extends BaseService {
       }
       
       if (typeof content === 'object' && 'error' in content) {
-        throw new Error(typeof content.error === 'object' && content.error !== null 
-          ? String((content.error as any).message)
+        throw new Error(typeof content.error === 'string' 
+          ? content.error
           : 'Failed to fetch content');
       }
       
       // Update the about section while preserving other sections
-      const updatedContent = { ...content, about: about as unknown as Json };
+      const updatedContent = { ...content, about: toJson(about) };
       
       // Save the updated content back to the database
       const success = await databaseService.saveMainContent(updatedContent);
@@ -80,14 +80,19 @@ export class AboutService extends BaseService {
       if (!content || (typeof content === 'object' && 'error' in content)) {
         console.warn('AboutService: Error fetching about content:', 
           typeof content === 'object' && content !== null && 'error' in content 
-            ? String((content.error as any).message) 
+            ? String(content.error) 
             : 'No content found');
         return null;
       }
       
       // Safely cast the about content to AboutContent
       if (content.about) {
-        return content.about as unknown as AboutContent;
+        return fromJson<AboutContent>(content.about, {
+          title: '',
+          description: [''],
+          features: [''],
+          image: ''
+        });
       }
       return null;
     } catch (error) {
