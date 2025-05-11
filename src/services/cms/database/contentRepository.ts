@@ -19,6 +19,13 @@ export async function fetchMainContent(): Promise<any | null> {
     }
     
     console.log('Main content fetched successfully:', data);
+    // Verificar explicitamente o campo clients
+    if (data.clients) {
+      console.log('Dados de clientes carregados:', data.clients);
+    } else {
+      console.log('Nenhum dado de clientes encontrado');
+    }
+    
     return data;
   } catch (error) {
     console.error('Error fetching main content:', error);
@@ -63,6 +70,11 @@ export async function saveMainContent(content: {
     await createTablesIfNotExist();
     
     console.log('Saving main content to database:', content);
+    // Verificar explicitamente o campo clients
+    if (content.clients) {
+      console.log('Salvando dados de clientes:', content.clients);
+    }
+    
     const { error } = await supabaseHelper.from('content')
       .upsert({ 
         id: 'main',

@@ -35,12 +35,18 @@ const Index = () => {
     const loadVisibility = async () => {
       try {
         setIsLoading(true);
+        console.log('Index: Carregando configurações de visibilidade das seções...');
         const content = await cmsService.getContent();
+        console.log('Index: Configurações carregadas:', content.sectionVisibility);
+        
         if (content.sectionVisibility) {
           setSectionVisibility(content.sectionVisibility);
+          console.log('Visibilidade da seção de clientes:', content.sectionVisibility.clients);
+        } else {
+          console.log('Nenhuma configuração de visibilidade encontrada, usando padrão');
         }
       } catch (error) {
-        console.error('Error loading section visibility:', error);
+        console.error('Erro ao carregar configurações de visibilidade:', error);
       } finally {
         setIsLoading(false);
       }
@@ -57,13 +63,20 @@ const Index = () => {
     );
   }
 
+  console.log('Index: Renderizando seções com visibilidade:', sectionVisibility);
+
   return (
     <div className="min-h-screen">
       <Navbar />
       <main>
         {sectionVisibility.hero && <Hero />}
         {sectionVisibility.about && <AboutUs />}
-        {sectionVisibility.clients && <ClientLogos />}
+        {sectionVisibility.clients && (
+          <>
+            {console.log('Renderizando seção de clientes')}
+            <ClientLogos />
+          </>
+        )}
         {sectionVisibility.services && <Services />}
         {sectionVisibility.methodology && <Methodology />}
         {sectionVisibility.projects && <Projects />}

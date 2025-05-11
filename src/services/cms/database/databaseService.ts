@@ -33,6 +33,12 @@ export class DatabaseService implements DatabaseServiceInterface {
     sectionVisibility?: any;
     ebooks?: any;
   }) {
+    console.log('DatabaseService.saveMainContent: Salvando conteúdo principal', {
+      clients: content.clients ? 'presente' : 'ausente',
+      sectionVisibility: content.sectionVisibility ? 'presente' : 'ausente',
+      ebooks: content.ebooks ? 'presente' : 'ausente'
+    });
+    
     return saveMainContent(content);
   }
   

@@ -37,6 +37,13 @@ export class CmsServiceCore extends BaseService {
     try {
       // Store main content directly to database
       const { hero, about, services, methodology, contact, clients, sectionVisibility, ebooks } = content;
+      
+      console.log('CmsServiceCore.saveContent: Salvando conteúdo completo', {
+        clients: clients ? 'presente' : 'ausente',
+        sectionVisibility: sectionVisibility ? 'presente' : 'ausente',
+        ebooks: ebooks ? 'presente' : 'ausente'
+      });
+      
       await databaseService.saveMainContent({ 
         hero, 
         about, 
@@ -73,6 +80,8 @@ export class CmsServiceCore extends BaseService {
     content: SiteContent[K]
   ): Promise<void> {
     try {
+      console.log(`CmsServiceCore.updatePartialContent: Atualizando seção ${String(section)}`, content);
+      
       // Get current content
       const currentContent = await this.getContent();
       
@@ -82,13 +91,16 @@ export class CmsServiceCore extends BaseService {
         [section]: content
       };
       
+      console.log(`Conteúdo atualizado com ${String(section)}:`, 
+        section === 'clients' ? 'dados de clientes presentes' : 'outra seção');
+      
       // For now, simply save the entire content
       // This could be optimized later to only save the updated section
       await this.saveContent(updatedContent);
       
-      this.showSuccessToast(`Conteúdo de ${section} atualizado com sucesso!`);
+      this.showSuccessToast(`Conteúdo de ${String(section)} atualizado com sucesso!`);
     } catch (error) {
-      this.handleError(error, `Falha ao atualizar ${section}`);
+      this.handleError(error, `Falha ao atualizar ${String(section)}`);
     }
   }
   
@@ -111,9 +123,27 @@ export class CmsServiceCore extends BaseService {
         if (mainContent.contact) content.contact = mainContent.contact as SiteContent['contact'];
         
         // Load new sections
-        if (mainContent.clients) content.clients = mainContent.clients as SiteContent['clients'];
-        if (mainContent.section_visibility) content.sectionVisibility = mainContent.section_visibility as SiteContent['sectionVisibility'];
-        if (mainContent.ebooks) content.ebooks = mainContent.ebooks as SiteContent['ebooks'];
+        if (mainContent.clients) {
+          console.log('Dados de clientes encontrados:', mainContent.clients);
+          content.clients = mainContent.clients as SiteContent['clients'];
+        } else {
+          console.log('Nenhum dado de clientes encontrado no banco');
+        }
+        
+        if (mainContent.section_visibility) {
+          console.log('section_visibility encontrado:', mainContent.section_visibility);
+          content.sectionVisibility = mainContent.section_visibility as SiteContent['sectionVisibility'];
+        } else if (mainContent.sectionVisibility) {
+          console.log('sectionVisibility encontrado:', mainContent.sectionVisibility);
+          content.sectionVisibility = mainContent.sectionVisibility as SiteContent['sectionVisibility'];
+        } else {
+          console.log('Nenhuma configuração de visibilidade encontrada no banco');
+        }
+        
+        if (mainContent.ebooks) {
+          console.log('Dados de ebooks encontrados');
+          content.ebooks = mainContent.ebooks as SiteContent['ebooks'];
+        }
       } else {
         console.log('No main content found in database, using default');
       }
