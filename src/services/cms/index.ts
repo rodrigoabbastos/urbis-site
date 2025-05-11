@@ -13,3 +13,7 @@ export * from './content/HeroService';
 export * from './content/AboutService';
 export * from './content/MethodologyService';
 export * from './content/ContactService';
+export * from './core/ContentLoader';
+export * from './core/ContentSaver';
+export * from './core/ContentResetter';
+export * from './core/ContentManager';

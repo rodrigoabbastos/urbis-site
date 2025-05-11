@@ -1,4 +1,3 @@
-
 import { supabaseHelper } from './databaseUtils';
 import { createTablesIfNotExist } from './tableInitializer';
 
@@ -36,8 +35,9 @@ export async function fetchMainContent(): Promise<any | null> {
         // Normalize to camelCase for consistent usage in the app
         data.sectionVisibility = data.section_visibility;
       }
-      // Then check if camelCase version exists
-      else if ('sectionVisibility' in data && data.sectionVisibility) {
+      // Then check if camelCase version exists - NOTE: this branch will likely never execute since
+      // the database stores in snake_case, but we keep it for completeness
+      else if ('sectionVisibility' in data) {
         console.log('Configurações de visibilidade carregadas (camelCase):', data.sectionVisibility);
       } else {
         console.log('Nenhuma configuração de visibilidade encontrada');
