@@ -4,6 +4,7 @@ import { BaseService } from '../BaseService';
 import { databaseService } from '../database/databaseService';
 import { toast } from '@/components/ui/use-toast';
 import { ContentLoader } from './ContentLoader';
+import { Json } from '@/integrations/supabase/types';
 
 export class ContentSaver extends BaseService {
   async saveContent(content: SiteContent): Promise<void> {
@@ -20,15 +21,15 @@ export class ContentSaver extends BaseService {
       // Create a payload that has both camelCase and snake_case versions of sectionVisibility
       // to ensure compatibility with different database field naming conventions
       const payload = { 
-        hero, 
-        about, 
-        services, 
-        methodology, 
-        contact,
-        clients,
-        sectionVisibility,
-        section_visibility: sectionVisibility, // Add snake_case version
-        ebooks
+        hero: hero as unknown as Json, 
+        about: about as unknown as Json, 
+        services: services as unknown as Json, 
+        methodology: methodology as unknown as Json, 
+        contact: contact as unknown as Json,
+        clients: clients as unknown as Json,
+        sectionVisibility: sectionVisibility as unknown as Json,
+        section_visibility: sectionVisibility as unknown as Json, // Add snake_case version
+        ebooks: ebooks as unknown as Json
       };
       
       await databaseService.saveMainContent(payload);

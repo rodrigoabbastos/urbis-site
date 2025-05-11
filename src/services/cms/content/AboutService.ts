@@ -4,6 +4,7 @@ import { AboutContent } from '../types';
 import { BaseService } from '../BaseService';
 import { databaseService } from '../database/databaseService';
 import { cacheService } from '../CacheService';
+import { Json } from '@/integrations/supabase/types';
 
 export class AboutService extends BaseService {
   /**
@@ -22,7 +23,7 @@ export class AboutService extends BaseService {
         console.warn('AboutService: No content found in database, creating new record');
         // Create new content object with only about section
         const newContent = {
-          about,
+          about: about as unknown as Json,
           hero: null,
           services: null,
           methodology: null,
@@ -39,15 +40,17 @@ export class AboutService extends BaseService {
         return;
       }
       
-      if ('error' in content) {
-        throw new Error(content.error?.message || 'Failed to fetch content');
+      if (typeof content === 'object' && 'error' in content) {
+        throw new Error(typeof content.error === 'object' && content.error !== null 
+          ? String((content.error as any).message)
+          : 'Failed to fetch content');
       }
       
       // Update the about section while preserving other sections
-      content.about = about;
+      const updatedContent = { ...content, about: about as unknown as Json };
       
       // Save the updated content back to the database
-      const success = await databaseService.saveMainContent(content);
+      const success = await databaseService.saveMainContent(updatedContent);
       
       if (!success) {
         throw new Error('Failed to save content to database');
@@ -74,13 +77,19 @@ export class AboutService extends BaseService {
       console.log('AboutService: Fetching about content directly from database');
       const content = await databaseService.fetchMainContent();
       
-      if (!content || 'error' in content) {
+      if (!content || (typeof content === 'object' && 'error' in content)) {
         console.warn('AboutService: Error fetching about content:', 
-          'error' in content ? content.error?.message : 'No content found');
+          typeof content === 'object' && content !== null && 'error' in content 
+            ? String((content.error as any).message) 
+            : 'No content found');
         return null;
       }
       
-      return content.about || null;
+      // Safely cast the about content to AboutContent
+      if (content.about) {
+        return content.about as unknown as AboutContent;
+      }
+      return null;
     } catch (error) {
       console.error('AboutService: Error fetching about content:', error);
       this.showErrorToast("Não foi possível carregar o conteúdo da seção Sobre.");

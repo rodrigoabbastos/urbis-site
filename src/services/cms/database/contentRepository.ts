@@ -2,9 +2,16 @@
 import { SiteContent } from '@/services/cms/types';
 import { supabase } from '@/lib/supabase';
 import { defaultContent } from '../defaultContent';
+import { Json } from '@/integrations/supabase/types';
 
 const CONTENT_TABLE = 'content';
 const DEFAULT_CONTENT_ID = 'default';
+
+// Helper function to safely type cast
+function typeCastFromJson<T>(data: Json | null, defaultValue: T): T {
+  if (!data) return defaultValue;
+  return data as unknown as T;
+}
 
 // Unified function that replaces saveContent and saveMainContent
 export const saveContent = async (content: Partial<SiteContent>): Promise<boolean> => {
@@ -16,15 +23,15 @@ export const saveContent = async (content: Partial<SiteContent>): Promise<boolea
       .from('content')
       .upsert({
         id: DEFAULT_CONTENT_ID,
-        hero: content.hero,
-        about: content.about,
-        services: content.services,
-        methodology: content.methodology,
-        projects: content.projects,
-        contact: content.contact,
-        clients: content.clients,
-        ebooks: content.ebooks,
-        section_visibility: content.sectionVisibility,
+        hero: content.hero as Json,
+        about: content.about as Json,
+        services: content.services as Json,
+        methodology: content.methodology as Json,
+        projects: content.projects as Json,
+        contact: content.contact as Json,
+        clients: content.clients as Json,
+        ebooks: content.ebooks as Json,
+        section_visibility: content.sectionVisibility as Json,
         updated_at: new Date().toISOString()
       })
       .select();
@@ -74,7 +81,13 @@ export const fetchMainContent = async () => {
       return null;
     }
     
-    return data;
+    // Add a field to indicate it's from the database and contains Json types
+    return { 
+      ...data,
+      // Make sectionVisibility available for compatibility
+      sectionVisibility: data.section_visibility,
+      isDbContent: true
+    };
   } catch (error) {
     console.error('Exception loading content:', error);
     return null;
@@ -86,8 +99,8 @@ export const fetchProjectsInfo = async () => {
   const content = await fetchMainContent();
   if (content && content.projects) {
     return {
-      title: content.projects.title,
-      description: content.projects.description
+      title: typeCastFromJson(content.projects, {}).title || '',
+      description: typeCastFromJson(content.projects, {}).description || ''
     };
   }
   return null;
@@ -102,7 +115,7 @@ export const saveProjectsInfo = async (projectsInfo: { title: string; descriptio
     const updatedContent = {
       ...content,
       projects: {
-        ...content.projects,
+        ...(typeof content.projects === 'object' ? content.projects : {}),
         title: projectsInfo.title,
         description: projectsInfo.description
       }
@@ -124,15 +137,15 @@ export const resetContentToDefault = async (): Promise<boolean> => {
       .from('content')
       .upsert({
         id: DEFAULT_CONTENT_ID,
-        hero: defaultContent.hero,
-        about: defaultContent.about,
-        services: defaultContent.services,
-        methodology: defaultContent.methodology,
-        projects: defaultContent.projects,
-        contact: defaultContent.contact,
-        clients: defaultContent.clients,
-        ebooks: defaultContent.ebooks,
-        section_visibility: defaultContent.sectionVisibility,
+        hero: defaultContent.hero as Json,
+        about: defaultContent.about as Json,
+        services: defaultContent.services as Json,
+        methodology: defaultContent.methodology as Json,
+        projects: defaultContent.projects as Json,
+        contact: defaultContent.contact as Json,
+        clients: defaultContent.clients as Json,
+        ebooks: defaultContent.ebooks as Json,
+        section_visibility: defaultContent.sectionVisibility as Json,
         updated_at: new Date().toISOString()
       })
       .select();
@@ -180,12 +193,21 @@ export const loadContent = async (): Promise<SiteContent | null> => {
     
     // Map section_visibility to sectionVisibility for consistency
     const content = {
-      ...data,
+      ...defaultContent,
+      hero: typeCastFromJson(data.hero, defaultContent.hero),
+      about: typeCastFromJson(data.about, defaultContent.about),
+      services: typeCastFromJson(data.services, defaultContent.services),
+      methodology: typeCastFromJson(data.methodology, defaultContent.methodology),
+      contact: typeCastFromJson(data.contact, defaultContent.contact),
+      clients: typeCastFromJson(data.clients, defaultContent.clients),
+      projects: typeCastFromJson(data.projects, defaultContent.projects),
+      ebooks: typeCastFromJson(data.ebooks, defaultContent.ebooks),
+      linkedInPosts: defaultContent.linkedInPosts, // Will be loaded separately
       // Ensure we handle both property names for backward compatibility
-      sectionVisibility: data.section_visibility || defaultContent.sectionVisibility
+      sectionVisibility: typeCastFromJson(data.section_visibility, defaultContent.sectionVisibility),
     };
     
-    return content as unknown as SiteContent;
+    return content;
   } catch (error) {
     console.error('Exception loading content:', error);
     return null;
