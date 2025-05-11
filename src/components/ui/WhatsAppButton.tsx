@@ -2,10 +2,11 @@
 import { MessageCircleMore } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { cmsService } from '@/services/cms/cmsService';
 
 const WhatsAppButton = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const phoneNumber = "5512992031890"; // Mesmo número usado no contato
+  const [whatsappNumber, setWhatsappNumber] = useState("5512992031890"); // Default number
   const message = "Olá! Gostaria de mais informações sobre os serviços da Urbis.";
   
   useEffect(() => {
@@ -19,10 +20,24 @@ const WhatsAppButton = () => {
     
     window.addEventListener('scroll', toggleVisibility);
     
+    // Load whatsapp number from CMS
+    const loadWhatsappNumber = async () => {
+      try {
+        const content = await cmsService.getContent();
+        if (content?.contact?.whatsapp) {
+          setWhatsappNumber(content.contact.whatsapp);
+        }
+      } catch (error) {
+        console.error('Failed to load whatsapp number:', error);
+      }
+    };
+    
+    loadWhatsappNumber();
+    
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
   
-  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
   
   return (
     <a 
