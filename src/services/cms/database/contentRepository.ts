@@ -19,8 +19,9 @@ export async function fetchMainContent(): Promise<any | null> {
     }
     
     console.log('Main content fetched successfully:', data);
-    // Verificar explicitamente o campo clients
-    if (data.clients) {
+    
+    // Verificar se data existe e se tem a propriedade clients antes de acessá-la
+    if (data && data.clients) {
       console.log('Dados de clientes carregados:', data.clients);
     } else {
       console.log('Nenhum dado de clientes encontrado');
