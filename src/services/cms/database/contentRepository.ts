@@ -1,4 +1,3 @@
-
 import { supabaseHelper } from './databaseUtils';
 import { createTablesIfNotExist } from './tableInitializer';
 
@@ -30,13 +29,12 @@ export async function fetchMainContent(): Promise<any | null> {
       }
       
       // Verificar se data tem a propriedade sectionVisibility ou section_visibility
-      if ('sectionVisibility' in data) {
-        console.log('Configurações de visibilidade carregadas (camelCase):', data.sectionVisibility);
-      } else if ('section_visibility' in data) {
-        // Compatibilidade com o campo section_visibility (snake_case)
+      if ('section_visibility' in data) {
         console.log('Configurações de visibilidade carregadas (snake_case):', data.section_visibility);
         // Normalizar para camelCase
         data.sectionVisibility = data.section_visibility;
+      } else if ('sectionVisibility' in data) {
+        console.log('Configurações de visibilidade carregadas (camelCase):', data.sectionVisibility);
       } else {
         console.log('Nenhuma configuração de visibilidade encontrada');
       }
