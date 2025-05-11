@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { getLinkedInPosts } from '../linkedin/linkedInData';
 import { LinkedInPost } from '../linkedin/types';
@@ -51,7 +52,7 @@ const LinkedInFeed = () => {
 
         <div className="text-center mt-10">
           <a
-            href="https://www.linkedin.com/company/urbis"
+            href="https://www.linkedin.com/company/urbis-inteligencia"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block bg-[#0A66C2] hover:bg-[#0A66C2]/90 text-white font-medium py-3 px-6 rounded-md transition-colors"
