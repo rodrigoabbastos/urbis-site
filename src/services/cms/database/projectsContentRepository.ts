@@ -83,3 +83,6 @@ class ProjectsContentRepository {
 }
 
 export const projectsContentRepository = new ProjectsContentRepository();
+// Exportar explicitamente as funções para corrigir o erro de importação
+export const fetchProjectsInfo = projectsContentRepository.fetchProjectsInfo.bind(projectsContentRepository);
+export const saveProjectsInfo = projectsContentRepository.saveProjectsInfo.bind(projectsContentRepository);
