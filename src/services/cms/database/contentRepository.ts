@@ -1,144 +1,118 @@
-import { supabaseHelper } from './databaseUtils';
-import { createTablesIfNotExist } from './tableInitializer';
+import { SiteContent } from '@/services/cms/types';
+import { supabase } from '@/lib/supabase';
+import { defaultContent } from '../defaultContent';
 
-export async function fetchMainContent(): Promise<any | null> {
+const CONTENT_TABLE = 'content';
+const DEFAULT_CONTENT_ID = 'default';
+
+export const saveContent = async (content: SiteContent): Promise<boolean> => {
   try {
-    // Ensure tables exist before fetching
-    await createTablesIfNotExist();
+    console.log('Saving content to Supabase:', content);
     
-    console.log('Fetching main content from database...');
-    const { data, error } = await supabaseHelper.from('content')
-      .select('*')
-      .eq('id', 'main')
-      .single();
-    
+    // Prepare the data for insertion/update
+    const { data, error } = await supabase
+      .from('content')
+      .upsert({
+        id: DEFAULT_CONTENT_ID,
+        hero: content.hero,
+        about: content.about,
+        services: content.services,
+        methodology: content.methodology,
+        projects: content.projects,
+        contact: content.contact,
+        clients: content.clients,
+        ebooks: content.ebooks,
+        // Fix for the error: use section_visibility instead of sectionVisibility
+        section_visibility: content.sectionVisibility,
+        updated_at: new Date().toISOString()
+      })
+      .select();
+
     if (error) {
-      console.warn('Erro ao carregar conteúdo principal:', error.message);
-      return null;
+      console.error('Error saving content:', error);
+      return false;
     }
     
-    console.log('Main content fetched successfully:', data);
+    return true;
+  } catch (error) {
+    console.error('Exception saving content:', error);
+    return false;
+  }
+};
+
+export const resetContentToDefault = async (): Promise<boolean> => {
+  try {
+    console.log('Resetting content to default values');
     
-    // Safely handle data processing after confirming it exists
-    if (data) {
-      // Check for clients data
-      if ('clients' in data && data.clients) {
-        console.log('Dados de clientes carregados:', data.clients);
-      } else {
-        console.log('Nenhum dado de clientes encontrado');
-      }
+    // Prepare the default data for insertion/update
+    const { data, error } = await supabase
+      .from('content')
+      .upsert({
+        id: DEFAULT_CONTENT_ID,
+        hero: defaultContent.hero,
+        about: defaultContent.about,
+        services: defaultContent.services,
+        methodology: defaultContent.methodology,
+        projects: defaultContent.projects,
+        contact: defaultContent.contact,
+        clients: defaultContent.clients,
+        ebooks: defaultContent.ebooks,
+        section_visibility: defaultContent.sectionVisibility,
+        updated_at: new Date().toISOString()
+      })
+      .select();
       
-      // Handle both section_visibility naming formats
-      // First check if snake_case version exists
-      if ('section_visibility' in data && data.section_visibility) {
-        console.log('Configurações de visibilidade carregadas (snake_case):', data.section_visibility);
-        // Normalize to camelCase for consistent usage in the app
-        data.sectionVisibility = data.section_visibility;
-      }
-      // Then check if camelCase version exists - NOTE: this branch will likely never execute since
-      // the database stores in snake_case, but we keep it for completeness
-      else if ('sectionVisibility' in data) {
-        console.log('Configurações de visibilidade carregadas (camelCase):', data.sectionVisibility);
-      } else {
-        console.log('Nenhuma configuração de visibilidade encontrada');
-      }
+    if (error) {
+      console.error('Error resetting content:', error);
+      return false;
     }
     
-    return data;
+    return true;
   } catch (error) {
-    console.error('Error fetching main content:', error);
-    return null;
+    console.error('Exception resetting content:', error);
+    return false;
   }
-}
+};
 
-export async function fetchProjectsInfo(): Promise<any | null> {
+export const loadContent = async (): Promise<SiteContent | null> => {
   try {
-    // Ensure tables exist before fetching
-    await createTablesIfNotExist();
+    // Check if the content table exists
+    const { data: tableExists } = await supabase.rpc('table_exists', {
+      table_name: CONTENT_TABLE
+    });
     
-    const { data, error } = await supabaseHelper.from('content')
-      .select('*')
-      .eq('id', 'projects')
-      .single();
-    
-    if (error) {
-      console.warn('Erro ao carregar informações dos projetos:', error.message);
+    if (!tableExists) {
+      console.log('Content table does not exist yet');
       return null;
     }
     
-    return data;
-  } catch (error) {
-    console.error('Error fetching projects info:', error);
-    return null;
-  }
-}
-
-export async function saveMainContent(content: {
-  hero: any;
-  about: any;
-  services: any;
-  methodology: any;
-  contact: any;
-  clients?: any;
-  sectionVisibility?: any;
-  ebooks?: any;
-}): Promise<boolean> {
-  try {
-    // Ensure tables exist before saving
-    await createTablesIfNotExist();
-    
-    console.log('Saving main content to database:', content);
-    
-    // Log specific fields we are saving
-    if (content.clients) {
-      console.log('Salvando dados de clientes:', content.clients);
+    // Fetch the content
+    const { data, error } = await supabase
+      .from(CONTENT_TABLE)
+      .select('*')
+      .eq('id', DEFAULT_CONTENT_ID)
+      .single();
+      
+    if (error) {
+      console.error('Error loading content:', error);
+      return null;
     }
     
-    if (content.sectionVisibility) {
-      console.log('Salvando configurações de visibilidade:', content.sectionVisibility);
+    if (!data) {
+      console.log('No content found');
+      return null;
     }
     
-    // Save sectionVisibility in both camelCase and snake_case for compatibility
-    const dataToSave = {
-      id: 'main',
-      ...content,
-      section_visibility: content.sectionVisibility, // Snake case version for database compatibility
-      updated_at: new Date()
+    // Map section_visibility to sectionVisibility for consistency
+    const content = {
+      ...data,
+      // Ensure we handle both property names for backward compatibility
+      sectionVisibility: data.section_visibility || defaultContent.sectionVisibility
     };
     
-    console.log('Dados sendo gravados no banco:', dataToSave);
-    
-    const { error } = await supabaseHelper.from('content')
-      .upsert(dataToSave as any);
-    
-    if (error) {
-      console.error('Error in saveMainContent:', error);
-      throw error;
-    }
-    console.log('Main content saved successfully');
-    return true;
+    return content as unknown as SiteContent;
   } catch (error) {
-    console.error('Error saving main content:', error);
-    return false;
+    console.error('Exception loading content:', error);
+    return null;
   }
-}
-
-export async function saveProjectsInfo(projectsInfo: { title: string; description: string }): Promise<boolean> {
-  try {
-    // Ensure tables exist before saving
-    await createTablesIfNotExist();
-    
-    const { error } = await supabaseHelper.from('content')
-      .upsert({ 
-        id: 'projects',
-        ...projectsInfo,
-        updated_at: new Date()
-      } as any);
-    
-    if (error) throw error;
-    return true;
-  } catch (error) {
-    console.error('Error saving projects info:', error);
-    return false;
-  }
-}
+};
