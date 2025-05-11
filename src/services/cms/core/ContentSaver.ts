@@ -3,6 +3,7 @@ import { SiteContent } from '../types';
 import { BaseService } from '../BaseService';
 import { databaseService } from '../database/databaseService';
 import { toast } from '@/components/ui/use-toast';
+import { ContentLoader } from './ContentLoader';
 
 export class ContentSaver extends BaseService {
   async saveContent(content: SiteContent): Promise<void> {

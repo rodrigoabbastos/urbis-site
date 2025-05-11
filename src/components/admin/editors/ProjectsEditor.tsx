@@ -37,9 +37,20 @@ const ProjectsEditor = () => {
     try {
       setIsLoading(true);
       const content = await cmsService.getContent();
-      setTitle(content.projects.title);
-      setDescription(content.projects.description);
-      setProjects(content.projects.items);
+      
+      console.log('ProjectsEditor: Carregando conteúdo de projetos', content.projects);
+      
+      // Set title and description
+      setTitle(content.projects.title || 'Projetos');
+      setDescription(content.projects.description || 'Nossos projetos em destaque');
+      
+      // Set projects
+      if (content.projects.items && Array.isArray(content.projects.items)) {
+        setProjects(content.projects.items);
+      } else {
+        console.warn('Itens de projetos não encontrados ou não é um array');
+        setProjects([]);
+      }
     } catch (error) {
       console.error('Error loading content:', error);
       toast({
@@ -201,7 +212,19 @@ const ProjectsEditor = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-medium">Lista de Projetos</h2>
             <Button 
-              onClick={handleAddProject}
+              onClick={() => {
+                setIsEditing(false);
+                setCurrentProject({
+                  id: Date.now().toString(),
+                  image: '',
+                  title: '',
+                  description: '',
+                  client: '',
+                  year: new Date().getFullYear().toString(),
+                  type: 'urban'
+                });
+                setIsDialogOpen(true);
+              }}
               className="bg-urbis-primary hover:bg-urbis-primary/90 items-center gap-2"
             >
               <PlusCircle className="h-4 w-4" />
@@ -210,7 +233,7 @@ const ProjectsEditor = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {projects.map((project) => (
+            {projects.length > 0 ? projects.map((project) => (
               <Card key={project.id} className="overflow-hidden">
                 <div className="h-40 overflow-hidden">
                   <img 
@@ -237,7 +260,11 @@ const ProjectsEditor = () => {
                   <Button 
                     variant="ghost" 
                     size="sm"
-                    onClick={() => handleEditProject(project)}
+                    onClick={() => {
+                      setIsEditing(true);
+                      setCurrentProject(project);
+                      setIsDialogOpen(true);
+                    }}
                   >
                     <Pencil className="h-4 w-4 mr-1" /> Editar
                   </Button>
@@ -251,7 +278,11 @@ const ProjectsEditor = () => {
                   </Button>
                 </CardFooter>
               </Card>
-            ))}
+            )) : (
+              <div className="col-span-full text-center py-10">
+                <p className="text-gray-500">Nenhum projeto foi adicionado ainda.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -269,7 +300,7 @@ const ProjectsEditor = () => {
                 id="title"
                 name="title"
                 value={currentProject.title}
-                onChange={handleInputChange}
+                onChange={(e) => setCurrentProject(prev => ({ ...prev, title: e.target.value }))}
                 placeholder="Ex: Residencial Parque das Águas"
               />
             </div>
@@ -280,7 +311,7 @@ const ProjectsEditor = () => {
                 id="image"
                 name="image"
                 value={currentProject.image}
-                onChange={handleInputChange}
+                onChange={(e) => setCurrentProject(prev => ({ ...prev, image: e.target.value }))}
                 placeholder="https://example.com/image.jpg"
               />
             </div>
@@ -304,7 +335,7 @@ const ProjectsEditor = () => {
                 id="description"
                 name="description"
                 value={currentProject.description}
-                onChange={handleInputChange}
+                onChange={(e) => setCurrentProject(prev => ({ ...prev, description: e.target.value }))}
                 placeholder="Descrição do projeto"
                 rows={3}
               />
@@ -317,7 +348,7 @@ const ProjectsEditor = () => {
                   id="client"
                   name="client"
                   value={currentProject.client}
-                  onChange={handleInputChange}
+                  onChange={(e) => setCurrentProject(prev => ({ ...prev, client: e.target.value }))}
                   placeholder="Ex: Incorporadora XYZ"
                 />
               </div>
@@ -328,7 +359,7 @@ const ProjectsEditor = () => {
                   id="year"
                   name="year"
                   value={currentProject.year}
-                  onChange={handleInputChange}
+                  onChange={(e) => setCurrentProject(prev => ({ ...prev, year: e.target.value }))}
                   placeholder="Ex: 2023"
                 />
               </div>
@@ -338,7 +369,7 @@ const ProjectsEditor = () => {
               <Label>Tipo de projeto</Label>
               <RadioGroup 
                 value={currentProject.type} 
-                onValueChange={(value: 'urban' | 'smart') => handleTypeChange(value)}
+                onValueChange={(value: 'urban' | 'smart') => setCurrentProject(prev => ({ ...prev, type: value }))}
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="urban" id="urban" />
