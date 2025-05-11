@@ -33,8 +33,8 @@ const ContactInfo = () => {
   };
 
   const getWhatsappLink = () => {
-    // Use the whatsapp field if available, otherwise format the phone number
-    const whatsappNumber = contactInfo.whatsapp || formatPhone(contactInfo.phone);
+    // Always use the consistent fixed number format
+    const whatsappNumber = "5512992031890";
     const message = "Olá! Gostaria de mais informações sobre os serviços da Urbis.";
     return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
   };
@@ -62,7 +62,7 @@ const ContactInfo = () => {
             <h4 className="text-white font-medium mb-1">Telefone</h4>
             <div className="flex items-center space-x-2">
               <p className="text-gray-200">
-                {contactInfo.phone}
+                (12) 99203-1890
               </p>
               <a 
                 href={getWhatsappLink()}

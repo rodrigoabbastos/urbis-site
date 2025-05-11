@@ -25,7 +25,8 @@ const WhatsAppButton = () => {
       try {
         const content = await cmsService.getContent();
         if (content?.contact?.whatsapp) {
-          setWhatsappNumber(content.contact.whatsapp);
+          // Make sure we're using the consistent format 
+          setWhatsappNumber(content.contact.whatsapp.replace(/\D/g, '')); // Remove non-digits
         }
       } catch (error) {
         console.error('Failed to load whatsapp number:', error);

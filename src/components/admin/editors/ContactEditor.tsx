@@ -11,8 +11,8 @@ import { toast } from '@/components/ui/use-toast';
 const ContactEditor = () => {
   const [formData, setFormData] = useState<ContactInfo>({
     email: '',
-    phone: '',
-    whatsapp: '',
+    phone: '(12) 99203-1890',
+    whatsapp: '5512992031890',
     address: '',
     mapUrl: ''
   });
@@ -67,7 +67,7 @@ const ContactEditor = () => {
               name="phone" 
               value={formData.phone} 
               onChange={handleChange}
-              placeholder="+55 51 3333-3333"
+              placeholder="(12) 99203-1890"
             />
           </div>
           
@@ -78,10 +78,10 @@ const ContactEditor = () => {
               name="whatsapp" 
               value={formData.whatsapp} 
               onChange={handleChange}
-              placeholder="+5551999999999"
+              placeholder="5512992031890"
             />
             <p className="text-xs text-muted-foreground">
-              Formato internacional sem espaços ou caracteres especiais. Ex: +5551999999999
+              Formato internacional sem espaços ou caracteres especiais. Ex: 5512992031890
             </p>
           </div>
           
