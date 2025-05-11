@@ -42,6 +42,7 @@ const ClientLogos = () => {
             containScroll: false,
           }}
           className="w-full"
+          aria-label="Logos dos nossos clientes"
         >
           <CarouselContent className="-ml-2 md:-ml-4">
             {sortedLogos.map((logo) => (
@@ -52,7 +53,7 @@ const ClientLogos = () => {
                 <div className="h-24 flex items-center justify-center p-4 bg-white/95 rounded-md shadow-sm">
                   <img 
                     src={logo.image} 
-                    alt={logo.name} 
+                    alt={`Logo do cliente ${logo.name}`}
                     className="max-h-full max-w-full object-contain"
                     onError={(e) => {
                       console.error(`Logo failed to load: ${logo.name}`);
@@ -68,6 +69,26 @@ const ClientLogos = () => {
             <CarouselNext className="relative inset-0 translate-y-0 bg-white/20 hover:bg-white/30 border-white/40" />
           </div>
         </Carousel>
+        
+        {/* Schema.org structured data for Organization */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ 
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Urbis",
+            "description": "Inteligência em Desenvolvimento Urbano e Loteamentos",
+            "url": "https://urbis.com.br",
+            "knowsAbout": [
+              "loteamento", 
+              "urbanismo", 
+              "planejamento urbano", 
+              "bairro planejado", 
+              "viabilidade técnica",
+              "viabilidade ambiental",
+              "projetos urbanísticos"
+            ]
+          })
+        }} />
       </div>
     </section>
   );

@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { HeroContent } from '@/services/cms/types';
+import { Helmet } from 'react-helmet-async';
 
 const Hero = () => {
   const [heroContent, setHeroContent] = useState<HeroContent>({
@@ -84,6 +85,38 @@ const Hero = () => {
       </section>
     );
   }
+
+  // Prepare FAQ structured data
+  const faqData = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "O que é um estudo de viabilidade urbanística?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Um estudo de viabilidade urbanística é uma análise técnica que avalia o potencial de desenvolvimento de uma área, considerando aspectos legais, ambientais e econômicos para verificar se um projeto de loteamento ou urbanização é viável."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como funciona o processo de desenvolvimento de um loteamento?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O processo envolve análise da área, estudo de viabilidade, elaboração do projeto urbanístico, aprovação junto aos órgãos competentes, licenciamento ambiental, execução da infraestrutura e regularização fundiária."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quais são os requisitos para aprovar um projeto de loteamento?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Os requisitos incluem conformidade com o plano diretor municipal, respeito às áreas de preservação ambiental, porcentagem mínima de áreas públicas, projeto de drenagem, abastecimento de água, esgotamento sanitário e outros aspectos técnicos específicos da legislação local."
+        }
+      }
+    ]
+  };
   
   return (
     <section 
@@ -95,6 +128,12 @@ const Hero = () => {
         backgroundPosition: 'center',
       }}
     >
+      <Helmet>
+        <title>Urbis - Inteligência em Desenvolvimento Urbano e Loteamentos</title>
+        <meta name="description" content="Soluções completas em urbanismo, loteamentos, projetos e viabilidade técnica para bairros planejados e desenvolvimento urbano sustentável" />
+        <meta name="keywords" content="loteamento, urbanismo, projeto urbanístico, viabilidade técnica, bairro planejado, planejamento urbano, meio ambiente" />
+      </Helmet>
+
       <div className="container-wrapper text-white">
         <div className="max-w-3xl">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">{heroContent.title}</h1>
@@ -110,6 +149,9 @@ const Hero = () => {
           </a>
         </div>
       </div>
+
+      {/* Schema.org structured data */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqData) }} />
     </section>
   );
 };
