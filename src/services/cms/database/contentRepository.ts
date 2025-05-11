@@ -83,13 +83,14 @@ export const fetchMainContent = async () => {
     }
     
     // Add a field to indicate it's from the database and contains Json types
+    // Ensure projects field exists in the returned data
     return { 
       ...data,
       // Make sectionVisibility available for compatibility
       sectionVisibility: data.section_visibility,
       isDbContent: true,
       // Ensure projects exists and has the right structure
-      projects: data.projects || { title: '', description: '', items: [] }
+      projects: data.projects || toJson({ title: '', description: '', items: [] })
     };
   } catch (error) {
     console.error('Exception loading content:', error);
@@ -142,7 +143,7 @@ export const saveProjectsInfo = async (projectsInfo: { title: string; descriptio
       contact: fromJson(updatedContent.contact, defaultContent.contact),
       clients: fromJson(updatedContent.clients, defaultContent.clients),
       ebooks: fromJson(updatedContent.ebooks, defaultContent.ebooks),
-      sectionVisibility: fromJson(updatedContent.sectionVisibility || updatedContent.section_visibility, defaultContent.sectionVisibility)
+      sectionVisibility: fromJson(updatedContent.section_visibility || updatedContent.sectionVisibility, defaultContent.sectionVisibility)
     };
     
     return await saveContent(contentToSave);

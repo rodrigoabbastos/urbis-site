@@ -21,6 +21,7 @@ export async function createTablesIfNotExist(): Promise<void> {
             section_visibility JSONB,
             sectionVisibility JSONB,
             ebooks JSONB,
+            projects JSONB,
             created_at TIMESTAMPTZ DEFAULT NOW(),
             updated_at TIMESTAMPTZ DEFAULT NOW()
           );
@@ -81,14 +82,15 @@ export async function createTablesIfNotExist(): Promise<void> {
       }
     }
 
-    // Ensure all content columns exist, incluindo ambas as versões do campo de visibilidade
+    // Ensure all content columns exist, including both versions of the visibility field and projects
     const { error: columnsError } = await supabaseHelper.rpc('run_sql', {
       sql: `
         ALTER TABLE IF EXISTS public.content 
         ADD COLUMN IF NOT EXISTS clients JSONB,
         ADD COLUMN IF NOT EXISTS section_visibility JSONB,
         ADD COLUMN IF NOT EXISTS sectionVisibility JSONB,
-        ADD COLUMN IF NOT EXISTS ebooks JSONB;
+        ADD COLUMN IF NOT EXISTS ebooks JSONB,
+        ADD COLUMN IF NOT EXISTS projects JSONB;
       `
     });
     
@@ -114,6 +116,7 @@ export async function createTablesIfNotExist(): Promise<void> {
             section_visibility JSONB,
             sectionVisibility JSONB,
             ebooks JSONB,
+            projects JSONB,
             created_at TIMESTAMPTZ DEFAULT NOW(),
             updated_at TIMESTAMPTZ DEFAULT NOW()
           );
