@@ -1,5 +1,5 @@
 
-import { SiteContent, HeroContent, AboutContent, Service, MethodologyStep, ContactInfo, Project } from './types';
+import { SiteContent, HeroContent, AboutContent, Service, MethodologyStep, ContactInfo, Project, SectionVisibility } from './types';
 import { contentService } from './ContentService';
 import { serviceManagementService } from './ServiceManagementService';
 import { projectService } from './projectService';
@@ -102,6 +102,19 @@ class CMSService {
   
   getLinkedInPosts(): Promise<LinkedInPost[]> {
     return linkedInService.getLinkedInPosts();
+  }
+  
+  // New methods for client logos and ebooks
+  updateClients(clients: SiteContent['clients']): Promise<void> {
+    return this.core.updatePartialContent('clients', clients);
+  }
+  
+  updateSectionVisibility(visibility: SectionVisibility): Promise<void> {
+    return this.core.updatePartialContent('sectionVisibility', visibility);
+  }
+  
+  updateEbooks(ebooks: SiteContent['ebooks']): Promise<void> {
+    return this.core.updatePartialContent('ebooks', ebooks);
   }
 }
 

@@ -3,13 +3,40 @@ import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { cmsService } from '@/services/cmsService';
+import { SectionVisibility } from '@/services/cms/types';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('');
+  const [sectionVisibility, setSectionVisibility] = useState<SectionVisibility>({
+    hero: true,
+    about: true,
+    clients: true,
+    services: true,
+    methodology: true,
+    projects: true,
+    linkedin: true,
+    testimonials: true,
+    contact: true,
+    ebooks: false
+  });
 
   useEffect(() => {
+    const loadVisibility = async () => {
+      try {
+        const content = await cmsService.getContent();
+        if (content.sectionVisibility) {
+          setSectionVisibility(content.sectionVisibility);
+        }
+      } catch (error) {
+        console.error('Error loading section visibility:', error);
+      }
+    };
+    
+    loadVisibility();
+    
     const handleScroll = () => {
       if (window.scrollY > 10) {
         setIsScrolled(true);
@@ -19,7 +46,10 @@ const Navbar = () => {
 
       // Determine which section is currently visible
       try {
-        const sections = ['home', 'about', 'services', 'projects', 'testimonials', 'contact'];
+        const sections = ['home', 'about', 'clients', 'services', 'methodology', 'projects', 'linkedin', 'testimonials', 'contact', 'ebooks'].filter(
+          section => sectionVisibility[section as keyof SectionVisibility]
+        );
+        
         const current = sections.find(section => {
           const element = document.getElementById(section);
           if (element) {
@@ -39,7 +69,7 @@ const Navbar = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [sectionVisibility]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -81,6 +111,16 @@ const Navbar = () => {
     );
   };
 
+  // Navigation items based on visibility settings
+  const navItems = [
+    { id: 'about', label: 'Sobre', visible: sectionVisibility.about },
+    { id: 'clients', label: 'Clientes', visible: sectionVisibility.clients },
+    { id: 'services', label: 'Serviços', visible: sectionVisibility.services },
+    { id: 'projects', label: 'Projetos', visible: sectionVisibility.projects },
+    { id: 'testimonials', label: 'Depoimentos', visible: sectionVisibility.testimonials },
+    { id: 'ebooks', label: 'E-books', visible: sectionVisibility.ebooks }
+  ].filter(item => item.visible);
+
   return (
     <nav 
       className={cn(
@@ -113,16 +153,17 @@ const Navbar = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <NavLink href="#about" label="Sobre" />
-            <NavLink href="#services" label="Serviços" />
-            <NavLink href="#projects" label="Projetos" />
-            <NavLink href="#testimonials" label="Depoimentos" />
-            <Button 
-              onClick={() => scrollToSection('contact')}
-              className="bg-urbis-primary text-white hover:bg-urbis-primary/90 transition-all duration-300"
-            >
-              Contato
-            </Button>
+            {navItems.map(item => (
+              <NavLink key={item.id} href={`#${item.id}`} label={item.label} />
+            ))}
+            {sectionVisibility.contact && (
+              <Button 
+                onClick={() => scrollToSection('contact')}
+                className="bg-urbis-primary text-white hover:bg-urbis-primary/90 transition-all duration-300"
+              >
+                Contato
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -141,16 +182,17 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white shadow-lg absolute top-full left-0 w-full animate-fade-in">
           <div className="container-wrapper py-5 flex flex-col space-y-4">
-            <NavLink href="#about" label="Sobre" />
-            <NavLink href="#services" label="Serviços" />
-            <NavLink href="#projects" label="Projetos" />
-            <NavLink href="#testimonials" label="Depoimentos" />
-            <Button 
-              onClick={() => scrollToSection('contact')}
-              className="w-full bg-urbis-primary text-white hover:bg-urbis-primary/90 transition-all duration-300"
-            >
-              Contato
-            </Button>
+            {navItems.map(item => (
+              <NavLink key={item.id} href={`#${item.id}`} label={item.label} />
+            ))}
+            {sectionVisibility.contact && (
+              <Button 
+                onClick={() => scrollToSection('contact')}
+                className="w-full bg-urbis-primary text-white hover:bg-urbis-primary/90 transition-all duration-300"
+              >
+                Contato
+              </Button>
+            )}
           </div>
         </div>
       )}

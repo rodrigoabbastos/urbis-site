@@ -51,6 +51,34 @@ export interface ContactInfo {
   mapUrl: string;
 }
 
+export interface ClientLogo {
+  id: string;
+  image: string;
+  name: string;
+  order: number;
+}
+
+export interface SectionVisibility {
+  hero: boolean;
+  about: boolean;
+  clients: boolean;
+  services: boolean;
+  methodology: boolean;
+  projects: boolean;
+  linkedin: boolean;
+  testimonials: boolean;
+  contact: boolean;
+  ebooks: boolean;
+}
+
+export interface Ebook {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  downloadUrl: string;
+}
+
 export interface SiteContent {
   hero: HeroContent;
   about: AboutContent;
@@ -67,4 +95,15 @@ export interface SiteContent {
   };
   contact: ContactInfo;
   linkedInPosts: LinkedInPost[];
+  clients: {
+    title: string;
+    description: string;
+    logos: ClientLogo[];
+  };
+  sectionVisibility: SectionVisibility;
+  ebooks: {
+    title: string;
+    description: string;
+    items: Ebook[];
+  };
 }

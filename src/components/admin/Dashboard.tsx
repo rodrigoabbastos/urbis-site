@@ -2,7 +2,7 @@
 import AdminLayout from './AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Image, Settings, User, Linkedin } from 'lucide-react';
+import { FileText, Image, Settings, User, Linkedin, Layout, BookOpen, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cmsService } from '@/services/cmsService';
 import { useEffect, useState } from 'react';
@@ -37,6 +37,13 @@ const Dashboard = () => {
       path: "/admin/about"
     },
     {
+      title: "Quem Confia na URBIS",
+      icon: Users,
+      description: "Gerenciar logotipos de clientes",
+      count: content.clients ? content.clients.logos.length : 0,
+      path: "/admin/clients"
+    },
+    {
       title: "O que Fazemos",
       icon: Settings,
       description: "Gerenciar serviços oferecidos",
@@ -65,11 +72,25 @@ const Dashboard = () => {
       path: "/admin/linkedin"
     },
     {
+      title: "E-books",
+      icon: BookOpen,
+      description: "Gerenciar e-books para download",
+      count: content.ebooks ? content.ebooks.items.length : 0,
+      path: "/admin/ebooks"
+    },
+    {
       title: "Informações de Contato",
       icon: Settings,
       description: "Atualizar dados de contato",
       count: 1,
       path: "/admin/contact"
+    },
+    {
+      title: "Visibilidade das Seções",
+      icon: Layout,
+      description: "Configurar quais seções serão exibidas no site",
+      count: Object.keys(content.sectionVisibility || {}).length,
+      path: "/admin/visibility"
     }
   ];
 

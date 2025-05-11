@@ -10,6 +10,9 @@ import MethodologyEditor from '@/components/admin/editors/MethodologyEditor';
 import ProjectsEditor from '@/components/admin/editors/ProjectsEditor';
 import ContactEditor from '@/components/admin/editors/ContactEditor';
 import LinkedInPostsEditor from '@/components/admin/editors/LinkedInPostsEditor';
+import ClientsEditor from '@/components/admin/editors/ClientsEditor';
+import SectionVisibilityEditor from '@/components/admin/editors/SectionVisibilityEditor';
+import EbooksEditor from '@/components/admin/editors/EbooksEditor';
 
 // Protected route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -51,6 +54,11 @@ const Admin = () => {
           <AboutEditor />
         </ProtectedRoute>
       } />
+      <Route path="/clients" element={
+        <ProtectedRoute>
+          <ClientsEditor />
+        </ProtectedRoute>
+      } />
       <Route path="/services" element={
         <ProtectedRoute>
           <ServicesEditor />
@@ -74,6 +82,16 @@ const Admin = () => {
       <Route path="/linkedin" element={
         <ProtectedRoute>
           <LinkedInPostsEditor />
+        </ProtectedRoute>
+      } />
+      <Route path="/visibility" element={
+        <ProtectedRoute>
+          <SectionVisibilityEditor />
+        </ProtectedRoute>
+      } />
+      <Route path="/ebooks" element={
+        <ProtectedRoute>
+          <EbooksEditor />
         </ProtectedRoute>
       } />
     </Routes>
