@@ -41,6 +41,8 @@ export interface Project {
   client: string;
   year: string;
   type: 'urban' | 'smart' | string;
+  link?: string;
+  keywords?: string[];
 }
 
 export interface ContactInfo {

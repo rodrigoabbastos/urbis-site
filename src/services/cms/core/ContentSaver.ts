@@ -17,7 +17,9 @@ export class ContentSaver extends BaseService {
         ebooks: ebooks ? 'presente' : 'ausente'
       });
       
-      await databaseService.saveMainContent({ 
+      // Create a payload that has both camelCase and snake_case versions of sectionVisibility
+      // to ensure compatibility with different database field naming conventions
+      const payload = { 
         hero, 
         about, 
         services, 
@@ -25,8 +27,11 @@ export class ContentSaver extends BaseService {
         contact,
         clients,
         sectionVisibility,
+        section_visibility: sectionVisibility, // Add snake_case version
         ebooks
-      });
+      };
+      
+      await databaseService.saveMainContent(payload);
       
       // Store projects info
       const projectsContent = {
