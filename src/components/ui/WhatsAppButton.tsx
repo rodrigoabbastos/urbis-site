@@ -2,11 +2,10 @@
 import { MessageCircleMore } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { cmsService } from '@/services/cms/cmsService';
 
 const WhatsAppButton = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [whatsappNumber, setWhatsappNumber] = useState("5512992031890"); // Default number
+  const whatsappNumber = "5512992031890"; // Fixed WhatsApp number
   const message = "Olá! Gostaria de mais informações sobre os serviços da Urbis.";
   
   useEffect(() => {
@@ -19,21 +18,6 @@ const WhatsAppButton = () => {
     };
     
     window.addEventListener('scroll', toggleVisibility);
-    
-    // Load whatsapp number from CMS
-    const loadWhatsappNumber = async () => {
-      try {
-        const content = await cmsService.getContent();
-        if (content?.contact?.whatsapp) {
-          // Make sure we're using the consistent format 
-          setWhatsappNumber(content.contact.whatsapp.replace(/\D/g, '')); // Remove non-digits
-        }
-      } catch (error) {
-        console.error('Failed to load whatsapp number:', error);
-      }
-    };
-    
-    loadWhatsappNumber();
     
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
