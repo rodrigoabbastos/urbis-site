@@ -6,6 +6,18 @@ import { Json } from '@/integrations/supabase/types';
 import { mainContentRepository } from './mainContentRepository';
 import { defaultContent } from '../defaultContent';
 
+// Define interfaces for proper type safety
+interface ProjectsInfo {
+  title: string;
+  description: string;
+}
+
+interface ProjectsData {
+  items: any[];
+  title: string;
+  description: string;
+}
+
 // Repository for project specific content management
 class ProjectsContentRepository {
   // Add fetchProjectsInfo function
@@ -15,12 +27,6 @@ class ProjectsContentRepository {
       if (content && content.projects) {
         // Get projects data with safe type handling
         const projectsJson = content.projects as Json;
-        
-        // Define interface for proper type safety
-        interface ProjectsInfo {
-          title: string;
-          description: string;
-        }
         
         // Create a strongly typed default
         const defaultData: ProjectsInfo = { title: '', description: '' };
@@ -47,13 +53,12 @@ class ProjectsContentRepository {
       if (!content) return false;
       
       // Use proper type conversion when working with JSON data
-      interface ProjectsData {
-        items: any[];
-        title?: string;
-        description?: string;
-      }
+      const defaultProjectsData: ProjectsData = { 
+        items: [],
+        title: '',
+        description: ''
+      };
       
-      const defaultProjectsData: ProjectsData = { items: [] };
       const projectsJson = content.projects || toJson(defaultProjectsData);
       
       // Convert JSON to a properly typed object

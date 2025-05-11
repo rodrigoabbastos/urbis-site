@@ -35,12 +35,14 @@ export class ContentSaver extends BaseService {
       await databaseService.saveMainContent(payload);
       
       // Store projects info
-      const projectsContent = {
-        title: content.projects.title,
-        description: content.projects.description
-      };
-      
-      await databaseService.saveProjectsInfo(projectsContent);
+      if (content.projects) {
+        const projectsContent = {
+          title: content.projects.title,
+          description: content.projects.description
+        };
+        
+        await databaseService.saveProjectsInfo(projectsContent);
+      }
       
       this.showSuccessToast("Conteúdo salvo com sucesso!");
     } catch (error) {
