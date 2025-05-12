@@ -1,0 +1,21 @@
+
+# Coloque este arquivo como .htaccess na pasta de imagens do seu servidor Hostinger
+# Este arquivo permite que suas imagens sejam acessadas pelo CMS Lovable
+
+<IfModule mod_headers.c>
+    # Habilita CORS para permitir acesso às imagens de qualquer domínio
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, OPTIONS"
+    Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept"
+    
+    # Desabilita cache para facilitar testes (opcional)
+    # Header set Cache-Control "no-cache, no-store, must-revalidate"
+    # Header set Pragma "no-cache"
+    # Header set Expires 0
+</IfModule>
+
+# Permitir acesso a tipos de imagens comuns
+<FilesMatch "\.(jpg|jpeg|png|gif|webp|svg)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
