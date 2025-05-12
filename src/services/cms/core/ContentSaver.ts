@@ -105,19 +105,49 @@ export class ContentSaver extends BaseService {
       
       // Update the title and description
       if (typeof sectionContent === 'object' && sectionContent !== null) {
-        // Handle different section structures
-        if (section === 'methodology' || section === 'clients' || section === 'ebooks') {
-          // These sections have simple title/description at the root level
-          sectionContent.title = title;
-          sectionContent.description = description;
-        } else if (section === 'hero') {
-          // Hero has title as title and subtitle as description
-          sectionContent.title = title;
-          sectionContent.subtitle = Array.isArray(description) ? description[0] : description;
-        } else if (section === 'about') {
-          // About has title and description array
-          sectionContent.title = title;
-          sectionContent.description = Array.isArray(description) ? description : [description];
+        // Handle different section structures based on section type
+        switch (section) {
+          case 'methodology':
+          case 'clients':
+          case 'ebooks':
+          case 'projects':
+            // These sections have simple title/description at the root level
+            if ('title' in sectionContent) {
+              sectionContent.title = title;
+            }
+            if ('description' in sectionContent) {
+              sectionContent.description = description;
+            }
+            break;
+            
+          case 'hero':
+            // Hero has title as title and subtitle as description
+            if ('title' in sectionContent) {
+              sectionContent.title = title;
+            }
+            if ('subtitle' in sectionContent) {
+              sectionContent.subtitle = Array.isArray(description) ? description[0] : description;
+            }
+            break;
+            
+          case 'about':
+            // About has title and description array
+            if ('title' in sectionContent) {
+              sectionContent.title = title;
+            }
+            if ('description' in sectionContent) {
+              sectionContent.description = Array.isArray(description) ? description : [description];
+            }
+            break;
+            
+          default:
+            // For other sections, try to set the properties if they exist
+            if ('title' in sectionContent) {
+              sectionContent.title = title;
+            }
+            if ('description' in sectionContent) {
+              sectionContent.description = description;
+            }
         }
         
         // Update the content with the modified section

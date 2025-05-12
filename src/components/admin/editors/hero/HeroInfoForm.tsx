@@ -19,7 +19,7 @@ const HeroInfoForm = ({ title, subtitle, onRefresh }: HeroInfoFormProps) => {
         ? newDescription[0] 
         : newDescription;
       
-      await cmsService.core.updateSectionInfo('hero', newTitle, description);
+      await cmsService.updateSectionInfo('hero', newTitle, description);
       onRefresh();
     } catch (error) {
       console.error('Error saving hero info:', error);

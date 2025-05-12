@@ -64,21 +64,11 @@ class ProjectService {
     }
   }
 
-  // Save section info using the Core ContentSaver
+  // Save section info using the ContentSaver
   async updateSectionInfo(title: string, description: string): Promise<void> {
     try {
-      // Get current content
-      const content = await cmsService.getContent();
-      
-      // Create updated projects content
-      const updatedProjects = {
-        ...content.projects,
-        title,
-        description
-      };
-      
-      // Update through core service
-      await cmsService.core.updatePartialContent('projects', updatedProjects);
+      // Update through cmsService
+      await cmsService.updateSectionInfo('projects', title, description);
       
     } catch (error) {
       console.error('Error updating projects section info:', error);

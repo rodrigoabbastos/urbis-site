@@ -1,4 +1,3 @@
-
 import { SiteContent, HeroContent, AboutContent, Service, MethodologyStep, ContactInfo, Project, SectionVisibility } from './types';
 import { contentService } from './ContentService';
 import { serviceManagementService } from './ServiceManagementService';
@@ -9,7 +8,7 @@ import { cacheService } from './CacheService';
 import { LinkedInPost } from '@/components/linkedin/types';
 
 class CMSService {
-  private readonly core: CmsServiceCore;
+  readonly core: CmsServiceCore;
   private readonly STORAGE_KEY = 'urbis_cms_content';
   
   constructor() {
@@ -27,11 +26,6 @@ class CMSService {
     }
   }
   
-  // Expose the core service for direct access
-  get core() {
-    return this.core;
-  }
-
   // Expose project service for direct access
   get projectService() {
     return projectService;
