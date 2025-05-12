@@ -1,6 +1,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { normalizeImageUrl } from '@/utils/imageUtils';
 
 interface ProjectCardProps {
   image: string;
@@ -12,13 +13,20 @@ interface ProjectCardProps {
 }
 
 const ProjectCard = ({ image, title, description, client, year, type }: ProjectCardProps) => {
+  // Normaliza a URL da imagem
+  const normalizedImageUrl = normalizeImageUrl(image);
+  
   return (
     <Card className="overflow-hidden h-full transition-all hover:shadow-lg">
       <div className="relative h-60 w-full overflow-hidden">
         <img 
-          src={image} 
+          src={normalizedImageUrl} 
           alt={title} 
           className="w-full h-full object-cover transition-transform hover:scale-105 duration-500"
+          onError={(e) => {
+            console.error(`Erro ao carregar imagem do projeto: ${normalizedImageUrl}`);
+            (e.target as HTMLImageElement).src = "/placeholder.svg";
+          }}
         />
       </div>
       

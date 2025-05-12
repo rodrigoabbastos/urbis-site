@@ -17,15 +17,37 @@ export const checkImageURL = async (url: string): Promise<boolean> => {
       resolve(true);
     };
     
-    img.onerror = () => {
-      console.error(`Erro ao carregar imagem de ${url}. Possível problema de CORS.`);
-      console.error(`Verifique se o arquivo .htaccess está configurado corretamente em ${new URL(url).origin}/`);
+    img.onerror = (error) => {
+      console.error(`Erro ao carregar imagem de ${url}. Possível problema de CORS.`, error);
+      console.error(`Verifique se a URL está correta e se o arquivo existe em ${new URL(url).origin}/`);
+      
+      // Verificar se o domínio é urbis.com.br
+      if (url.includes('urbis.com.br')) {
+        console.error(`
+          Para imagens do domínio urbis.com.br:
+          1. Verifique se a imagem existe no caminho correto (use / e não \\)
+          2. Confirme que a imagem está na pasta pública do servidor (public_html ou www)
+          3. Verifique as permissões do arquivo (deve ser 644)
+        `);
+      }
+      
       resolve(false);
     };
     
     // Configura a URL após definir os eventos
     img.src = url;
   });
+};
+
+/**
+ * Normaliza uma URL de imagem, substituindo barras invertidas por barras normais
+ * @param url URL da imagem a ser normalizada
+ * @returns URL normalizada
+ */
+export const normalizeImageUrl = (url: string): string => {
+  if (!url) return '';
+  // Substituir barras invertidas por barras normais
+  return url.replace(/\\/g, '/');
 };
 
 /**
@@ -39,6 +61,9 @@ export const getImageWithFallback = async (
   fallbackUrl: string = '/placeholder.svg'
 ): Promise<string> => {
   if (!url) return fallbackUrl;
+  
+  // Normaliza a URL (substitui \ por /)
+  url = normalizeImageUrl(url);
   
   // Verifica se é uma URL interna (começa com /)
   if (url.startsWith('/')) {
@@ -82,7 +107,7 @@ export const isValidURL = (url: string): boolean => {
 export const corsInstructions = `
 Para permitir o carregamento de imagens do seu servidor Hostinger:
 
-1. Crie um arquivo .htaccess na pasta de imagens com o seguinte conteúdo:
+1. Crie um arquivo .htaccess na pasta pública do seu site (public_html ou www) com o seguinte conteúdo:
 
 # Arquivo .htaccess para permitir acesso CORS às imagens
 <IfModule mod_headers.c>
@@ -97,7 +122,16 @@ Para permitir o carregamento de imagens do seu servidor Hostinger:
     Allow from all
 </FilesMatch>
 
-2. Se o arquivo .htaccess não funcionar, peça ao suporte da Hostinger para habilitar 
+# Se o código acima não funcionar, você pode tentar a versão mais recente:
+<FilesMatch "\\.(jpg|jpeg|png|gif|webp|svg)$">
+    Require all granted
+</FilesMatch>
+
+2. Verifique se as permissões dos arquivos de imagem estão corretas:
+   - Arquivos: 644 (rw-r--r--)
+   - Pastas: 755 (rwxr-xr-x)
+
+3. Se o arquivo .htaccess não funcionar, peça ao suporte da Hostinger para habilitar 
    o módulo headers e permitir a configuração de CORS nos diretórios de imagens.
 `;
 
@@ -128,4 +162,3 @@ export const isSameDomain = (url: string): boolean => {
   
   return urlDomain === currentDomain;
 };
-

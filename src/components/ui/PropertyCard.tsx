@@ -2,6 +2,7 @@
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Bed, Bath, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { normalizeImageUrl } from '@/utils/imageUtils';
 
 interface PropertyCardProps {
   image: string;
@@ -24,13 +25,20 @@ const PropertyCard = ({
   area,
   type
 }: PropertyCardProps) => {
+  // Normaliza a URL da imagem
+  const normalizedImageUrl = normalizeImageUrl(image);
+  
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-lg transition-all hover:shadow-xl group">
       <div className="relative overflow-hidden">
         <img 
-          src={image} 
+          src={normalizedImageUrl} 
           alt={title}
           className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105"
+          onError={(e) => {
+            console.error(`Erro ao carregar imagem da propriedade: ${normalizedImageUrl}`);
+            (e.target as HTMLImageElement).src = "/placeholder.svg";
+          }}
         />
         <Badge className={`absolute top-3 left-3 ${type === 'sale' ? 'bg-urbis-red' : 'bg-urbis-blue'} text-white`}>
           {type === 'sale' ? 'Venda' : 'Locação'}
