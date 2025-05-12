@@ -17,8 +17,23 @@ export const normalizeImageUrl = (imageUrl: string): string => {
     normalizedUrl = `/${normalizedUrl}`;
   }
   
+  // Para favicons e outros recursos estáticos, garantir que a URL esteja correta
+  if (normalizedUrl.startsWith('/lovable-uploads')) {
+    console.log(`Recurso do projeto detectado: ${normalizedUrl}`);
+  }
+  
   // Garante que as URL do projeto tenham o formato correto
   console.log(`Imagem normalizada: ${normalizedUrl}`);
   
   return normalizedUrl;
+};
+
+/**
+ * Verifica se uma URL é um recurso local do projeto
+ * @param url URL a ser verificada
+ * @returns boolean indicando se é um recurso local
+ */
+export const isLocalResource = (url: string): boolean => {
+  if (!url) return false;
+  return url.includes('lovable-uploads') || url.startsWith('/public/');
 };
