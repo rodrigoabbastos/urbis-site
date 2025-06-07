@@ -12,14 +12,33 @@ const AboutUs = () => {
     const loadContent = async () => {
       try {
         setIsLoading(true);
+        console.log('AboutUs: Iniciando carregamento do conteúdo...');
         // Always fetch fresh content from the database
         const content = await cmsService.getContent();
-        console.log('AboutUs - Loaded content:', content.about);
+        console.log('AboutUs: Conteúdo carregado:', content.about);
         setAboutContent(content.about);
       } catch (error) {
-        console.error('Error loading about content:', error);
+        console.error('AboutUs: Erro ao carregar conteúdo:', error);
+        // Usar conteúdo padrão em caso de erro
+        setAboutContent({
+          title: "Quem somos",
+          description: [
+            "A URBIS é uma consultoria especializada na estruturação de empreendimentos urbanos com inteligência técnica, visão estratégica e agilidade. Atuamos desde o estudo de viabilidade até a aprovação e implantação, transformando terrenos em projetos viáveis, valorizados e legalmente seguros.",
+            "Com experiência consolidada, integrando áreas como urbanismo, meio ambiente, infraestrutura e legislação, a URBIS é o parceiro ideal para destravar terrenos e criar valor duradouro para loteadores, investidores e incorporadores."
+          ],
+          features: [
+            "Inteligência técnica e visão estratégica",
+            "Expertise em urbanismo e meio ambiente",
+            "Conhecimento profundo em legislação",
+            "Agilidade nos processos de aprovação",
+            "Foco em valorização do empreendimento",
+            "Suporte completo do estudo à implantação"
+          ],
+          image: "https://images.unsplash.com/photo-1622547748225-3fc4abd2cca0?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        });
       } finally {
         setIsLoading(false);
+        console.log('AboutUs: Carregamento finalizado');
       }
     };
     
@@ -44,6 +63,22 @@ const AboutUs = () => {
     "A URBIS é uma consultoria especializada na estruturação de empreendimentos urbanos com inteligência técnica, visão estratégica e agilidade. Atuamos desde o estudo de viabilidade até a aprovação e implantação, transformando terrenos em projetos viáveis, valorizados e legalmente seguros.",
     "Com experiência consolidada, integrando áreas como urbanismo, meio ambiente, infraestrutura e legislação, a URBIS é o parceiro ideal para destravar terrenos e criar valor duradouro para loteadores, investidores e incorporadores."
   ];
+
+  if (isLoading) {
+    return (
+      <section id="about" className="section-padding bg-white">
+        <div className="container-wrapper">
+          <div className="text-center">
+            <div className="animate-pulse">
+              <div className="h-8 bg-gray-200 rounded w-1/3 mx-auto mb-4"></div>
+              <div className="h-4 bg-gray-200 rounded w-2/3 mx-auto mb-2"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="about" className="section-padding bg-white">
@@ -80,8 +115,8 @@ const AboutUs = () => {
                 alt="Urbis Infográfico" 
                 className="w-full h-auto object-contain rounded-lg shadow-lg z-10 relative"
                 onError={(e) => {
-                  console.error("Failed to load primary image");
-                  e.currentTarget.src = "https://via.placeholder.com/800x500?text=Urbis+Infografico";
+                  console.log("AboutUs: Erro ao carregar imagem, usando placeholder");
+                  e.currentTarget.src = "https://via.placeholder.com/800x500/BF3B6C/FFFFFF?text=URBIS+Infografico";
                 }}
               />
             </div>

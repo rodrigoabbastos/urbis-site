@@ -6,14 +6,15 @@ import { isSupabaseConfigured } from '@/lib/supabase';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { HeroContent } from '@/services/cms/types';
 import { Helmet } from 'react-helmet-async';
+import { cmsService } from '@/services/cmsService';
 
 const Hero = () => {
   const [heroContent, setHeroContent] = useState<HeroContent>({
-    title: '',
-    subtitle: '',
-    ctaText: '',
-    ctaLink: '',
-    backgroundImage: ''
+    title: 'Inteligência em Desenvolvimento Urbano',
+    subtitle: 'Transformamos terrenos em projetos viáveis, valorizados e legalmente seguros através de expertise técnica, visão estratégica e agilidade nos processos.',
+    ctaText: 'Fale com um especialista',
+    ctaLink: '#contact',
+    backgroundImage: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop'
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,38 +23,27 @@ const Hero = () => {
     const loadContent = async () => {
       try {
         setIsLoading(true);
-        // Check if Supabase is configured
-        if (!isSupabaseConfigured()) {
-          throw new Error('Supabase configuration is missing. Please make sure your project is connected to Supabase.');
-        }
+        console.log('Hero: Iniciando carregamento do conteúdo...');
         
-        // Fetch hero content directly from Supabase
-        const { data, error } = await supabase
-          .from('content')
-          .select('hero')
-          .eq('id', 'main')
-          .single();
-          
-        if (error) {
-          console.error('Error fetching hero content:', error);
-          throw new Error('Erro ao buscar conteúdo do Hero: ' + error.message);
-        }
+        // Primeiro tenta carregar do CMS service
+        const content = await cmsService.getContent();
+        console.log('Hero: Conteúdo carregado do CMS:', content.hero);
         
-        if (data && data.hero) {
-          console.log('Hero content loaded:', data.hero);
-          // Fix type conversion with proper typecasting
-          const heroData = data.hero as unknown as HeroContent;
-          setHeroContent(heroData);
+        if (content && content.hero) {
+          setHeroContent(content.hero);
+          console.log('Hero: Conteúdo aplicado com sucesso');
         } else {
-          console.warn('No hero content found');
+          console.log('Hero: Usando conteúdo padrão');
         }
         
         setError(null);
       } catch (error) {
-        console.error('Error loading hero content:', error);
-        setError('Não foi possível carregar o conteúdo. Verifique a conexão com o Supabase.');
+        console.error('Hero: Erro ao carregar conteúdo:', error);
+        // Não mostrar erro para o usuário, apenas usar conteúdo padrão
+        console.log('Hero: Usando conteúdo padrão devido ao erro');
       } finally {
         setIsLoading(false);
+        console.log('Hero: Carregamento finalizado');
       }
     };
     
@@ -62,25 +52,10 @@ const Hero = () => {
   
   if (isLoading) {
     return (
-      <section id="hero" className="relative h-screen flex items-center justify-center bg-gray-100">
-        <div className="text-center">
-          <p className="text-xl text-gray-600">Carregando...</p>
-        </div>
-      </section>
-    );
-  }
-  
-  if (error) {
-    return (
-      <section id="hero" className="relative h-screen flex items-center justify-center bg-gray-100">
-        <div className="container-wrapper max-w-3xl">
-          <Alert variant="destructive" className="mb-6">
-            <AlertCircle className="h-5 w-5 mr-2" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-          <p className="text-center text-gray-600 mt-4">
-            Acesse as configurações do projeto e conecte-o ao Supabase para continuar.
-          </p>
+      <section id="hero" className="relative h-screen flex items-center justify-center bg-gradient-to-r from-urbis-primary to-urbis-secondary">
+        <div className="text-center text-white">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-xl">Carregando...</p>
         </div>
       </section>
     );
